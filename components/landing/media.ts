@@ -1,0 +1,15 @@
+export const LANDING_MEDIA = {
+  heroVideo: "/media/silk-hero.mp4",
+  heroPoster: "/media/hero-navy-jersey.jpg",
+  cotton: "/media/fabrics/cotton.jpg",
+  silk: "/media/fabrics/silk-chiffon-primary.webp",
+  jersey: "/media/fabrics/jersey.jpg",
+  linen: "/media/fabrics/linen.jpg",
+  denim: "/media/fabrics/denim.jpg",
+  canvas: "/media/fabrics/canvas.jpg",
+  poplin: "/media/fabrics/poplin.jpg",
+  twill: "/media/fabrics/twill.jpg",
+  performance: "/media/fabrics/polyester.jpg",
+  fleece: "/media/fabrics/fleece.jpg",
+  knit: "/Knit-Fabrics-4-1024x684.jpg",
+} as const;

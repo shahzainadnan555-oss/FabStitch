@@ -1,0 +1,260 @@
+{
+  "site": "http://127.0.0.1:3014",
+  "budget": {
+    "coreWebVitals": {
+      "lcpMs": 2500,
+      "inpMs": 200,
+      "cls": 0.1
+    },
+    "buildAssets": {
+      "largestJavaScriptBytes": 350000,
+      "totalCssBytes": 150000,
+      "largestImageBytes": 500000,
+      "largestVideoBytes": 3000000
+    },
+    "publicRoute": {
+      "maximumRequests": 45,
+      "maximumTransferredBytes": 3500000
+    }
+  },
+  "routeMeasurements": [
+    {
+      "route": "/",
+      "lcp": 252,
+      "cls": 0,
+      "inp": null,
+      "meaningfulContentMs": 574,
+      "ttfbMs": 10.800000071525574,
+      "domContentLoadedMs": 62.60000002384186,
+      "fcpMs": 152,
+      "requestCount": 38,
+      "transferredBytes": 3017122
+    },
+    {
+      "route": "/marketplace/",
+      "lcp": 100,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 180.10000002384186,
+      "ttfbMs": 28.100000023841858,
+      "domContentLoadedMs": 77.5,
+      "fcpMs": 100,
+      "requestCount": 35,
+      "transferredBytes": 103083
+    },
+    {
+      "route": "/fabrics/cotton/jersey/",
+      "lcp": 64,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 114.20000004768372,
+      "ttfbMs": 14.600000023841858,
+      "domContentLoadedMs": 49.10000002384186,
+      "fcpMs": 64,
+      "requestCount": 39,
+      "transferredBytes": 147927
+    },
+    {
+      "route": "/collections/linen-lightweight/",
+      "lcp": 104,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 138.5,
+      "ttfbMs": 41.699999928474426,
+      "domContentLoadedMs": 55,
+      "fcpMs": 84,
+      "requestCount": 39,
+      "transferredBytes": 106375
+    },
+    {
+      "route": "/collections/spring-summer-2027/",
+      "lcp": 100,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 134.29999995231628,
+      "ttfbMs": 21.699999928474426,
+      "domContentLoadedMs": 50.699999928474426,
+      "fcpMs": 84,
+      "requestCount": 39,
+      "transferredBytes": 120487
+    },
+    {
+      "route": "/fabrics/silk-chiffon/",
+      "lcp": 100,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 134.60000002384186,
+      "ttfbMs": 13.399999976158142,
+      "domContentLoadedMs": 44,
+      "fcpMs": 100,
+      "requestCount": 27,
+      "transferredBytes": 59934
+    },
+    {
+      "route": "/fabrics/best-for/shirts/",
+      "lcp": 104,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 188.60000002384186,
+      "ttfbMs": 31.5,
+      "domContentLoadedMs": 57.300000071525574,
+      "fcpMs": 104,
+      "requestCount": 41,
+      "transferredBytes": 101522
+    },
+    {
+      "route": "/guides/fabrics-2027/",
+      "lcp": 72,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 98.70000004768372,
+      "ttfbMs": 12,
+      "domContentLoadedMs": 22.600000023841858,
+      "fcpMs": 72,
+      "requestCount": 25,
+      "transferredBytes": 35407
+    },
+    {
+      "route": "/about/",
+      "lcp": 48,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 98.30000007152557,
+      "ttfbMs": 8,
+      "domContentLoadedMs": 24.899999976158142,
+      "fcpMs": 48,
+      "requestCount": 29,
+      "transferredBytes": 42613
+    },
+    {
+      "route": "/how-it-works/",
+      "lcp": 88,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 87.10000002384186,
+      "ttfbMs": 4.5,
+      "domContentLoadedMs": 12.700000047683716,
+      "fcpMs": 68,
+      "requestCount": 25,
+      "transferredBytes": 55752
+    },
+    {
+      "route": "/contact/",
+      "lcp": 72,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 102.70000004768372,
+      "ttfbMs": 4.700000047683716,
+      "domContentLoadedMs": 14,
+      "fcpMs": 52,
+      "requestCount": 30,
+      "transferredBytes": 64782
+    },
+    {
+      "route": "/help/",
+      "lcp": 72,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 93.5,
+      "ttfbMs": 10.099999904632568,
+      "domContentLoadedMs": 18.799999952316284,
+      "fcpMs": 72,
+      "requestCount": 23,
+      "transferredBytes": 41739
+    },
+    {
+      "route": "/support/",
+      "lcp": 56,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 86.89999997615814,
+      "ttfbMs": 4.700000047683716,
+      "domContentLoadedMs": 14.700000047683716,
+      "fcpMs": 56,
+      "requestCount": 25,
+      "transferredBytes": 30169
+    },
+    {
+      "route": "/terms/",
+      "lcp": 52,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 93.10000002384186,
+      "ttfbMs": 5.5,
+      "domContentLoadedMs": 14.600000023841858,
+      "fcpMs": 52,
+      "requestCount": 25,
+      "transferredBytes": 56282
+    },
+    {
+      "route": "/privacy/",
+      "lcp": 44,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 89.80000007152557,
+      "ttfbMs": 4.399999976158142,
+      "domContentLoadedMs": 13.800000071525574,
+      "fcpMs": 44,
+      "requestCount": 25,
+      "transferredBytes": 47859
+    },
+    {
+      "route": "/search/?q=linen",
+      "lcp": 84,
+      "cls": 0,
+      "inp": 16,
+      "meaningfulContentMs": 151.5,
+      "ttfbMs": 22.90000009536743,
+      "domContentLoadedMs": 37.200000047683716,
+      "fcpMs": 84,
+      "requestCount": 35,
+      "transferredBytes": 101186
+    }
+  ],
+  "responsiveChecks": {
+    "routes": 16,
+    "widths": [
+      375,
+      390,
+      414,
+      768,
+      1024,
+      1280,
+      1366,
+      1440,
+      1600
+    ],
+    "checks": 144
+  },
+  "preferenceChecks": {
+    "countryOptionCount": 7,
+    "countries": [
+      "United StatesUS",
+      "United KingdomGB",
+      "TurkeyTR",
+      "PakistanPK",
+      "IndiaIN",
+      "BangladeshBD",
+      "SingaporeSG"
+    ],
+    "countryClosedOnEscape": true,
+    "countryDefaultedCurrency": true,
+    "currencyOptionCount": 7,
+    "deliberateCurrencyPreserved": true,
+    "mobileControlsVisible": true
+  },
+  "reducedMotion": {
+    "animationName": "none",
+    "headingVisible": true
+  },
+  "slowNetwork": {
+    "headingReadyMs": 614.3000000715256,
+    "firstResultReadyMs": 619.3000000715256
+  },
+  "temporaryDisconnect": {
+    "shellPreserved": true,
+    "localSelectionWorked": true
+  },
+  "caveat": "These are local Chrome lab measurements, not field Core Web Vitals. A null INP means no qualifying Event Timing entry was exposed; it is reported as unknown rather than zero.",
+  "failures": []
+}

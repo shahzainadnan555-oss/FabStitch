@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-*/
 /out/
 
 # production
@@ -32,6 +33,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...except the documented template. Which variables the app needs is not a
+# secret, and a deploy that has to guess them is a deploy that misconfigures
+# the API base URL.
+!.env.example
 
 # vercel
 .vercel

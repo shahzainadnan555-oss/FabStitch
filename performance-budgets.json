@@ -1,0 +1,17 @@
+{
+  "coreWebVitals": {
+    "lcpMs": 2500,
+    "inpMs": 200,
+    "cls": 0.1
+  },
+  "buildAssets": {
+    "largestJavaScriptBytes": 350000,
+    "totalCssBytes": 150000,
+    "largestImageBytes": 500000,
+    "largestVideoBytes": 3000000
+  },
+  "publicRoute": {
+    "maximumRequests": 45,
+    "maximumTransferredBytes": 3500000
+  }
+}

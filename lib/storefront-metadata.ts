@@ -1,0 +1,221 @@
+import type { Metadata } from "next";
+import type { Crumb } from "@/components/ui/breadcrumbs";
+import type { SeoPage } from "@/lib/api/types";
+import { getSeoPageByPath } from "@/repositories/seo";
+import type { CustomerCatalogFabric } from "@/repositories/customer-catalog";
+
+const DEFAULT_SOCIAL_IMAGE = "/media/hero-navy-jersey.jpg";
+
+function canonicalPath(path: string): string {
+  const pathname = path.split(/[?#]/, 1)[0] || "/";
+  const withLeadingSlash = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const collapsed = withLeadingSlash.replace(/\/{2,}/g, "/").toLowerCase();
+  return collapsed === "/" ? "/" : `${collapsed.replace(/\/+$/, "")}/`;
+}
+
+export function storefrontMetadata({
+  title,
+  description,
+  path,
+  image,
+  index = false,
+  type = "website",
+}: {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+  index?: boolean;
+  type?: "website" | "article";
+}): Metadata {
+  const canonical = canonicalPath(path);
+  const socialImage = image ?? DEFAULT_SOCIAL_IMAGE;
+  return {
+    title: canonical === "/" ? { absolute: title } : title,
+    description,
+    alternates: { canonical },
+    robots: { index, follow: true },
+    openGraph: {
+      type,
+      siteName: "FabStitch",
+      title,
+      description,
+      url: canonical,
+      images: [{ url: socialImage, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [socialImage],
+    },
+  };
+}
+
+export type StorefrontSeoResult = {
+  page: SeoPage | null;
+  metadata: Metadata;
+  breadcrumbs: Crumb[];
+};
+
+function text(
+  value: Record<string, string>,
+  keys: readonly string[],
+): string | undefined {
+  for (const key of keys) {
+    const candidate = value[key]?.trim();
+    if (candidate) return candidate;
+  }
+  return undefined;
+}
+
+export function seoBreadcrumbs(page: SeoPage | null): Crumb[] {
+  return (page?.breadcrumb ?? []).flatMap((item) => {
+    const label = text(item, ["label", "name", "title"]);
+    if (!label) return [];
+    const href = text(item, [
+      "href",
+      "path",
+      "url",
+      "canonical_path",
+      "canonical_url",
+    ]);
+    return [{ label, ...(href ? { href } : {}) }];
+  });
+}
+
+function backendMetadata(
+  page: SeoPage,
+  overrides: {
+    image?: string;
+    index?: boolean;
+    type?: "website" | "article";
+  },
+): Metadata {
+  const title = page.seo_title?.trim() || page.title;
+  const description = page.meta_description?.trim() || undefined;
+  const canonical = page.canonical_url?.trim() || page.canonical_path;
+  const socialTitle = page.og_title?.trim() || title;
+  const socialDescription = page.og_description?.trim() || description;
+  const socialImage =
+    page.og_image_path?.trim() || overrides.image?.trim() || undefined;
+  const indexable = page.is_indexable && overrides.index !== false;
+  const configuredRobots = page.robots_directives?.trim();
+  const robots = configuredRobots
+    ? [
+        indexable ? null : "noindex",
+        page.is_public ? null : "nofollow",
+        ...configuredRobots
+          .split(",")
+          .map((directive) => directive.trim())
+          .filter(
+            (directive) =>
+              directive &&
+              !(!indexable && /^(?:no)?index$/i.test(directive)) &&
+              !(!page.is_public && /^(?:no)?follow$/i.test(directive)),
+          ),
+      ]
+        .filter(Boolean)
+        .join(", ")
+    : { index: indexable, follow: page.is_public };
+
+  return {
+    title: page.canonical_path === "/" ? { absolute: title } : title,
+    description,
+    alternates: { canonical },
+    robots,
+    openGraph: {
+      type: overrides.type ?? "website",
+      siteName: "FabStitch",
+      title: socialTitle,
+      description: socialDescription,
+      url: canonical,
+      ...(socialImage
+        ? { images: [{ url: socialImage, alt: socialTitle }] }
+        : {}),
+    },
+    twitter: {
+      card: socialImage ? "summary_large_image" : "summary",
+      title: socialTitle,
+      description: socialDescription,
+      ...(socialImage ? { images: [socialImage] } : {}),
+    },
+  };
+}
+
+export async function loadStorefrontSeo(
+  path: string,
+  overrides: {
+    title?: string;
+    description?: string;
+    image?: string;
+    index?: boolean;
+    type?: "website" | "article";
+  } = {},
+): Promise<StorefrontSeoResult> {
+  let page: SeoPage | null = null;
+  try {
+    page = await getSeoPageByPath(path);
+  } catch (error) {
+    console.error("[seo] metadata lookup failed", {
+      path,
+      errorType: error instanceof Error ? error.name : "UnknownError",
+    });
+  }
+
+  if (page) {
+    return {
+      page,
+      metadata: backendMetadata(page, overrides),
+      breadcrumbs: seoBreadcrumbs(page),
+    };
+  }
+
+  return {
+    page: null,
+    metadata: storefrontMetadata({
+      title: overrides.title ?? "FabStitch",
+      description:
+        overrides.description ?? "FabStitch fabric sourcing marketplace.",
+      path: canonicalPath(path),
+      image: overrides.image,
+      index: false,
+      type: overrides.type,
+    }),
+    breadcrumbs: [],
+  };
+}
+
+export async function registeredStorefrontMetadata(
+  path: string,
+  overrides: {
+    title?: string;
+    description?: string;
+    image?: string;
+    index?: boolean;
+    type?: "website" | "article";
+  } = {},
+): Promise<Metadata> {
+  return (await loadStorefrontSeo(path, overrides)).metadata;
+}
+
+export function hasSeoQueryState(
+  query: Record<string, string | string[] | undefined>,
+): boolean {
+  return Object.values(query).some((value) => value !== undefined);
+}
+
+export function fabricSeoDescription(fabric: CustomerCatalogFabric): string {
+  if (fabric.description) return fabric.description;
+  const details = [
+    fabric.composition[0],
+    fabric.characteristics.slice(0, 2).join(" and "),
+    fabric.applications.length
+      ? `best for ${fabric.applications
+          .slice(0, 3)
+          .map((item) => item.label.toLowerCase())
+          .join(", ")}`
+      : undefined,
+  ].filter(Boolean);
+  return `Explore ${fabric.name} in the FabStitch 2027 collection${details.length ? `: ${details.join(", ")}` : ""}.`;
+}

@@ -1,0 +1,772 @@
+import {
+  BEST_FOR_BY_SLUG,
+  CATALOG_COLLECTION_CARDS,
+  COLLECTION_BY_SLUG,
+  CURATED_FABRIC_SLUGS,
+  FABRICS_2027,
+  MEDIA_BY_FABRIC_SLUG,
+  SEASONAL_COLLECTIONS,
+  SEO_USE_CASES,
+  SOURCE_FAMILY_BY_SLUG,
+  fabricsForSeason,
+  fabricsForUseCase,
+} from "@/catalog";
+import { CATALOG_GUIDES } from "@/content/guides";
+import { HELP_ARTICLES } from "@/features/help/content";
+import { STOREFRONT_REDIRECT_FAMILIES } from "@/lib/storefront-redirects";
+import {
+  SEO_PUBLICATION_OVERRIDES,
+  launchBatchForPage,
+  launchPhaseForPageType,
+  publicationForPage,
+} from "@/domain/seo/launch-manifest";
+import {
+  assertPublication,
+  canonicalSeoPath,
+  resolvePublication,
+  type EffectivePublicationStatus,
+  type SeoLaunchPhase,
+  type SeoPublication,
+  type SeoPublicationStatus,
+} from "@/domain/seo/publication";
+
+export type StorefrontPageType =
+  | "home"
+  | "marketplace"
+  | "fabric_hub"
+  | "fabric"
+  | "collection_hub"
+  | "collection"
+  | "seasonal_collection"
+  | "best_for_hub"
+  | "best_for"
+  | "guide_hub"
+  | "guide"
+  | "help_hub"
+  | "help"
+  | "brand"
+  | "support"
+  | "legal"
+  | "private";
+
+export type SearchIntent =
+  | "brand"
+  | "commercial"
+  | "commercial_investigation"
+  | "informational"
+  | "navigational"
+  | "support";
+
+export type SeoSchemaType =
+  | "Organization"
+  | "WebSite"
+  | "WebPage"
+  | "CollectionPage"
+  | "Product"
+  | "Article"
+  | "FAQPage"
+  | "BreadcrumbList";
+
+type SeoPageDefinition = {
+  path: string;
+  type: StorefrontPageType;
+  title: string;
+  description: string;
+  h1?: string;
+  primaryTopic: string;
+  secondaryTopics: readonly string[];
+  intent: SearchIntent;
+  audience: "Fabric customers" | "Existing customers";
+  contentOwner: "FabStitch";
+  contentSource: string;
+  relatedPaths: readonly string[];
+  qualityGatePassed: boolean;
+  productCount?: number;
+  wordCount?: number;
+  image?: string;
+};
+
+export type SeoPageRecord = Omit<
+  SeoPageDefinition,
+  "h1" | "qualityGatePassed"
+> & {
+  h1: string;
+  canonicalPath: string;
+  parentPath?: string;
+  qualityGatePassed: boolean;
+  launchPhase: SeoLaunchPhase;
+  launchBatch: string;
+  publication: SeoPublication;
+  status: SeoPublicationStatus;
+  effectiveStatus: EffectivePublicationStatus;
+  isPublic: boolean;
+  indexable: boolean;
+  sitemapEligible: boolean;
+  internalLinkEligible: boolean;
+  expectedSchemas: readonly SeoSchemaType[];
+  expectsBreadcrumbs: boolean;
+};
+
+function words(values: readonly string[]): number {
+  return values.join(" ").trim().split(/\s+/).filter(Boolean).length;
+}
+
+const staticPages: SeoPageDefinition[] = [
+  {
+    path: "/",
+    type: "home",
+    title: "FabStitch - discover fabrics for what you make",
+    h1: "Find fabric that fits your vision.",
+    description:
+      "Discover FabStitch fabrics by material, construction and use. Explore the 2027 collection and find the right fabric for what you are making.",
+    primaryTopic: "FabStitch fabric marketplace",
+    secondaryTopics: [
+      "fabric discovery",
+      "fabric sourcing",
+      "fabric materials",
+    ],
+    intent: "brand",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch product positioning and 2027 catalog",
+    relatedPaths: ["/marketplace/", "/collections/", "/guides/fabrics-2027/"],
+    qualityGatePassed: true,
+    image: "/media/hero-navy-jersey.jpg",
+  },
+  {
+    path: "/marketplace/",
+    type: "marketplace",
+    title: "Fabric marketplace",
+    h1: "Discover fabrics for what comes next.",
+    description:
+      "Search and filter the complete FabStitch 2027 fabric collection by material, construction, season, weight and Best For use.",
+    primaryTopic: "fabric marketplace",
+    secondaryTopics: ["fabric search", "fabric filter", "2027 fabrics"],
+    intent: "commercial",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Canonical FabStitch catalog",
+    relatedPaths: [
+      "/collections/",
+      "/fabrics/best-for/",
+      "/guides/",
+      ...CURATED_FABRIC_SLUGS.map((slug) => `/fabrics/${slug}/`),
+    ],
+    qualityGatePassed: true,
+  },
+  {
+    path: "/fabrics/",
+    type: "fabric_hub",
+    title: "FabStitch fabrics",
+    h1: "Find the fabric, then read the detail.",
+    description:
+      "Browse all FabStitch fabric products and move into collections, Best For uses and the complete searchable marketplace.",
+    primaryTopic: "fabric types",
+    secondaryTopics: ["fabric materials", "fabric products"],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Canonical FabStitch catalog",
+    relatedPaths: ["/marketplace/", "/collections/", "/fabrics/best-for/"],
+    qualityGatePassed: true,
+    productCount: FABRICS_2027.length,
+  },
+  {
+    path: "/collections/",
+    type: "collection_hub",
+    title: "Fabric collections",
+    h1: "Start with the material.",
+    description:
+      "Explore twelve FabStitch fabric collections, from linen, cotton and silk to technical outerwear, denim and home textiles.",
+    primaryTopic: "fabric collections",
+    secondaryTopics: ["fabric materials", "seasonal fabrics"],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Canonical collection registry",
+    relatedPaths: [
+      "/marketplace/",
+      ...CATALOG_COLLECTION_CARDS.map(
+        (collection) => `/collections/${collection.slug}/`,
+      ),
+      ...SEASONAL_COLLECTIONS.map(
+        (collection) => `/collections/${collection.slug}/`,
+      ),
+    ],
+    qualityGatePassed: true,
+    productCount: FABRICS_2027.length,
+  },
+  {
+    path: "/fabrics/best-for/",
+    type: "best_for_hub",
+    title: "Find fabrics by what you are making",
+    h1: "Find fabric for what you are making.",
+    description:
+      "Explore useful FabStitch fabric edits for shirts, dresses, tailoring, activewear, outerwear, home textiles and more.",
+    primaryTopic: "best fabrics by use",
+    secondaryTopics: ["apparel fabrics", "home textiles"],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Document-supported catalog applications",
+    relatedPaths: [
+      "/marketplace/",
+      "/collections/",
+      "/guides/",
+      ...SEO_USE_CASES.map((useCase) => `/fabrics/best-for/${useCase.slug}/`),
+    ],
+    qualityGatePassed: true,
+    productCount: FABRICS_2027.length,
+  },
+  {
+    path: "/guides/",
+    type: "guide_hub",
+    title: "FabStitch Guides",
+    h1: "Fabric knowledge for better sourcing.",
+    description:
+      "Explore practical guides on fabrics, materials, applications, sourcing, and choosing the right textile for your next project.",
+    primaryTopic: "fabric education",
+    secondaryTopics: ["fabric sourcing education", "2027 fabric directions"],
+    intent: "informational",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch 2027 reference and catalog",
+    relatedPaths: [
+      ...CATALOG_GUIDES.map((guide) => guide.path),
+      "/marketplace/",
+      "/collections/",
+      "/help/",
+    ],
+    qualityGatePassed: true,
+  },
+  {
+    path: "/help/",
+    type: "help_hub",
+    title: "How can we help?",
+    h1: "How can we help?",
+    description:
+      "Find quick answers about discovering fabrics, sending inquiries, managing your account, and using FabStitch.",
+    primaryTopic: "FabStitch help",
+    secondaryTopics: ["fabric search help", "fabric inquiries"],
+    intent: "support",
+    audience: "Existing customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch product behavior",
+    relatedPaths: [
+      ...HELP_ARTICLES.map((article) => `/help/${article.slug}/`),
+      "/contact/",
+    ],
+    qualityGatePassed: true,
+  },
+  {
+    path: "/about/",
+    type: "brand",
+    title: "About FabStitch",
+    h1: "Material decisions, made clearer.",
+    description:
+      "Why FabStitch exists and how a material-first fabric storefront makes product discovery and comparison clearer.",
+    primaryTopic: "about FabStitch",
+    secondaryTopics: ["fabric discovery", "material sourcing"],
+    intent: "brand",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch product positioning",
+    relatedPaths: ["/how-it-works/", "/marketplace/", "/contact/"],
+    qualityGatePassed: true,
+  },
+  {
+    path: "/how-it-works/",
+    type: "brand",
+    title: "How FabStitch works",
+    h1: "From an idea to the right fabric.",
+    description:
+      "See how FabStitch connects fabric discovery, search, Best For guidance, product detail, quantity and buying.",
+    primaryTopic: "how FabStitch works",
+    secondaryTopics: ["fabric search", "fabric buying"],
+    intent: "navigational",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch product behavior",
+    relatedPaths: [
+      "/marketplace/",
+      "/collections/",
+      "/help/how-fabstitch-works/",
+    ],
+    qualityGatePassed: true,
+  },
+  {
+    path: "/contact/",
+    type: "brand",
+    title: "Contact FabStitch",
+    h1: "Let’s talk fabrics.",
+    description:
+      "Contact FabStitch about a fabric, the marketplace, an order or how the product works.",
+    primaryTopic: "contact FabStitch",
+    secondaryTopics: ["fabric help", "customer support"],
+    intent: "navigational",
+    audience: "Existing customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch contact configuration",
+    relatedPaths: ["/help/", "/support/", "/marketplace/"],
+    qualityGatePassed: true,
+  },
+  {
+    path: "/support/",
+    type: "support",
+    title: "Need help with something specific?",
+    h1: "Need help with something specific?",
+    description:
+      "Contact FabStitch for fabric inquiries, sourcing questions, account issues, and help using the platform.",
+    primaryTopic: "FabStitch support",
+    secondaryTopics: ["customer assistance"],
+    intent: "support",
+    audience: "Existing customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch support configuration",
+    relatedPaths: ["/help/", "/contact/"],
+    qualityGatePassed: true,
+  },
+];
+
+const fabricPages: SeoPageDefinition[] = FABRICS_2027.map((fabric) => {
+  const family = SOURCE_FAMILY_BY_SLUG[fabric.family];
+  const collection = COLLECTION_BY_SLUG[fabric.collection];
+  const composition =
+    "composition" in fabric ? (fabric.composition ?? []).join(" / ") : "";
+  const characteristics =
+    "characteristics" in fabric
+      ? (fabric.characteristics ?? []).join(", ")
+      : "";
+  const applications = fabric.applications.map(
+    (slug) => BEST_FOR_BY_SLUG[slug].label,
+  );
+  const description = `Explore ${fabric.name} in the FabStitch 2027 collection${composition ? `, with ${composition}` : ""}${characteristics ? `. ${characteristics}` : ""}${applications.length ? `. Best for ${applications.slice(0, 3).join(", ")}` : ""}.`;
+  const media = MEDIA_BY_FABRIC_SLUG[fabric.slug];
+  const fabricTopic = /\bfabric$/i.test(fabric.name)
+    ? fabric.name
+    : `${fabric.name} fabric`;
+  return {
+    path: `/fabrics/${fabric.slug}/`,
+    type: "fabric",
+    title: `${fabricTopic}: properties and uses`,
+    h1: fabric.name,
+    description,
+    primaryTopic: fabricTopic,
+    secondaryTopics: [
+      family.label,
+      collection.label,
+      ...applications.slice(0, 3),
+    ],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: fabric.source,
+    relatedPaths: [
+      `/collections/${collection.slug}/`,
+      ...applications
+        .map((label) =>
+          SEO_USE_CASES.find((item) =>
+            item.applicationSlugs.some(
+              (slug) => BEST_FOR_BY_SLUG[slug].label === label,
+            ),
+          ),
+        )
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((item) => `/fabrics/best-for/${item!.slug}/`),
+    ],
+    qualityGatePassed: true,
+    image:
+      (media.status as string) === "final" && "src" in media
+        ? media.src
+        : undefined,
+  } satisfies SeoPageDefinition;
+});
+
+const collectionPages: SeoPageDefinition[] = CATALOG_COLLECTION_CARDS.map(
+  (card) => {
+    const collection = COLLECTION_BY_SLUG[card.slug];
+    const products = FABRICS_2027.filter(
+      (fabric) => fabric.collection === card.slug,
+    );
+    const representativeMedia = MEDIA_BY_FABRIC_SLUG[card.representativeFabric];
+    return {
+      path: `/collections/${card.slug}/`,
+      type: "collection",
+      title: `${collection.label} fabrics`,
+      h1: `${collection.label} fabrics`,
+      description: `${card.description} Compare ${products.length} named FabStitch fabrics with source-supported properties and uses.`,
+      primaryTopic: `${collection.label} fabrics`,
+      secondaryTopics: products.slice(0, 5).map((fabric) => fabric.name),
+      intent: "commercial_investigation",
+      audience: "Fabric customers",
+      contentOwner: "FabStitch",
+      contentSource: "FabStitch 2027 collection registry",
+      relatedPaths: products.map((fabric) => `/fabrics/${fabric.slug}/`),
+      productCount: products.length,
+      qualityGatePassed: products.length >= 3,
+      image:
+        representativeMedia?.status === "final"
+          ? representativeMedia.src
+          : undefined,
+    };
+  },
+);
+
+const seasonalPages: SeoPageDefinition[] = SEASONAL_COLLECTIONS.map((theme) => {
+  const products = fabricsForSeason(theme);
+  return {
+    path: `/collections/${theme.slug}/`,
+    type: "seasonal_collection",
+    title: theme.title,
+    h1: theme.title,
+    description: theme.description,
+    primaryTopic: theme.title,
+    secondaryTopics: theme.relatedCollections.map(
+      (slug) => COLLECTION_BY_SLUG[slug].label,
+    ),
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Fabrics for 2027 sourcing and design reference",
+    relatedPaths: [
+      "/guides/fabrics-2027/",
+      ...theme.relatedCollections.map((slug) => `/collections/${slug}/`),
+      ...products.map((fabric) => `/fabrics/${fabric.slug}/`),
+    ],
+    productCount: products.length,
+    wordCount: words(theme.introduction),
+    qualityGatePassed: products.length >= 3 && words(theme.introduction) >= 50,
+    image:
+      products[0] && MEDIA_BY_FABRIC_SLUG[products[0].slug]?.status === "final"
+        ? MEDIA_BY_FABRIC_SLUG[products[0].slug].src
+        : undefined,
+  };
+});
+
+const bestForPages: SeoPageDefinition[] = SEO_USE_CASES.map((useCase) => {
+  const products = fabricsForUseCase(useCase);
+  const contentWords = words(useCase.introduction);
+  const indexable = products.length >= 3 && contentWords >= 45;
+  return {
+    path: `/fabrics/best-for/${useCase.slug}/`,
+    type: "best_for",
+    title: useCase.title,
+    h1: useCase.title,
+    description: useCase.description,
+    primaryTopic: useCase.title,
+    secondaryTopics: products.slice(0, 6).map((fabric) => fabric.name),
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Document-supported catalog application mappings",
+    relatedPaths: [
+      ...products.map((fabric) => `/fabrics/${fabric.slug}/`),
+      ...useCase.related.map((slug) => `/fabrics/best-for/${slug}/`),
+      ...CATALOG_GUIDES.filter((guide) =>
+        guide.applicationSlugs.includes(useCase.slug),
+      ).map((guide) => guide.path),
+    ],
+    productCount: products.length,
+    wordCount: contentWords,
+    qualityGatePassed: indexable,
+    image:
+      products[0] && MEDIA_BY_FABRIC_SLUG[products[0].slug]?.status === "final"
+        ? MEDIA_BY_FABRIC_SLUG[products[0].slug].src
+        : undefined,
+  };
+});
+
+const guidePages: SeoPageDefinition[] = CATALOG_GUIDES.map((guide) => {
+  const indexable = guide.wordCount >= 300 && guide.sections.length >= 3;
+  return {
+    path: guide.path,
+    type: "guide",
+    title: guide.title,
+    h1: guide.heading,
+    description: guide.metaDescription,
+    primaryTopic: guide.heading,
+    secondaryTopics: [
+      guide.cluster,
+      ...guide.fabricSlugs.slice(0, 5),
+      ...guide.applicationSlugs.slice(0, 3),
+    ],
+    intent: "informational",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch 2027 reference and canonical catalog",
+    relatedPaths: [
+      ...guide.fabricSlugs.map((slug) => `/fabrics/${slug}/`),
+      ...guide.applicationSlugs.map((slug) => `/fabrics/best-for/${slug}/`),
+      ...(guide.slug === "spring-summer-2027-fabrics"
+        ? ["/collections/spring-summer-2027/"]
+        : []),
+      ...(guide.slug === "autumn-winter-2027-28-fabrics"
+        ? ["/collections/autumn-winter-2027-28/"]
+        : []),
+      ...(guide.slug === "fabrics-2027"
+        ? ["/collections/home-contract-2027-28/"]
+        : []),
+    ],
+    wordCount: guide.wordCount,
+    qualityGatePassed: indexable,
+  };
+});
+
+const helpPages: SeoPageDefinition[] = HELP_ARTICLES.map((article) => ({
+  path: `/help/${article.slug}/`,
+  type: "help",
+  title: article.title,
+  h1: article.title,
+  description: article.summary,
+  primaryTopic: article.title,
+  secondaryTopics: [article.category],
+  intent: "support",
+  audience: "Existing customers",
+  contentOwner: "FabStitch",
+  contentSource: "FabStitch visible product behavior",
+  relatedPaths: [
+    ...article.related.map((item) => item.href),
+    ...HELP_ARTICLES.filter(
+      (candidate) =>
+        candidate.category === article.category &&
+        candidate.slug !== article.slug,
+    )
+      .slice(0, 5)
+      .map((candidate) => `/help/${candidate.slug}/`),
+  ],
+  qualityGatePassed: article.indexable,
+  wordCount: words(
+    article.sections.flatMap((section) => [section.heading, ...section.body]),
+  ),
+}));
+
+const privatePages: SeoPageDefinition[] = [
+  "/admin/",
+  "/login/",
+  "/signup/",
+  "/account/",
+  "/account/preferences/",
+  "/onboarding/",
+  "/verify/",
+  "/forgot-password/",
+  "/reset-password/",
+].map((path) => ({
+  path,
+  type: "private",
+  title: `Private FabStitch page: ${path}`,
+  h1: "Account utility",
+  description: "Private or account utility route.",
+  primaryTopic: "Account utility",
+  secondaryTopics: [],
+  intent: "navigational",
+  audience: "Existing customers",
+  contentOwner: "FabStitch",
+  contentSource: "Application route policy",
+  relatedPaths: [],
+  qualityGatePassed: false,
+}));
+
+function parentPathFor(page: SeoPageDefinition): string | undefined {
+  if (page.path === "/") return undefined;
+  if (
+    page.type === "marketplace" ||
+    page.type === "fabric_hub" ||
+    page.type === "brand" ||
+    page.type === "legal"
+  ) {
+    return "/";
+  }
+  if (page.type === "collection_hub") return "/fabrics/";
+  if (page.type === "collection" || page.type === "seasonal_collection") {
+    return "/collections/";
+  }
+  if (page.type === "fabric") {
+    return page.relatedPaths.find((path) => path.startsWith("/collections/"));
+  }
+  if (page.type === "best_for_hub") return "/fabrics/";
+  if (page.type === "best_for") return "/fabrics/best-for/";
+  if (page.type === "guide_hub") return "/guides/";
+  if (page.type === "guide") {
+    const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
+    return guide?.pillarSlug ? `/guides/${guide.pillarSlug}/` : "/guides/";
+  }
+  if (page.type === "help_hub") return "/";
+  if (page.type === "help" || page.type === "support") return "/help/";
+  return undefined;
+}
+
+function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
+  const schemas: SeoSchemaType[] = ["Organization"];
+  if (page.type === "home") schemas.push("WebSite");
+  if (
+    page.type === "marketplace" ||
+    page.type === "fabric_hub" ||
+    page.type === "collection_hub" ||
+    page.type === "collection" ||
+    page.type === "seasonal_collection" ||
+    page.type === "best_for_hub" ||
+    page.type === "best_for" ||
+    page.type === "guide_hub"
+  ) {
+    schemas.push("CollectionPage");
+  }
+  if (page.type === "fabric") schemas.push("Product");
+  if (page.type === "guide") {
+    schemas.push("Article");
+    const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
+    if (guide?.faqs.length) schemas.push("FAQPage");
+  }
+
+  const hasBreadcrumbs =
+    page.path !== "/" &&
+    page.path !== "/marketplace/" &&
+    page.path !== "/how-it-works/" &&
+    page.path !== "/contact/" &&
+    page.type !== "private";
+  if (hasBreadcrumbs) schemas.push("BreadcrumbList");
+  return schemas;
+}
+
+function resolvePage(page: SeoPageDefinition): SeoPageRecord {
+  const path = canonicalSeoPath(page.path);
+  const publication = publicationForPage({
+    path,
+    type: page.type,
+    qualityGatePassed: page.qualityGatePassed,
+  });
+  assertPublication(publication);
+  const resolved = resolvePublication(publication);
+  const parentPath = parentPathFor({ ...page, path });
+  return {
+    ...page,
+    path,
+    h1: page.h1 ?? page.primaryTopic,
+    canonicalPath: path,
+    parentPath: parentPath ? canonicalSeoPath(parentPath) : undefined,
+    launchPhase: launchPhaseForPageType(page.type),
+    launchBatch: launchBatchForPage(page.type, path),
+    publication,
+    status: resolved.configuredStatus,
+    effectiveStatus: resolved.effectiveStatus,
+    isPublic: resolved.isPublic,
+    indexable: resolved.isIndexable,
+    sitemapEligible: resolved.isSitemapEligible,
+    internalLinkEligible: resolved.isInternalLinkEligible,
+    expectedSchemas: expectedSchemasFor({ ...page, path }),
+    expectsBreadcrumbs: expectedSchemasFor({ ...page, path }).includes(
+      "BreadcrumbList",
+    ),
+  };
+}
+
+export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
+  ...staticPages,
+  ...fabricPages,
+  ...collectionPages,
+  ...seasonalPages,
+  ...bestForPages,
+  ...guidePages,
+  ...helpPages,
+  ...privatePages,
+].map(resolvePage);
+
+export const INDEXABLE_SEO_PAGES = SEO_PAGE_REGISTRY.filter(
+  (page) => page.indexable,
+);
+export const PUBLIC_SEO_PAGES = SEO_PAGE_REGISTRY.filter(
+  (page) => page.isPublic,
+);
+export const SITEMAP_ELIGIBLE_SEO_PAGES = SEO_PAGE_REGISTRY.filter(
+  (page) => page.sitemapEligible,
+);
+export const LINKABLE_SEO_PAGES = SEO_PAGE_REGISTRY.filter(
+  (page) => page.internalLinkEligible,
+);
+export const NOINDEX_SEO_PAGES = SEO_PAGE_REGISTRY.filter(
+  (page) => page.isPublic && !page.indexable,
+);
+export { STOREFRONT_REDIRECT_FAMILIES };
+
+export function seoPage(path: string): SeoPageRecord | undefined {
+  const normalized = canonicalSeoPath(path);
+  return SEO_PAGE_REGISTRY.find((page) => page.path === normalized);
+}
+
+export function isPublicSeoPath(path: string): boolean {
+  return seoPage(path)?.isPublic ?? false;
+}
+
+export function isIndexableSeoPath(path: string): boolean {
+  return seoPage(path)?.indexable ?? false;
+}
+
+export function isInternalLinkEligibleSeoPath(path: string): boolean {
+  return seoPage(path)?.internalLinkEligible ?? false;
+}
+
+function duplicates(values: readonly string[]): string[] {
+  const seen = new Set<string>();
+  const duplicated = new Set<string>();
+  for (const value of values) {
+    if (seen.has(value)) duplicated.add(value);
+    seen.add(value);
+  }
+  return [...duplicated];
+}
+
+export function assertStorefrontSeoRegistry(): void {
+  const paths = duplicates(SEO_PAGE_REGISTRY.map((page) => page.path));
+  const canonicals = duplicates(
+    SEO_PAGE_REGISTRY.map((page) => page.canonicalPath),
+  );
+  const titles = duplicates(
+    INDEXABLE_SEO_PAGES.map((page) => page.title.toLowerCase()),
+  );
+  const descriptions = duplicates(
+    INDEXABLE_SEO_PAGES.map((page) => page.description.toLowerCase()),
+  );
+  if (paths.length) throw new Error(`Duplicate SEO paths: ${paths.join(", ")}`);
+  if (canonicals.length)
+    throw new Error(`Duplicate SEO canonicals: ${canonicals.join(", ")}`);
+  if (titles.length)
+    throw new Error(`Duplicate indexable titles: ${titles.join(", ")}`);
+  if (descriptions.length)
+    throw new Error(
+      `Duplicate indexable descriptions: ${descriptions.join(", ")}`,
+    );
+  const registered = new Set(SEO_PAGE_REGISTRY.map((page) => page.path));
+  for (const path of Object.keys(SEO_PUBLICATION_OVERRIDES)) {
+    if (!registered.has(canonicalSeoPath(path))) {
+      throw new Error(`Publication override is not registered: ${path}`);
+    }
+  }
+  for (const page of SEO_PAGE_REGISTRY) {
+    assertPublication(page.publication);
+    if (!page.path.endsWith("/") && page.path !== "/")
+      throw new Error(`Non-canonical trailing slash: ${page.path}`);
+    if (page.path !== page.canonicalPath)
+      throw new Error(`Path and canonical disagree: ${page.path}`);
+    if (!page.title.trim() || !page.description.trim() || !page.h1.trim())
+      throw new Error(`Missing metadata: ${page.path}`);
+    if (!page.contentSource.trim())
+      throw new Error(`Missing content source: ${page.path}`);
+    if (page.indexable && !page.isPublic)
+      throw new Error(`Unavailable page is indexable: ${page.path}`);
+    if (page.sitemapEligible !== page.indexable)
+      throw new Error(`Sitemap/indexability mismatch: ${page.path}`);
+    if (!page.isPublic && page.internalLinkEligible)
+      throw new Error(`Unavailable page is linkable: ${page.path}`);
+    if (
+      page.indexable &&
+      page.path !== "/" &&
+      (!page.parentPath || !registered.has(page.parentPath))
+    ) {
+      throw new Error(`Indexable page has no registered parent: ${page.path}`);
+    }
+    if (page.indexable && !page.expectedSchemas.length)
+      throw new Error(`Indexable page has no schema expectation: ${page.path}`);
+  }
+}
+
+assertStorefrontSeoRegistry();

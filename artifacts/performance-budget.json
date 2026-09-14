@@ -1,0 +1,42 @@
+{
+  "budget": {
+    "coreWebVitals": {
+      "lcpMs": 2500,
+      "inpMs": 200,
+      "cls": 0.1
+    },
+    "buildAssets": {
+      "largestJavaScriptBytes": 350000,
+      "totalCssBytes": 150000,
+      "largestImageBytes": 500000,
+      "largestVideoBytes": 3000000
+    },
+    "publicRoute": {
+      "maximumRequests": 45,
+      "maximumTransferredBytes": 3500000
+    }
+  },
+  "distDir": ".next",
+  "measurements": {
+    "largestJavaScript": {
+      "file": ".next/static/chunks/3z6h-42vc8z6q.js",
+      "bytes": 234172
+    },
+    "totalJavaScriptBytes": 1177100,
+    "javascriptChunkCount": 50,
+    "totalCssBytes": 108206,
+    "cssFileCount": 1,
+    "largestImage": {
+      "file": "public/media/fabrics/wool-viscose-twill-primary.webp",
+      "bytes": 496578
+    },
+    "imageCount": 212,
+    "largestVideo": {
+      "file": "public/media/silk-hero.mp4",
+      "bytes": 2095134
+    },
+    "videoCount": 1
+  },
+  "note": "Build asset sizes are raw bytes. Core Web Vitals and route transfer budgets are measured by seo-browser-performance.mjs against a running production server.",
+  "failures": []
+}

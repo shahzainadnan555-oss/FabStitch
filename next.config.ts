@@ -1,7 +1,32 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
+  trailingSlash: true,
+  experimental: {
+    cpus: 2,
+    staticGenerationMinPagesPerWorker: 200,
+    staticGenerationMaxConcurrency: 2,
+    staticGenerationRetryCount: 1,
+  },
+  staticPageGenerationTimeout: 240,
+  async headers() {
+    return [
+      {
+        source: "/media/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=604800, stale-while-revalidate=86400",
+          },
+        ],
+      },
+    ];
+  },
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
+  allowedDevOrigins: ["127.0.0.1", "localhost"],
 };
 
 export default nextConfig;

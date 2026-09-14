@@ -1,26 +1,624 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==========================================================================
+   FabStitch design tokens
+   See docs/DECISIONS.md R6 for the rationale behind these choices.
+   Every token below generates Tailwind utilities (bg-paper, text-ink-3,
+   border-rule, text-label, …) and is available as a CSS variable.
+   ========================================================================== */
+
+@theme {
+  /* --- Surface ---------------------------------------------------------- */
+  /* Warm-neutral paper, not cream. Reads as an uncoated swatch card.
+     THREE PLANES, in this order, and they are the whole structure:
+       chrome  (frame)  #ece7db  - header and rail: furniture, so it recedes
+       paper   (field)  #f8f6f1  - the workspace content sits in
+       raised  (object) #ffffff  - cards, panels, menus: the things themselves
+
+     The previous pass deepened the canvas and stopped there, which is why the
+     workspace still read flat: the header and the rail were `paper-raised`,
+     i.e. *the same white as the cards*. Chrome and content were one surface,
+     so nothing in the frame told the eye what was furniture and what was
+     content, and the only way to add separation was more beige on the largest
+     area of the page - which is exactly what made it read brown.
+     Inverting it fixes both at once. The frame takes the warm tone, the field
+     goes almost white, and beige stops being the dominant impression while the
+     structure gets *stronger*. Steps are 1.14 (chrome->paper), 1.08
+     (paper->raised) and 1.23 (chrome->raised) - the widest gap sits between
+     the two surfaces that used to be identical.
+     Chrome is capped at #ece7db because ink-3 lands on it at 4.52:1; any
+     darker and the rail's own meta text drops below AA. */
+  --color-chrome: #ece7db;
+  --color-chrome-hover: #e1dac8;
+  --color-paper: #f8f6f1;
+  --color-paper-sunk: #ebe7de;
+  --color-paper-raised: #ffffff;
+  --color-ink-surface: #14161a;
+  --color-ink-surface-2: #1e2127;
+
+  /* --- Text ------------------------------------------------------------- */
+  --color-ink: #14161a; /* 16.0:1 on paper */
+  --color-ink-2: #3b4048; /* 9.6:1  */
+  --color-ink-3: #65686f; /* 5.1:1  - meta, still AA for body */
+  /* The quiet tier, re-cut from #9a9ca3. On the deeper paper that was 2.4:1 -
+     under 3:1, so it failed even as a non-text mark, and it is carrying 79
+     call sites including every input placeholder. Moved to 3.5:1 on paper and
+     3.9:1 on a white card: still unmistakably the fourth and quietest step
+     below ink-3's 5.0:1, but now actually visible. Fixed here rather than at
+     the call sites so the tier keeps meaning one thing. */
+  --color-ink-4: #7e8189; /* 3.5:1 on paper - marks, disabled, placeholders */
+  --color-on-ink: #f4f2ed;
+  --color-on-ink-2: #a7a9ae;
+
+  /* --- Lines ------------------------------------------------------------ */
+  /* The grid is the brand: structure comes from rules, not shadows. */
+  /* Both strengthened one step. With the field now almost white, a card can no
+     longer be defined by the tone it sits on - the border has to do that work,
+     which is what "the grid is the brand" was always supposed to mean.
+     `rule` 1.33 -> 1.42 on white (the divider between a card's media, spec and
+     commercial zones), `rule-2` 1.65 -> 1.83 (the card's own outline). */
+  --color-rule: #ded8cd; /* divider inside a surface */
+  --color-rule-2: #c6bfb1; /* structural outline */
+  --color-border: #87847e; /* control boundary - 3.3:1 paper, meets 1.4.11 */
+  --color-rule-on-ink: #33373f;
+
+  /* Deep navy surface - the page's closing block.
+     A deepened indigo rather than a new hue: the brand colour is the dye that
+     made the textile trade, and the footer is the one place it can carry a
+     whole surface instead of an accent. Near-black read as absence of colour;
+     this reads as a decision. Contrast on it is verified, not assumed -
+     #f4f2ed gives 14.7:1 and #9aa6c0 gives 6.6:1. */
+  --color-navy-surface: #141f38;
+  --color-navy-surface-2: #1c2b4a;
+  --color-rule-on-navy: #2c3c63;
+  /* Unwalked segment of a progress track on navy. `rule-on-navy` is 1.5:1
+     there - right for a hairline, too faint to read as a track. 1.9:1 against
+     the panel, and 3.4:1 against the gold that marks a completed step, so
+     done-versus-pending is legible as a shape and not only as a hue. */
+  --color-navy-track: #3a4b74;
+  --color-on-navy-2: #9aa6c0;
+
+  /* --- Brand ------------------------------------------------------------ */
+  /* Indigo: the dye that made the textile trade. Not SaaS blue. */
+  --color-indigo: #1e3563;
+  --color-indigo-hover: #16264a;
+  /* The fill behind an active nav item or a selected filter. Was #eef1f8,
+     which is 2% off paper - the selected state was technically present and
+     visually absent. Indigo still reads 9.4:1 on this. */
+  --color-indigo-soft: #dde4f2;
+  /* Indigo pulled almost all the way down to paper. Used where a line or a
+     hover needs to read as *brand* rather than as generic grey - the masthead
+     rule, nav hovers, the edge of an interactive surface. Deliberately close
+     to neutral: the target is roughly 95% paper to 5% accent. */
+  --color-rule-brand: #d6dae6;
+  /* Deepened from #f4f6fb, which was 1.08:1 on the white cards it washes -
+     a hover state you had to look for. 1.17:1 now. */
+  --color-indigo-wash: #e8edf8;
+
+  /* --- Gold ------------------------------------------------------------- */
+  /* Sampled from the wordmark itself: the S in the FS monogram is #b88840,
+     and until now that colour appeared in exactly one place on the whole
+     product - the 32px logo. It is the warm half of the brand and the thing
+     that stops navy-on-neutral reading as generic enterprise software.
+     Used sparingly and deliberately: navy carries actions, gold marks the
+     brand's own moments, the way the monogram pairs them.
+     #b88840 is 2.8:1 on paper. That is below 1.4.11's 3:1, so it is usable
+     only as *decoration* - never as the sole carrier of a state. The sidebar
+     active edge is fine because the indigo fill, the indigo text and the
+     weight all say "active" too; the gold is the fourth signal, not the one.
+     Kept at the sampled value rather than darkened to clear 3:1, because a
+     brand mark that no longer matches the mark is not a brand mark. Anything
+     that must stand on its own uses `gold-ink`. */
+  --color-gold: #b88840; /* 2.8:1 - decorative only, never load-bearing */
+  /* AA on all three surface planes, not just the one it happens to be used on
+     today: 4.8:1 on chrome, 5.5:1 on paper, 5.9:1 on a card. It is a tone on
+     the shared `Label` primitive, so it has to hold anywhere that renders. */
+  --color-gold-ink: #855c23;
+  --color-gold-on-navy: #c79a55; /* 6.4:1 on navy-surface */
+
+  /* --- Status ----------------------------------------------------------- */
+  /* The tint backgrounds were tuned against the old #fbfaf8 paper. Deepening
+     the canvas left every one of them at 1.01-1.04:1 against it - a verified
+     badge and a caution badge with the same background as the page, which is
+     a status system that has stopped saying anything. Re-cut against both
+     backdrops they actually sit on: >=1.10:1 on paper, >=1.25:1 on a white
+     card, with the paired ink still AA on the tint.
+     `caution-soft` is the shallowest of the three because going deeper drops
+     `--color-caution` below 4.5:1 on it; the ink is the binding constraint. */
+  --color-verified: #1b6b4a;
+  --color-verified-soft: #d6e8dd; /* 1.13 paper / 1.28 white / ink 5.1 */
+  --color-caution: #8a5a12;
+  --color-caution-soft: #f1e4ca; /* 1.12 paper / 1.26 white / ink 4.7 */
+  --color-alert: #a32a1e;
+  --color-alert-soft: #f4ddd9; /* 1.15 paper / 1.30 white / ink 5.6 */
+
+  /* --- Type ------------------------------------------------------------- */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* The one display size, and the only place its weight is set.
+
+     Bold, and a real 700 cut - see the weight list in `app/layout.tsx`. The
+     headline is the entry point to the whole marketplace and is meant to carry
+     that; Plex Bold has enough character in the `g`, `a` and `y` to read as
+     drawn rather than defaulted.
+
+     Weight lives here as a companion variable rather than as a `font-*` class
+     on each headline, because it previously sat on two separate elements and
+     had begun to drift. Tailwind compiles the utility as
+     `font-weight: var(--tw-font-weight, var(--text-display--font-weight))`, so
+     any `font-*` class on a display headline silently wins over this.
+
+     Tracking is tight because the weight fills the counters: at 700 the same
+     -0.03em that looked cramped at 500 reads deliberate. Leading is the one
+     thing that cannot go back - 1.03 was set for a single line, and both
+     display headlines wrap to two, where the descender of "right" struck the
+     "what" beneath it. 1.06 clears it and keeps the block tight. */
+  --text-display: clamp(2.125rem, 1.45rem + 2.7vw, 3.25rem);
+  --text-display--line-height: 1.06;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 700;
+
+  /* Workspace and catalogue page titles. Sits between display and h2, which
+     is the size the reference mockups use for "All Fabrics". */
+  --text-h1: clamp(1.5rem, 1.35rem + 0.6vw, 1.75rem);
+  --text-h1--line-height: 1.2;
+  --text-h1--letter-spacing: -0.022em;
+
+  --text-h2: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);
+  --text-h2--line-height: 1.18;
+  --text-h2--letter-spacing: -0.018em;
+
+  --text-h3: 1.0625rem;
+  --text-h3--line-height: 1.35;
+  --text-h3--letter-spacing: -0.012em;
+
+  --text-lead: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  --text-lead--line-height: 1.55;
+
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.6;
+
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.5;
+
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.45;
+
+  /* Spec-sheet vernacular: mono, uppercase, wide tracking. */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.1;
+  --text-label--letter-spacing: 0.09em;
+
+  /* --- Shape ------------------------------------------------------------ */
+  /* Softened one step from the original all-sharp scale (docs/DECISIONS.md
+     R11). Still far from the 12-16px SaaS default: 6px reads as a machined
+     edge rather than a rounded card. One scale, applied everywhere. */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* --- Elevation --------------------------------------------------------- */
+  /* Tinted to the paper hue, never black. Depth is a whisper here: it
+     separates a card from the ground without turning the page into a stack of
+     floating tiles. */
+  --shadow-card:
+    0 1px 2px -1px rgb(60 52 38 / 0.06), 0 2px 8px -4px rgb(60 52 38 / 0.08);
+  --shadow-card-hover:
+    0 2px 4px -2px rgb(60 52 38 / 0.08), 0 8px 20px -10px rgb(60 52 38 / 0.14);
+  --shadow-rail: 0 -8px 24px -20px rgb(60 52 38 / 0.5);
+
+  /* --- Motion ----------------------------------------------------------- */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ==========================================================================
+   Base layer
+   ========================================================================== */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-rule);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern";
+  }
+
+  /* Tabular figures everywhere a number can be compared against another. */
+  .font-mono,
+  [class*="font-mono"] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-indigo);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-indigo);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Only remove the ring for pointer users who never needed it. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::placeholder {
+    color: var(--color-ink-4);
+    opacity: 1;
+  }
+
+  [hidden] {
+    display: none !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==========================================================================
+   Component-agnostic utilities
+   ========================================================================== */
+
+@layer utilities {
+  /* Modal entrance. One short move and a fade - enough to show where the
+     dialog came from, not enough to be an animation anyone notices twice.
+     Honoured only when the viewer has not asked for reduced motion; the
+     global reduce-motion guard above collapses the duration. */
+  dialog[open] {
+    animation: fs-dialog-in 160ms var(--ease-out-quart);
+  }
+  dialog[open]::backdrop {
+    animation: fs-backdrop-in 160ms var(--ease-out-quart);
+  }
+  /* Silk band: the copy settles in beside the cloth.
+     Scoped inside `no-preference` deliberately - the elements are fully
+     visible by default, so a browser that never runs the animation shows the
+     text rather than an empty column. Opacity is only ever removed where
+     motion is welcome. */
+  @media (prefers-reduced-motion: no-preference) {
+    .silk-reveal > * {
+      opacity: 0;
+      animation: fs-silk-in 620ms var(--ease-out-quart) both;
+    }
+  }
+
+  @keyframes fs-silk-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.6rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes fs-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.99);
+    }
+  }
+  @keyframes fs-backdrop-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Accessible name for screen readers only. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* The site's structural gutter. Used by every full-width band so that
+     content columns line up across sections regardless of background. */
+  .fs-gutter {
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) {
+    .fs-gutter {
+      padding-inline: 1.5rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    .fs-gutter {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Warp-and-weft: a faint woven grid, used once, behind the masthead.
+     Thematic rather than decorative - the product is literally a grid. */
+  .fs-weave {
+    background-image:
+      linear-gradient(to right, var(--color-rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-rule) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* Card elevation. A single class so every raised surface lifts by the same
+     amount, and so the hover state is consistent across cards, tiles and
+     rows. Paired with a 1px border: the border does the definition, the
+     shadow only does the separation. */
+  .fs-card {
+    box-shadow: var(--shadow-card);
+    transition:
+      box-shadow 180ms var(--ease-out-quart),
+      border-color 150ms var(--ease-out-quart),
+      transform 180ms var(--ease-out-quart);
+  }
+  .fs-card-interactive:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
+  }
+  .fs-card-interactive:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-card);
+  }
+
+  .landing-tile {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-md);
+    background: var(--color-paper-raised);
+    transition:
+      transform 420ms var(--ease-out-quart),
+      border-color 180ms ease,
+      box-shadow 420ms var(--ease-out-quart);
+  }
+  .landing-tile:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-indigo);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .landing-tile:focus-within {
+    outline: 2px solid var(--color-gold-ink);
+    outline-offset: 3px;
+  }
+  .landing-tile img {
+    transition: transform 800ms var(--ease-out-quart);
+  }
+  .landing-tile:hover img {
+    transform: scale(1.035);
+  }
+  .landing-collections-card {
+    overflow: hidden;
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-sm);
+    transition: border-color 220ms ease;
+  }
+  .landing-collections-card:hover {
+    border-color: var(--color-rule-2);
+  }
+  .landing-collections-card:focus-visible {
+    outline: 2px solid var(--color-gold-ink);
+    outline-offset: 3px;
+  }
+  .landing-collections-media img {
+    transition: transform 700ms var(--ease-out-quart);
+  }
+  .landing-collections-card:hover img {
+    transform: scale(1.03);
+  }
+
+  .fs-textile-environment {
+    opacity: var(--fs-textile-opacity, 0.08);
+  }
+  .fs-textile-environment[data-placement="right"] {
+    -webkit-mask-image: linear-gradient(to left, #000 38%, transparent 100%);
+    mask-image: linear-gradient(to left, #000 38%, transparent 100%);
+  }
+  .fs-textile-environment[data-placement="left"] {
+    -webkit-mask-image: linear-gradient(to right, #000 38%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 38%, transparent 100%);
+  }
+  .fs-textile-environment[data-placement="bottom"] {
+    -webkit-mask-image: linear-gradient(to top, #000 18%, transparent 100%);
+    mask-image: linear-gradient(to top, #000 18%, transparent 100%);
+  }
+  .fs-textile-environment[data-placement="full"] {
+    -webkit-mask-image: radial-gradient(
+      ellipse at 70% 50%,
+      #000 0%,
+      transparent 72%
+    );
+    mask-image: radial-gradient(ellipse at 70% 50%, #000 0%, transparent 72%);
+  }
+
+  @media (max-width: 767px) {
+    .fs-textile-environment {
+      opacity: calc(var(--fs-textile-opacity, 0.08) * 0.62);
+    }
+    .landing-collections-card:hover img {
+      transform: none;
+    }
+  }
+
+  .fs-scroll-reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .fs-scroll-reveal[data-reveal="pending"] {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .fs-scroll-reveal[data-reveal="pending"],
+  .fs-scroll-reveal[data-reveal="visible"] {
+    transition:
+      opacity 720ms var(--ease-out-quart) var(--fs-reveal-delay, 0ms),
+      transform 720ms var(--ease-out-quart) var(--fs-reveal-delay, 0ms);
+  }
+  .fs-scroll-reveal[data-reveal="visible"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .fs-pointer-fabric {
+    --fabric-x: 0px;
+    --fabric-y: 0px;
+  }
+  .fs-pointer-fabric > .fs-pointer-fabric-layer {
+    transform: scale(1.045);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fs-hero-copy > * {
+      opacity: 0;
+      animation: fs-hero-in 800ms var(--ease-out-quart) forwards;
+    }
+    .fs-hero-copy > :nth-child(2) {
+      animation-delay: 90ms;
+    }
+    .fs-hero-copy > :nth-child(3) {
+      animation-delay: 170ms;
+    }
+    .fs-hero-copy > :nth-child(4) {
+      animation-delay: 250ms;
+    }
+
+    .fs-textile-drift {
+      animation: fs-textile-drift 14s ease-in-out 2 alternate;
+    }
+
+    .fs-textile-breathe {
+      animation: fs-textile-breathe 10s ease-in-out 2;
+    }
+
+    .fs-pointer-fabric-layer {
+      animation: fs-media-mask-in 980ms var(--ease-out-quart) 120ms both;
+    }
+  }
+
+  @keyframes fs-hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes fs-textile-drift {
+    from {
+      transform: scale(1.01) translate3d(-0.3%, -0.2%, 0);
+    }
+    to {
+      transform: scale(1.025) translate3d(0.4%, 0.3%, 0);
+    }
+  }
+
+  @keyframes fs-textile-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.018);
+    }
+  }
+
+  @keyframes fs-media-mask-in {
+    from {
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0);
+    }
+  }
+
+  .fs-onboarding-step {
+    animation: fs-onboarding-in 280ms var(--ease-out-quart) both;
+  }
+
+  @keyframes fs-onboarding-in {
+    from {
+      opacity: 0;
+      transform: translate3d(14px, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fs-card,
+    .fs-card-interactive:hover,
+    .fs-card-interactive:active {
+      transform: none;
+      transition: none;
+    }
+    .fs-scroll-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .fs-pointer-fabric > .fs-pointer-fabric-layer,
+    .fs-textile-drift,
+    .fs-textile-breathe,
+    .fs-onboarding-step,
+    .landing-tile:hover,
+    .landing-collections-card:hover img {
+      transform: none;
+      transition: none;
+      animation: none;
+    }
+  }
+}
+
+/* The homepage product row.
+ *
+ * Column count comes from the data, not from a hardcoded number: the section
+ * asked for nine tiles and the backend returns six, so a fixed
+ * `lg:grid-cols-9` left three empty columns at the end of the row. The page
+ * sets `--tile-columns`; this only applies it, and only from `lg` up, where the
+ * row is wide enough to hold them.
+ */
+@media (min-width: 1024px) {
+  .fs-product-row {
+    grid-template-columns: repeat(var(--tile-columns, 9), minmax(0, 1fr));
+  }
 }

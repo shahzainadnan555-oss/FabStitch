@@ -1,0 +1,181 @@
+{
+  "generatedAt": "2026-09-13T13:20:39.116Z",
+  "authority": {
+    "publication": "/api/v1/seo/pages/by-path",
+    "sitemapIndex": "/api/v1/seo/sitemap/index",
+    "sitemapPage": "/api/v1/seo/sitemap?page=",
+    "routeClasses": "/api/v1/seo/route-classes",
+    "classification": "/api/v1/seo/classify"
+  },
+  "sitemap": {
+    "total_urls": 0,
+    "page_size": 5000,
+    "page_count": 0,
+    "pages": [],
+    "fetchedPages": 0,
+    "fetchedUrls": 0,
+    "empty": true
+  },
+  "routeClasses": [
+    {
+      "path_prefix": "/how-it-works",
+      "route_class": "public_seo",
+      "description": "How it works",
+      "allow_index": true,
+      "sitemap_eligible_by_default": true
+    },
+    {
+      "path_prefix": "/collections",
+      "route_class": "public_seo",
+      "description": "Collections",
+      "allow_index": true,
+      "sitemap_eligible_by_default": true
+    },
+    {
+      "path_prefix": "/marketplace",
+      "route_class": "filter",
+      "description": "Faceted marketplace filters",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/checkout",
+      "route_class": "transactional",
+      "description": "Checkout",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/best-for",
+      "route_class": "public_seo",
+      "description": "Best For landing pages",
+      "allow_index": true,
+      "sitemap_eligible_by_default": true
+    },
+    {
+      "path_prefix": "/contact",
+      "route_class": "public_non_seo",
+      "description": "Contact",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/account",
+      "route_class": "private",
+      "description": "Customer account",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/fabrics",
+      "route_class": "public_seo",
+      "description": "Fabric catalog",
+      "allow_index": true,
+      "sitemap_eligible_by_default": true
+    },
+    {
+      "path_prefix": "/search",
+      "route_class": "search",
+      "description": "Site search",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/orders",
+      "route_class": "private",
+      "description": "Customer orders",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/guides",
+      "route_class": "public_seo",
+      "description": "Guides",
+      "allow_index": true,
+      "sitemap_eligible_by_default": true
+    },
+    {
+      "path_prefix": "/signup",
+      "route_class": "authentication",
+      "description": "Signup",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/admin",
+      "route_class": "admin",
+      "description": "Admin Dashboard",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/login",
+      "route_class": "authentication",
+      "description": "Login",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/about",
+      "route_class": "public_seo",
+      "description": "About",
+      "allow_index": true,
+      "sitemap_eligible_by_default": true
+    },
+    {
+      "path_prefix": "/legal",
+      "route_class": "public_non_seo",
+      "description": "Legal",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/auth",
+      "route_class": "authentication",
+      "description": "Auth flows",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/help",
+      "route_class": "public_non_seo",
+      "description": "Help",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/cart",
+      "route_class": "transactional",
+      "description": "Cart",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/api",
+      "route_class": "private",
+      "description": "API surfaces",
+      "allow_index": false,
+      "sitemap_eligible_by_default": false
+    },
+    {
+      "path_prefix": "/",
+      "route_class": "public_seo",
+      "description": "Homepage / residual public",
+      "allow_index": true,
+      "sitemap_eligible_by_default": true
+    }
+  ],
+  "metadataAudit": {
+    "limit": 100,
+    "checked": 0,
+    "totalSitemapUrls": 0,
+    "findings": []
+  },
+  "findings": {
+    "duplicatePaths": [],
+    "duplicateLocations": [],
+    "malformedUrls": [],
+    "classificationMismatches": []
+  },
+  "failures": []
+}

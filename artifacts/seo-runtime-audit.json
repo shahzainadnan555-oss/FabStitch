@@ -1,0 +1,266 @@
+{
+  "site": "http://127.0.0.1:3014",
+  "sitemapIndexLocations": [
+    "http://127.0.0.1:3014/sitemaps/1/"
+  ],
+  "sitemapDocuments": [
+    {
+      "path": "/sitemaps/1/",
+      "status": 200
+    }
+  ],
+  "sitemapUrls": 63,
+  "pagesChecked": 63,
+  "internalLinksChecked": 264,
+  "redirectResults": [
+    {
+      "source": "/marketplace/fabrics/silk-chiffon/",
+      "status": 308,
+      "location": "/fabrics/silk-chiffon/"
+    },
+    {
+      "source": "/applications/shirts/",
+      "status": 308,
+      "location": "/fabrics/best-for/shirts/"
+    },
+    {
+      "source": "/suppliers/",
+      "status": 308,
+      "location": "/marketplace/"
+    },
+    {
+      "source": "/certifications/",
+      "status": 308,
+      "location": "/marketplace/"
+    },
+    {
+      "source": "/search/?q=linen",
+      "status": 308,
+      "location": "/marketplace/?q=linen"
+    },
+    {
+      "source": "/sitemap-index.xml",
+      "status": 308,
+      "location": "http://localhost:3014/sitemap.xml"
+    },
+    {
+      "source": "/FABRICS/SILK-CHIFFON/",
+      "status": 308,
+      "location": "/fabrics/silk-chiffon/"
+    }
+  ],
+  "invalidFabricStatus": 404,
+  "queryIndexation": {
+    "title": "Fabric search results | FabStitch",
+    "description": "Search and filter the FabStitch 2027 fabric catalog. This result view canonicalizes to the main marketplace.",
+    "canonical": "http://127.0.0.1:3014/marketplace/",
+    "robots": "noindex, follow",
+    "h1Count": 1,
+    "ogTitle": "Fabric search results",
+    "ogDescription": "Search and filter the FabStitch 2027 fabric catalog. This result view canonicalizes to the main marketplace.",
+    "ogUrl": "http://127.0.0.1:3014/marketplace/",
+    "ogImage": "http://127.0.0.1:3014/media/hero-navy-jersey.jpg",
+    "ogType": "website",
+    "twitterCard": "summary_large_image"
+  },
+  "controlledQueryResults": [
+    {
+      "pathname": "/collections/cotton/?page=2",
+      "canonicalPath": "/collections/cotton/",
+      "robots": "noindex, follow"
+    },
+    {
+      "pathname": "/help/?q=account",
+      "canonicalPath": "/help/",
+      "robots": "noindex, follow"
+    }
+  ],
+  "representativeResults": [
+    {
+      "type": "home",
+      "path": "/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/",
+      "h1Count": 1
+    },
+    {
+      "type": "fabric-family",
+      "path": "/collections/cotton/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/collections/cotton/",
+      "h1Count": 1
+    },
+    {
+      "type": "fabric-detail",
+      "path": "/fabrics/silk-chiffon/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/fabrics/silk-chiffon/",
+      "h1Count": 1
+    },
+    {
+      "type": "held-fabric-detail",
+      "path": "/fabrics/linen-cotton/",
+      "indexable": false,
+      "status": 200,
+      "robots": "noindex, follow",
+      "canonical": "http://127.0.0.1:3014/fabrics/linen-cotton/",
+      "h1Count": 1
+    },
+    {
+      "type": "collection",
+      "path": "/collections/spring-summer-2027/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/collections/spring-summer-2027/",
+      "h1Count": 1
+    },
+    {
+      "type": "best-for",
+      "path": "/fabrics/best-for/shirts/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/fabrics/best-for/shirts/",
+      "h1Count": 1
+    },
+    {
+      "type": "guide",
+      "path": "/guides/fabrics-2027/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/guides/fabrics-2027/",
+      "h1Count": 1
+    },
+    {
+      "type": "about",
+      "path": "/about/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/about/",
+      "h1Count": 1
+    },
+    {
+      "type": "how-it-works",
+      "path": "/how-it-works/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/how-it-works/",
+      "h1Count": 1
+    },
+    {
+      "type": "contact",
+      "path": "/contact/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/contact/",
+      "h1Count": 1
+    },
+    {
+      "type": "help",
+      "path": "/help/",
+      "indexable": true,
+      "status": 200,
+      "robots": "index, follow",
+      "canonical": "http://127.0.0.1:3014/help/",
+      "h1Count": 1
+    },
+    {
+      "type": "terms",
+      "path": "/terms/",
+      "indexable": false,
+      "status": 200,
+      "robots": "noindex, follow",
+      "canonical": "http://127.0.0.1:3014/terms/",
+      "h1Count": 1
+    },
+    {
+      "type": "privacy",
+      "path": "/privacy/",
+      "indexable": false,
+      "status": 200,
+      "robots": "noindex, follow",
+      "canonical": "http://127.0.0.1:3014/privacy/",
+      "h1Count": 1
+    }
+  ],
+  "privateRouteResults": [
+    {
+      "pathname": "/login/",
+      "status": 200,
+      "robots": "noindex, nofollow"
+    },
+    {
+      "pathname": "/signup/",
+      "status": 200,
+      "robots": "noindex, nofollow"
+    },
+    {
+      "pathname": "/account/",
+      "status": 307,
+      "robots": ""
+    },
+    {
+      "pathname": "/admin/",
+      "status": 200,
+      "robots": "noindex, nofollow"
+    },
+    {
+      "pathname": "/buyer/",
+      "status": 307,
+      "robots": "noindex, nofollow"
+    },
+    {
+      "pathname": "/supplier/",
+      "status": 307,
+      "robots": "noindex, nofollow"
+    }
+  ],
+  "excludedFromSitemap": [
+    "/fabrics/linen-cotton/",
+    "/terms/",
+    "/privacy/",
+    "/support/",
+    "/login/",
+    "/account/"
+  ],
+  "robotsStatus": 200,
+  "schemaCoverage": {
+    "home": [
+      "Organization",
+      "WebSite"
+    ],
+    "fabric": [
+      "Organization",
+      "Product",
+      "BreadcrumbList"
+    ],
+    "collection": [
+      "Organization",
+      "CollectionPage",
+      "BreadcrumbList"
+    ],
+    "bestFor": [
+      "Organization",
+      "CollectionPage",
+      "BreadcrumbList"
+    ],
+    "guide": [
+      "Organization",
+      "Article",
+      "FAQPage",
+      "BreadcrumbList"
+    ]
+  },
+  "failures": []
+}

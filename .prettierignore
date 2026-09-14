@@ -1,0 +1,8 @@
+node_modules
+.next
+package-lock.json
+*.pdf
+docs/api
+
+# Vendored design skills - third-party files, not this project's code.
+.agents
