@@ -105,7 +105,9 @@ export function GlobalNav() {
       <div className="hidden shrink-0 items-center justify-end gap-2 justify-self-end xl:flex">
         <HeaderSearch />
         <PreferenceControls />
-        <AccountLink />
+        <div className="shrink-0">
+          <AccountLink />
+        </div>
       </div>
 
       <div className="relative col-start-3 justify-self-end xl:hidden">

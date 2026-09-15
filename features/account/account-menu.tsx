@@ -21,25 +21,25 @@ const AUTH_CTA_FOCUS =
 
 const joinFreeClass = (mobile: boolean) =>
   cn(
-    "inline-flex items-center justify-center rounded-sm border border-indigo bg-indigo",
-    "text-sm font-medium tracking-[0.01em] text-white",
+    "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-sm",
+    "border border-indigo bg-indigo text-sm font-medium tracking-[0.01em] text-white",
     "transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out-quart",
     "hover:border-indigo-hover hover:bg-indigo-hover",
     "active:translate-y-px",
     AUTH_CTA_FOCUS,
     mobile
       ? "h-11 w-full px-5"
-      : "h-9 px-4 shadow-[0_1px_0_rgba(15,23,42,0.06)] hover:shadow-[0_2px_8px_rgba(37,56,140,0.18)]",
+      : "h-9 min-w-max px-4 shadow-[0_1px_0_rgba(15,23,42,0.06)] hover:shadow-[0_2px_8px_rgba(37,56,140,0.18)]",
   );
 
 const signInClass = (mobile: boolean) =>
   cn(
-    "inline-flex items-center justify-center rounded-sm border border-rule-2 bg-paper/80",
-    "text-sm font-medium tracking-[0.01em] text-ink",
+    "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-sm",
+    "border border-rule-2 bg-paper/80 text-sm font-medium tracking-[0.01em] text-ink",
     "transition-[background-color,border-color,color,box-shadow] duration-200 ease-out-quart",
     "hover:border-ink-3 hover:bg-paper-raised hover:text-ink",
     AUTH_CTA_FOCUS,
-    mobile ? "h-11 w-full px-5" : "h-9 px-3.5",
+    mobile ? "h-11 w-full px-5" : "h-9 min-w-max px-3.5",
   );
 
 export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
@@ -88,8 +88,8 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
     return (
       <div
         className={cn(
-          "flex items-center",
-          mobile ? "w-full flex-col-reverse gap-2" : "gap-1.5",
+          "flex shrink-0 items-center",
+          mobile ? "w-full flex-col-reverse gap-2" : "flex-nowrap gap-1.5",
         )}
       >
         <Link href="/login/" className={signInClass(mobile)}>
