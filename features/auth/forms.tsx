@@ -185,9 +185,17 @@ export function RegisterForm({
       setState({ fieldErrors: { country_code: "Choose a valid country." } });
       return;
     }
+    const password = String(form.get("password") ?? "");
+    const confirmation = String(form.get("confirm") ?? "");
+    if (password !== confirmation) {
+      setState({
+        fieldErrors: { confirm: "The two passwords do not match." },
+      });
+      return;
+    }
     const body: SignupRequest = {
       email: formEmail(form),
-      password: String(form.get("password") ?? ""),
+      password,
       full_name: String(form.get("full_name") ?? "").trim() || null,
       country,
     };
@@ -235,6 +243,14 @@ export function RegisterForm({
         minLength={8}
         maxLength={72}
         error={state.fieldErrors?.password}
+      />
+      <PasswordField
+        label="Confirm password"
+        name="confirm"
+        autoComplete="new-password"
+        minLength={8}
+        maxLength={72}
+        error={state.fieldErrors?.confirm}
       />
       <AuthField
         label="Your name"

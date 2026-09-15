@@ -25,15 +25,16 @@ export function OAuthCallback({
   const router = useRouter();
   const { hydrated, authenticated, user, refresh } = useSession();
   const [synced, setSynced] = useState(Boolean(error));
-  const failed =
-    error || (synced && hydrated && !authenticated)
+  const failed = error
+    ? googleAuthErrorMessage(error)
+    : synced && hydrated && !authenticated
       ? googleAuthErrorMessage(error)
       : null;
 
   useEffect(() => {
     if (error) return;
     let cancelled = false;
-    void refresh()
+    void refresh({ retries: 4 })
       .catch(() => {})
       .finally(() => {
         if (!cancelled) setSynced(true);
@@ -46,6 +47,7 @@ export function OAuthCallback({
   useEffect(() => {
     if (error || !synced || !hydrated || !authenticated || !user) return;
     router.replace(destination(user.onboarding_completed, next));
+    router.refresh();
   }, [authenticated, error, hydrated, next, router, synced, user]);
 
   if (failed) {

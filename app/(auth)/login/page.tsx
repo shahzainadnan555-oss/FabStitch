@@ -49,8 +49,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       }
     >
       <RedirectIfAuthenticated next={next} />
-      <ProviderOptions providers={providers} error={single(query.error)} />
       <LoginForm next={next} justReset={single(query.reset) === "1"} />
+      <ProviderOptions providers={providers} error={single(query.error)} />
     </AuthShell>
   );
 }

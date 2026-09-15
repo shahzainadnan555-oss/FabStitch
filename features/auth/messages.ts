@@ -14,45 +14,76 @@ const EXISTING_ACCOUNT_CODES = new Set([
   "already_registered",
 ]);
 
+const RATE_LIMIT_CODES = new Set([
+  "rate_limited",
+  "too_many_requests",
+  "rate_limit_exceeded",
+]);
+
 export type LoginErrorView = {
   message: string;
   missingAccount: boolean;
   signupHref?: string;
 };
 
+function logAuthError(error: unknown): void {
+  if (process.env.NODE_ENV === "production") return;
+  if (!(error instanceof ApiError)) return;
+  console.info("[fabstitch:auth]", error.code, error.requestId ?? "");
+}
+
+function fallbackAuthMessage(error: unknown, fallback: string): string {
+  if (error instanceof TypeError) {
+    return "We couldn’t complete sign-in right now. Please try again.";
+  }
+  if (!(error instanceof ApiError)) {
+    return fallback;
+  }
+  if (error.status === 429 || RATE_LIMIT_CODES.has(error.code)) {
+    return "Too many attempts. Please wait a moment and try again.";
+  }
+  if (error.code === "validation_error") {
+    return error.message || "Please check the highlighted fields.";
+  }
+  return error.message || "Something went wrong. Please try again.";
+}
+
 export function loginErrorView(
   error: unknown,
   returnTo: string,
 ): LoginErrorView {
+  logAuthError(error);
   if (error instanceof ApiError && MISSING_ACCOUNT_CODES.has(error.code)) {
     return {
-      message: "This account doesn't exist.",
+      message: "This account doesn’t exist. Please create an account first.",
       missingAccount: true,
       signupHref: signupHref(returnTo),
     };
   }
   if (error instanceof ApiError && error.code === "invalid_credentials") {
     return {
-      message: error.message || "Email or password is incorrect.",
+      message: "Incorrect email or password.",
       missingAccount: false,
     };
   }
   return {
-    message:
-      error instanceof ApiError
-        ? error.message
-        : "FabStitch could not complete this request. Try again.",
+    message: fallbackAuthMessage(
+      error,
+      "We couldn’t complete sign-in right now. Please try again.",
+    ),
     missingAccount: false,
   };
 }
 
 export function signupErrorMessage(error: unknown): string {
+  logAuthError(error);
   if (error instanceof ApiError && EXISTING_ACCOUNT_CODES.has(error.code)) {
     return "An account with this email already exists. Sign in to continue.";
   }
-  return error instanceof ApiError
-    ? error.message
-    : "FabStitch could not complete this request. Try again.";
+  return fallbackAuthMessage(
+    error,
+    "We couldn’t complete sign-in right now. Please try again.",
+  );
 }
 
 export function googleAuthErrorMessage(code?: string | null): string {

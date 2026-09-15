@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { markOauthPending } from "./oauth-return";
+
 /** Redirects the configured Google provider to the backend-owned OAuth flow. */
 
 export type SocialProvider = "google";
@@ -13,14 +16,24 @@ export function SocialAuthButton({
   onSelect: (provider: SocialProvider) => void;
   href?: string | null;
 }) {
+  const [leaving, setLeaving] = useState(false);
   const className =
-    "flex h-11 w-full items-center justify-center gap-2.5 rounded-sm border border-border bg-paper-raised text-body font-medium text-ink transition-colors duration-150 hover:border-ink-2 hover:bg-paper-sunk";
+    "flex h-11 w-full items-center justify-center gap-2.5 rounded-sm border border-border bg-paper-raised text-body font-medium text-ink transition-colors duration-150 hover:border-ink-2 hover:bg-paper-sunk disabled:cursor-wait disabled:opacity-70";
 
   if (href) {
     return (
-      <a href={href} className={className}>
+      <a
+        href={href}
+        aria-busy={leaving || undefined}
+        className={className}
+        onClick={() => {
+          if (leaving) return;
+          setLeaving(true);
+          markOauthPending();
+        }}
+      >
         <GoogleMark />
-        Continue with Google
+        {leaving ? "Continuing with Google…" : "Continue with Google"}
       </a>
     );
   }

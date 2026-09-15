@@ -140,7 +140,7 @@ export function InquiryDialog({
     return nextProfile;
   }
 
-  const checkingSession = status === "loading";
+  const checkingSession = status === "loading" || status === "error";
   const needsSignIn = !authenticated && !checkingSession;
 
   return (

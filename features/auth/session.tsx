@@ -10,8 +10,10 @@ import {
   useState,
 } from "react";
 import { api } from "@/lib/api/client";
-import { ApiError, apiErrorMessage } from "@/lib/api/errors";
+import { API_BASE_URL } from "@/lib/api/config";
+import { ApiError, apiErrorMessage, normalizeApiError } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
+import { clearOauthPending, shouldRetrySessionRestore } from "./oauth-return";
 
 type Schema = components["schemas"];
 type MeResponse = Schema["MeResponse"];
@@ -31,6 +33,7 @@ type SessionState = {
 
 type SessionRefreshOptions = {
   persistOnUnauthorized?: boolean;
+  retries?: number;
 };
 
 type SessionContextValue = SessionState & {
@@ -76,6 +79,59 @@ function isUnauthorized(error: unknown): boolean {
   return error instanceof ApiError && error.status === 401;
 }
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function parseMe(response: Response): Promise<MeResponse> {
+  const contentType = response.headers.get("content-type") ?? "";
+  const body = contentType.includes("application/json")
+    ? await response.json().catch(() => undefined)
+    : undefined;
+  if (!response.ok) {
+    throw normalizeApiError(
+      response.status,
+      body,
+      response.headers.get("x-request-id"),
+    );
+  }
+  return body as MeResponse;
+}
+
+async function readDirectMe(): Promise<MeResponse | null> {
+  if (typeof window === "undefined") return null;
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      credentials: "include",
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+    });
+    return await parseMe(response);
+  } catch {
+    return null;
+  }
+}
+
+async function readMe(): Promise<MeResponse> {
+  let session: MeResponse | null = null;
+  try {
+    session = await api.get<MeResponse>("/auth/me", {
+      cache: "no-store",
+      retryAuth: false,
+    });
+  } catch (error) {
+    if (!isUnauthorized(error)) {
+      const direct = await readDirectMe();
+      if (direct) return direct;
+    }
+    throw error;
+  }
+  if (session.authenticated && session.user) return session;
+  const direct = await readDirectMe();
+  if (direct?.authenticated && direct.user) return direct;
+  return session;
+}
+
 async function loadOptional<T>(path: string): Promise<T | null> {
   try {
     return await api.get<T>(path, { cache: "no-store" });
@@ -88,10 +144,7 @@ async function loadOptional<T>(path: string): Promise<T | null> {
 async function loadSession(): Promise<SessionState> {
   let session: MeResponse;
   try {
-    session = await api.get<MeResponse>("/auth/me", {
-      cache: "no-store",
-      retryAuth: false,
-    });
+    session = await readMe();
   } catch (error) {
     if (isUnauthorized(error)) return ANONYMOUS_STATE;
     throw error;
@@ -127,6 +180,16 @@ async function loadSession(): Promise<SessionState> {
   };
 }
 
+async function loadSessionWithRetries(retries: number): Promise<SessionState> {
+  let last = await loadSession();
+  for (let attempt = 0; attempt < retries && last.status === "anonymous";) {
+    attempt += 1;
+    await delay(250 * attempt);
+    last = await loadSession();
+  }
+  return last;
+}
+
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SessionState>(INITIAL_STATE);
   const generation = useRef(0);
@@ -134,11 +197,12 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const refresh = useCallback(async (options?: SessionRefreshOptions) => {
     const token = ++generation.current;
     try {
-      const next = await loadSession();
+      const next = await loadSessionWithRetries(options?.retries ?? 0);
       if (token !== generation.current) return;
       if (options?.persistOnUnauthorized && next.status === "anonymous") {
         return;
       }
+      clearOauthPending();
       setState(next);
     } catch (error) {
       if (token !== generation.current) return;
@@ -148,34 +212,62 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-      setState((current) => ({
-        ...current,
-        status: current.user ? "authenticated" : "error",
-        error: apiErrorMessage(
-          error,
-          "FabStitch could not load your account. Try again.",
-        ),
-      }));
+      setState((current) => {
+        if (current.user) {
+          return {
+            ...current,
+            status: "authenticated",
+            error: apiErrorMessage(
+              error,
+              "FabStitch could not load your account. Try again.",
+            ),
+          };
+        }
+        if ((options?.retries ?? 0) > 0) {
+          return {
+            ...ANONYMOUS_STATE,
+            status: "error",
+            error: apiErrorMessage(
+              error,
+              "FabStitch could not load your account. Try again.",
+            ),
+          };
+        }
+        return ANONYMOUS_STATE;
+      });
       throw error;
     }
   }, []);
 
   useEffect(() => {
-    void refresh().catch(() => {});
+    const retries = shouldRetrySessionRestore() ? 4 : 0;
+    void refresh({ retries }).catch(() => {});
   }, [refresh]);
 
   useEffect(() => {
     const expired = () => {
       generation.current += 1;
+      clearOauthPending();
       setState(ANONYMOUS_STATE);
     };
+    const restore = () => {
+      if (document.visibilityState !== "visible") return;
+      if (!shouldRetrySessionRestore()) return;
+      void refresh({ retries: 3, persistOnUnauthorized: true }).catch(() => {});
+    };
     window.addEventListener("fabstitch:session-expired", expired);
-    return () =>
+    window.addEventListener("pageshow", restore);
+    document.addEventListener("visibilitychange", restore);
+    return () => {
       window.removeEventListener("fabstitch:session-expired", expired);
-  }, []);
+      window.removeEventListener("pageshow", restore);
+      document.removeEventListener("visibilitychange", restore);
+    };
+  }, [refresh]);
 
   const adoptUser = useCallback((user: UserPublic) => {
     generation.current += 1;
+    clearOauthPending();
     setState({
       status: "authenticated",
       user,
@@ -236,6 +328,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     generation.current += 1;
+    clearOauthPending();
     try {
       await api.post<LogoutResponse>("/auth/logout", {
         retryAuth: false,
@@ -251,7 +344,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<SessionContextValue>(
     () => ({
       ...state,
-      hydrated: state.status !== "loading",
+      hydrated: state.status !== "loading" && state.status !== "error",
       authenticated: state.status === "authenticated" && Boolean(state.user),
       refresh,
       adoptUser,

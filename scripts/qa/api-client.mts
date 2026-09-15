@@ -92,7 +92,10 @@ const missing = loginErrorView(
   }),
   "/fabrics/cotton-poplin/",
 );
-assert.equal(missing.message, "This account doesn't exist.");
+assert.equal(
+  missing.message,
+  "This account doesn’t exist. Please create an account first.",
+);
 assert.equal(missing.missingAccount, true);
 assert.equal(missing.signupHref, "/signup/?next=%2Ffabrics%2Fcotton-poplin%2F");
 
@@ -104,7 +107,7 @@ const unknownPassword = loginErrorView(
   }),
   "/",
 );
-assert.equal(unknownPassword.message, "Invalid email or password");
+assert.equal(unknownPassword.message, "Incorrect email or password.");
 assert.equal(unknownPassword.missingAccount, false);
 
 const duplicate = signupErrorMessage(

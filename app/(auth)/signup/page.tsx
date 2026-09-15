@@ -55,8 +55,8 @@ export default async function SignupPage({
       }
     >
       <RedirectIfAuthenticated next={next} />
-      <ProviderOptions providers={providers} error={single(query.error)} />
       <RegisterForm next={next} countries={countries.items} />
+      <ProviderOptions providers={providers} error={single(query.error)} />
     </AuthShell>
   );
 }

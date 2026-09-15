@@ -13,7 +13,8 @@ const ITEMS = [
 
 export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
   const router = useRouter();
-  const { hydrated, authenticated, user, profile, signOut } = useSession();
+  const { hydrated, authenticated, status, user, profile, signOut } =
+    useSession();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const id = useId();
@@ -37,7 +38,7 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
     };
   }, [open]);
 
-  if (!hydrated) {
+  if (!hydrated || status === "loading" || status === "error") {
     return (
       <span
         aria-busy="true"
