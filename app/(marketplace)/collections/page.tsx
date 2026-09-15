@@ -9,7 +9,9 @@ import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 import { getCustomerCollections } from "@/repositories/customer-catalog";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return registeredStorefrontMetadata("/collections/");
+  return registeredStorefrontMetadata("/collections/", {
+    title: "Collections",
+  });
 }
 
 export default async function CollectionsPage() {

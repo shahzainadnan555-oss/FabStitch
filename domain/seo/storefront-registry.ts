@@ -115,7 +115,7 @@ const staticPages: SeoPageDefinition[] = [
   {
     path: "/",
     type: "home",
-    title: "FabStitch - discover fabrics for what you make",
+    title: "FabStitch",
     h1: "Find fabric that fits your vision.",
     description:
       "Discover FabStitch fabrics by material, construction and use. Explore the 2027 collection and find the right fabric for what you are making.",
@@ -136,7 +136,7 @@ const staticPages: SeoPageDefinition[] = [
   {
     path: "/marketplace/",
     type: "marketplace",
-    title: "Fabric marketplace",
+    title: "Marketplace",
     h1: "Discover fabrics for what comes next.",
     description:
       "Search and filter the complete FabStitch 2027 fabric collection by material, construction, season, weight and Best For use.",
@@ -157,7 +157,7 @@ const staticPages: SeoPageDefinition[] = [
   {
     path: "/fabrics/",
     type: "fabric_hub",
-    title: "FabStitch fabrics",
+    title: "Fabrics",
     h1: "Find the fabric, then read the detail.",
     description:
       "Browse all FabStitch fabric products and move into collections, Best For uses and the complete searchable marketplace.",
@@ -174,7 +174,7 @@ const staticPages: SeoPageDefinition[] = [
   {
     path: "/collections/",
     type: "collection_hub",
-    title: "Fabric collections",
+    title: "Collections",
     h1: "Start with the material.",
     description:
       "Explore twelve FabStitch fabric collections, from linen, cotton and silk to technical outerwear, denim and home textiles.",
@@ -242,7 +242,7 @@ const staticPages: SeoPageDefinition[] = [
   {
     path: "/help/",
     type: "help_hub",
-    title: "How can we help?",
+    title: "Help Center",
     h1: "How can we help?",
     description:
       "Find quick answers about discovering fabrics, sending inquiries, managing your account, and using FabStitch.",
@@ -297,7 +297,7 @@ const staticPages: SeoPageDefinition[] = [
   {
     path: "/contact/",
     type: "brand",
-    title: "Contact FabStitch",
+    title: "Contact",
     h1: "Let’s talk fabrics.",
     description:
       "Contact FabStitch about a fabric, the marketplace, an order or how the product works.",
@@ -542,7 +542,6 @@ const helpPages: SeoPageDefinition[] = HELP_ARTICLES.map((article) => ({
 }));
 
 const privatePages: SeoPageDefinition[] = [
-  "/admin/",
   "/login/",
   "/signup/",
   "/account/",

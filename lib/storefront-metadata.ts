@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { Crumb } from "@/components/ui/breadcrumbs";
 import type { SeoPage } from "@/lib/api/types";
+import { BRAND_NAME, cleanPageTitle, metadataTitle } from "@/lib/page-title";
 import { getSeoPageByPath } from "@/repositories/seo";
 import type { CustomerCatalogFabric } from "@/repositories/customer-catalog";
 
@@ -30,22 +31,29 @@ export function storefrontMetadata({
 }): Metadata {
   const canonical = canonicalPath(path);
   const socialImage = image ?? DEFAULT_SOCIAL_IMAGE;
+  const documentTitle = metadataTitle(title, {
+    absolute: canonical === "/",
+  });
+  const socialTitle =
+    typeof documentTitle === "string"
+      ? `${documentTitle} | ${BRAND_NAME}`
+      : BRAND_NAME;
   return {
-    title: canonical === "/" ? { absolute: title } : title,
+    title: documentTitle,
     description,
     alternates: { canonical },
     robots: { index, follow: true },
     openGraph: {
       type,
-      siteName: "FabStitch",
-      title,
+      siteName: BRAND_NAME,
+      title: socialTitle,
       description,
       url: canonical,
-      images: [{ url: socialImage, alt: title }],
+      images: [{ url: socialImage, alt: socialTitle }],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: socialTitle,
       description,
       images: [socialImage],
     },
@@ -87,15 +95,25 @@ export function seoBreadcrumbs(page: SeoPage | null): Crumb[] {
 function backendMetadata(
   page: SeoPage,
   overrides: {
+    title?: string;
     image?: string;
     index?: boolean;
     type?: "website" | "article";
   },
 ): Metadata {
-  const title = page.seo_title?.trim() || page.title;
+  const isHome = page.canonical_path === "/";
+  const preferred =
+    overrides.title?.trim() || page.seo_title?.trim() || page.title;
+  const cleaned = cleanPageTitle(preferred, BRAND_NAME);
+  const documentTitle = metadataTitle(cleaned, { absolute: isHome });
   const description = page.meta_description?.trim() || undefined;
   const canonical = page.canonical_url?.trim() || page.canonical_path;
-  const socialTitle = page.og_title?.trim() || title;
+  const socialTitle = cleanPageTitle(
+    page.og_title?.trim() || cleaned,
+    BRAND_NAME,
+  );
+  const socialDisplay =
+    socialTitle === BRAND_NAME ? BRAND_NAME : `${socialTitle} | ${BRAND_NAME}`;
   const socialDescription = page.og_description?.trim() || description;
   const socialImage =
     page.og_image_path?.trim() || overrides.image?.trim() || undefined;
@@ -120,23 +138,23 @@ function backendMetadata(
     : { index: indexable, follow: page.is_public };
 
   return {
-    title: page.canonical_path === "/" ? { absolute: title } : title,
+    title: documentTitle,
     description,
     alternates: { canonical },
     robots,
     openGraph: {
       type: overrides.type ?? "website",
-      siteName: "FabStitch",
-      title: socialTitle,
+      siteName: BRAND_NAME,
+      title: socialDisplay,
       description: socialDescription,
       url: canonical,
       ...(socialImage
-        ? { images: [{ url: socialImage, alt: socialTitle }] }
+        ? { images: [{ url: socialImage, alt: socialDisplay }] }
         : {}),
     },
     twitter: {
       card: socialImage ? "summary_large_image" : "summary",
-      title: socialTitle,
+      title: socialDisplay,
       description: socialDescription,
       ...(socialImage ? { images: [socialImage] } : {}),
     },
@@ -174,7 +192,7 @@ export async function loadStorefrontSeo(
   return {
     page: null,
     metadata: storefrontMetadata({
-      title: overrides.title ?? "FabStitch",
+      title: overrides.title ?? BRAND_NAME,
       description:
         overrides.description ?? "FabStitch fabric sourcing marketplace.",
       path: canonicalPath(path),

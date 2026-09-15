@@ -6,7 +6,9 @@ import { Prose } from "@/components/ui/typography";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return registeredStorefrontMetadata("/about/");
+  return registeredStorefrontMetadata("/about/", {
+    title: "About FabStitch",
+  });
 }
 
 export default function AboutPage() {

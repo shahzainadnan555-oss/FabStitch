@@ -94,6 +94,7 @@ export async function generateMetadata({
   if (detail) {
     const { fabric } = detail;
     return registeredStorefrontMetadata(`/fabrics/${fabric.slug}/`, {
+      title: fabric.seo?.title || fabric.name,
       description: fabricSeoDescription(fabric),
       image: fabric.media.src,
       index: !hasSeoQueryState(query),

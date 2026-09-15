@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Search",
+  title: "Search Fabrics",
   robots: { index: false, follow: true },
 };
 

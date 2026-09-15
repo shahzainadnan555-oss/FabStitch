@@ -15,7 +15,8 @@ export function postAuthDestination(
   if (
     requested === "/" ||
     requested.startsWith("/login") ||
-    requested.startsWith("/signin")
+    requested.startsWith("/signin") ||
+    requested.startsWith("/admin")
   ) {
     return "/marketplace/";
   }

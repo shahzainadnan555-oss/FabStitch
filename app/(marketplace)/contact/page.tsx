@@ -14,6 +14,7 @@ import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/contact/", {
+    title: "Contact",
     image: LANDING_MEDIA.heroPoster,
   });
 }

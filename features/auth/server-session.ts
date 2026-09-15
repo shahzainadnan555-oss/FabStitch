@@ -20,7 +20,7 @@ export async function requireCustomer(returnTo: string): Promise<UserPublic> {
     redirect(loginHref(returnTo));
   }
   if (session.user.role !== "customer") {
-    redirect("/admin/");
+    redirect("/");
   }
   return session.user;
 }

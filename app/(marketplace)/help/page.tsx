@@ -17,7 +17,7 @@ export async function generateMetadata({
   const query = await searchParams;
   const searching = Boolean(single(query.q)?.trim());
   return registeredStorefrontMetadata("/help/", {
-    title: searching ? "Help search results" : "How can we help?",
+    title: searching ? "Help search results" : "Help Center",
     description:
       "Find quick answers about discovering fabrics, sending inquiries, managing your account, and using FabStitch.",
     index: !hasSeoQueryState(query),

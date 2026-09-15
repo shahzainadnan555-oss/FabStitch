@@ -3,6 +3,7 @@ import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { OrganizationJsonLd } from "@/components/seo/structured-data";
 import { SessionProvider } from "@/features/auth/session";
+import { BRAND_NAME, TITLE_TEMPLATE } from "@/lib/page-title";
 import { SITE_URL } from "@/lib/seo";
 
 /**
@@ -42,23 +43,23 @@ export const metadata: Metadata = {
   // makes the two agree rather than introducing a second source of truth.
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "FabStitch - fabrics for what you make",
-    template: "%s | FabStitch",
+    default: BRAND_NAME,
+    template: TITLE_TEMPLATE,
   },
   description:
     "Discover FabStitch fabrics by material, construction and use. Search, filter, choose a quantity and buy from one focused storefront.",
-  applicationName: "FabStitch",
+  applicationName: BRAND_NAME,
   openGraph: {
-    siteName: "FabStitch",
+    siteName: BRAND_NAME,
     type: "website",
-    title: "FabStitch - fabrics for what you make",
+    title: BRAND_NAME,
     description:
       "Discover FabStitch fabrics by material, construction and use.",
     images: [{ url: "/media/hero-navy-jersey.jpg" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FabStitch - fabrics for what you make",
+    title: BRAND_NAME,
     description:
       "Discover FabStitch fabrics by material, construction and use.",
     images: ["/media/hero-navy-jersey.jpg"],

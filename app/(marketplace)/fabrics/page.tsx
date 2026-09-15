@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PersonalizedCatalogGrid } from "@/components/marketplace/personalized-catalog-grid";
 import { PageHeader } from "@/components/marketplace/page-header";
@@ -11,8 +12,10 @@ import {
 } from "@/repositories/customer-catalog";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 
-export async function generateMetadata() {
-  return registeredStorefrontMetadata("/fabrics/");
+export async function generateMetadata(): Promise<Metadata> {
+  return registeredStorefrontMetadata("/fabrics/", {
+    title: "Fabrics",
+  });
 }
 
 export default async function FabricsHubPage() {

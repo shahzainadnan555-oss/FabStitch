@@ -24,6 +24,7 @@ import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/", {
+    title: "FabStitch",
     image: LANDING_MEDIA.heroPoster,
   });
 }
