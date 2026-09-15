@@ -11,6 +11,37 @@ const ITEMS = [
   { href: "/inquiries/", label: "My Inquiries" },
 ] as const;
 
+/**
+ * First-visit header auth CTAs.
+ * Join Free is the primary action; Sign In is the refined secondary.
+ * Presentation only — routes and auth behavior stay unchanged.
+ */
+const AUTH_CTA_FOCUS =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo";
+
+const joinFreeClass = (mobile: boolean) =>
+  cn(
+    "inline-flex items-center justify-center rounded-sm border border-indigo bg-indigo",
+    "text-sm font-medium tracking-[0.01em] text-white",
+    "transition-[background-color,border-color,box-shadow,transform] duration-200 ease-out-quart",
+    "hover:border-indigo-hover hover:bg-indigo-hover",
+    "active:translate-y-px",
+    AUTH_CTA_FOCUS,
+    mobile
+      ? "h-11 w-full px-5"
+      : "h-9 px-4 shadow-[0_1px_0_rgba(15,23,42,0.06)] hover:shadow-[0_2px_8px_rgba(37,56,140,0.18)]",
+  );
+
+const signInClass = (mobile: boolean) =>
+  cn(
+    "inline-flex items-center justify-center rounded-sm border border-rule-2 bg-paper/80",
+    "text-sm font-medium tracking-[0.01em] text-ink",
+    "transition-[background-color,border-color,color,box-shadow] duration-200 ease-out-quart",
+    "hover:border-ink-3 hover:bg-paper-raised hover:text-ink",
+    AUTH_CTA_FOCUS,
+    mobile ? "h-11 w-full px-5" : "h-9 px-3.5",
+  );
+
 export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
   const router = useRouter();
   const { hydrated, authenticated, user, profile, signOut } = useSession();
@@ -58,28 +89,14 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
       <div
         className={cn(
           "flex items-center",
-          mobile ? "w-full flex-col gap-2" : "gap-2",
+          mobile ? "w-full flex-col-reverse gap-2" : "gap-1.5",
         )}
       >
-        <Link
-          href="/signup/"
-          className={
-            mobile
-              ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-rule-2 px-4 text-sm font-semibold text-ink-2"
-              : "inline-flex h-9 items-center rounded-sm px-3 text-sm font-semibold text-ink-2 hover:text-indigo"
-          }
-        >
-          Join Free
-        </Link>
-        <Link
-          href="/login/"
-          className={
-            mobile
-              ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold text-white"
-              : "inline-flex h-9 items-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold tracking-[0.01em] text-white hover:border-indigo-hover hover:bg-indigo-hover"
-          }
-        >
+        <Link href="/login/" className={signInClass(mobile)}>
           Sign In
+        </Link>
+        <Link href="/signup/" className={joinFreeClass(mobile)}>
+          Join Free
         </Link>
       </div>
     );
