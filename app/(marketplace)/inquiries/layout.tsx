@@ -1,9 +1,9 @@
 import { RequireCustomer } from "@/features/auth/require-customer";
 
-export default function AccountLayout({
+export default function InquiriesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <RequireCustomer returnTo="/account/">{children}</RequireCustomer>;
+  return <RequireCustomer returnTo="/inquiries/">{children}</RequireCustomer>;
 }

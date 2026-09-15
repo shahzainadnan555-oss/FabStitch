@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { IconArrowRight, IconCheck } from "@/components/ui/icon";
+import { postAuthDestination } from "@/features/auth/destination";
 import { useSession } from "@/features/auth/session";
 import { FABRIC_OPTIONS } from "./options";
 import { api } from "@/lib/api/client";
@@ -160,14 +161,11 @@ export function OnboardingExperience({
         { body },
       );
       setOnboarding(response);
-      router.push(
+      router.replace(
         editing
           ? "/account/preferences/?saved=1"
-          : next === "/"
-            ? "/marketplace/"
-            : next,
+          : postAuthDestination(true, next),
       );
-      router.refresh();
     } catch (requestError) {
       setError(
         apiErrorMessage(

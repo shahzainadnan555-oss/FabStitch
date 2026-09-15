@@ -11,9 +11,8 @@ import {
   SubmitButton,
 } from "./controls";
 import { useSession } from "@/features/auth/session";
-import { onboardingHref } from "@/features/onboarding/profile";
 import { loginErrorView, signupErrorMessage } from "./messages";
-import { safeReturnPath } from "./return-to";
+import { postAuthDestination } from "./destination";
 import { api } from "@/lib/api/client";
 import { ApiError, apiErrorMessage } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
@@ -36,12 +35,6 @@ type FormState = {
   missingAccount?: boolean;
   signupHref?: string;
 };
-
-function destination(completed: boolean, next: string) {
-  const requested = safeReturnPath(next);
-  if (!completed) return onboardingHref(requested);
-  return requested === "/" ? "/marketplace/" : requested;
-}
 
 function formEmail(form: FormData) {
   return String(form.get("email") ?? "")
@@ -97,8 +90,9 @@ export function LoginForm({
       );
       adoptUser(result.user);
       await refresh({ persistOnUnauthorized: true }).catch(() => {});
-      router.push(destination(result.user.onboarding_completed, next));
-      router.refresh();
+      router.replace(
+        postAuthDestination(result.user.onboarding_completed, next),
+      );
     } catch (error) {
       const view = loginErrorView(error, next);
       setState({
@@ -208,8 +202,9 @@ export function RegisterForm({
       );
       adoptUser(result.user);
       await refresh({ persistOnUnauthorized: true }).catch(() => {});
-      router.push(onboardingHref(next));
-      router.refresh();
+      router.replace(
+        postAuthDestination(result.user.onboarding_completed, next),
+      );
     } catch (error) {
       setState({
         ...requestErrors(error),

@@ -1,19 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthMessage } from "./controls";
+import { postAuthDestination } from "./destination";
 import { googleAuthErrorMessage } from "./messages";
 import { useSession } from "./session";
-import { loginHref, safeReturnPath } from "./return-to";
-import { onboardingHref } from "@/features/onboarding/profile";
-
-function destination(completed: boolean, next: string) {
-  const requested = safeReturnPath(next);
-  if (!completed) return onboardingHref(requested);
-  return requested === "/" ? "/marketplace/" : requested;
-}
+import { loginHref } from "./return-to";
 
 export function OAuthCallback({
   next,
@@ -24,21 +18,29 @@ export function OAuthCallback({
 }) {
   const router = useRouter();
   const { hydrated, authenticated, user, refresh } = useSession();
+  const [checked, setChecked] = useState(Boolean(error));
   const failed =
-    error || (hydrated && !authenticated)
+    error || (checked && hydrated && !authenticated)
       ? googleAuthErrorMessage(error)
       : null;
 
   useEffect(() => {
     if (error) return;
-    void refresh().catch(() => {});
+    let cancelled = false;
+    void refresh()
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setChecked(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [error, refresh]);
 
   useEffect(() => {
-    if (error || !hydrated || !authenticated || !user) return;
-    router.replace(destination(user.onboarding_completed, next));
-    router.refresh();
-  }, [authenticated, error, hydrated, next, router, user]);
+    if (error || !checked || !hydrated || !authenticated || !user) return;
+    router.replace(postAuthDestination(user.onboarding_completed, next));
+  }, [authenticated, checked, error, hydrated, next, router, user]);
 
   if (failed) {
     return (

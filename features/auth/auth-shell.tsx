@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Wordmark } from "@/components/layout/logo";
 import { IconQuantity, IconDocument, IconShield } from "@/components/ui/icon";
+import { AuthShellAccount } from "./auth-shell-account";
 
 /**
  * Authentication shell.
@@ -69,17 +70,7 @@ export function AuthShell({
           <Link href="/" aria-label="FabStitch - home" className="rounded-xs">
             <Wordmark />
           </Link>
-          {counterpart ? (
-            <p className="text-sm text-ink-3">
-              <span className="hidden sm:inline">{counterpart.prompt} </span>
-              <Link
-                href={counterpart.href}
-                className="font-semibold text-indigo hover:underline"
-              >
-                {counterpart.label}
-              </Link>
-            </p>
-          ) : null}
+          <AuthShellAccount counterpart={counterpart} />
         </div>
       </header>
 
