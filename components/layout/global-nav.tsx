@@ -46,7 +46,7 @@ function NavLinks({
         className={cn(
           mobile
             ? "relative rounded-sm px-3 py-3 text-base font-medium text-ink transition-colors hover:bg-indigo-wash hover:text-indigo"
-            : "group relative whitespace-nowrap rounded-xs px-1 py-2 text-[0.8125rem] font-medium tracking-[0.01em] transition-colors hover:text-indigo",
+            : "group relative whitespace-nowrap rounded-xs px-1.5 py-2 text-sm font-medium tracking-[0.01em] transition-colors hover:text-indigo",
           active
             ? mobile
               ? "bg-indigo-wash text-indigo"
@@ -94,15 +94,17 @@ export function GlobalNav() {
 
   return (
     <>
-      {/* Center column of the header grid — optically centered primary nav */}
+      {/* Centered to the header/viewport — not to leftover flex space */}
       <nav
         aria-label="Primary"
-        className="hidden items-center justify-center gap-4 justify-self-center xl:flex 2xl:gap-5"
+        className="pointer-events-none absolute inset-0 hidden items-center justify-center xl:flex"
       >
-        <NavLinks />
+        <div className="pointer-events-auto flex items-center gap-5">
+          <NavLinks />
+        </div>
       </nav>
 
-      <div className="hidden shrink-0 items-center justify-end gap-2 justify-self-end xl:flex">
+      <div className="relative z-10 ml-auto hidden shrink-0 items-center gap-2 xl:flex">
         <HeaderSearch />
         <PreferenceControls />
         <div className="shrink-0">
@@ -110,7 +112,7 @@ export function GlobalNav() {
         </div>
       </div>
 
-      <div className="relative col-start-3 justify-self-end xl:hidden">
+      <div className="relative z-10 ml-auto xl:hidden">
         <button
           ref={menuButton}
           type="button"

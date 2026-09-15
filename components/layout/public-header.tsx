@@ -5,15 +5,14 @@ import { GlobalNav } from "./global-nav";
 /**
  * Public storefront header.
  *
- * Layout: logo left · primary nav optically centered · utilities right.
- * Uses a three-column grid so the center nav is centered to the header,
- * not merely shoved into leftover flex space beside the logo.
+ * Layout: logo left · primary nav centered to the header · utilities right.
+ * Nav is absolutely centered so asymmetric logo/CTA widths cannot push it off-center.
  */
 export function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-rule-brand bg-paper/94 backdrop-blur-md">
-      <div className="relative mx-auto grid h-[4.25rem] w-[calc(100%-48px)] max-w-[1400px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
-        <div className="justify-self-start">
+      <div className="relative mx-auto flex h-[4.25rem] w-[calc(100%-48px)] max-w-[1400px] items-center">
+        <div className="relative z-10 shrink-0">
           <Link
             href="/"
             aria-label="FabStitch home"
