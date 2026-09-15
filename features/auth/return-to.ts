@@ -86,6 +86,7 @@ export function describeReturn(path: string): string | null {
   if (safe.includes("/request-quote")) return "your quote request";
   if (safe.includes("/contact")) return "your message";
   if (safe.startsWith("/inquiries")) return "your inquiries";
+  if (safe.startsWith("/fabrics/")) return "the fabric you were viewing";
   if (safe.startsWith("/listings/")) return "the listing you were viewing";
   if (safe.startsWith("/suppliers/")) return "the page you were viewing";
   return null;

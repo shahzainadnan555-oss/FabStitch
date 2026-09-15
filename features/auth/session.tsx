@@ -29,10 +29,14 @@ type SessionState = {
   error: string | null;
 };
 
+type SessionRefreshOptions = {
+  persistOnUnauthorized?: boolean;
+};
+
 type SessionContextValue = SessionState & {
   hydrated: boolean;
   authenticated: boolean;
-  refresh: () => Promise<void>;
+  refresh: (options?: SessionRefreshOptions) => Promise<void>;
   adoptUser: (user: UserPublic) => void;
   setProfile: (profile: UserPublic) => void;
   setPreferences: (preferences: CustomerPreferencesOut) => void;
@@ -127,16 +131,21 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SessionState>(INITIAL_STATE);
   const generation = useRef(0);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (options?: SessionRefreshOptions) => {
     const token = ++generation.current;
     try {
       const next = await loadSession();
       if (token !== generation.current) return;
+      if (options?.persistOnUnauthorized && next.status === "anonymous") {
+        return;
+      }
       setState(next);
     } catch (error) {
       if (token !== generation.current) return;
       if (isUnauthorized(error)) {
-        setState(ANONYMOUS_STATE);
+        if (!options?.persistOnUnauthorized) {
+          setState(ANONYMOUS_STATE);
+        }
         return;
       }
       setState((current) => ({

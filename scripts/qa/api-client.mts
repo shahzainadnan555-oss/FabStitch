@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { api } from "@/lib/api/client";
-import {
-  ApiError,
-  normalizeApiError,
-} from "@/lib/api/errors";
+import { ApiError, normalizeApiError } from "@/lib/api/errors";
 import { queryString } from "@/lib/api/query";
+import {
+  googleAuthErrorMessage,
+  loginErrorView,
+  signupErrorMessage,
+} from "@/features/auth/messages";
 
 assert.equal(
   queryString({
@@ -81,5 +83,48 @@ try {
     Reflect.deleteProperty(globalThis, "window");
   }
 }
+
+const missing = loginErrorView(
+  new ApiError({
+    status: 401,
+    code: "account_not_found",
+    message: "No customer for this email",
+  }),
+  "/fabrics/cotton-poplin/",
+);
+assert.equal(missing.message, "This account doesn't exist.");
+assert.equal(missing.missingAccount, true);
+assert.equal(missing.signupHref, "/signup/?next=%2Ffabrics%2Fcotton-poplin%2F");
+
+const unknownPassword = loginErrorView(
+  new ApiError({
+    status: 401,
+    code: "invalid_credentials",
+    message: "Invalid email or password",
+  }),
+  "/",
+);
+assert.equal(unknownPassword.message, "Invalid email or password");
+assert.equal(unknownPassword.missingAccount, false);
+
+const duplicate = signupErrorMessage(
+  new ApiError({
+    status: 409,
+    code: "email_taken",
+    message: "Email already registered",
+  }),
+);
+assert.equal(
+  duplicate,
+  "An account with this email already exists. Sign in to continue.",
+);
+assert.equal(
+  googleAuthErrorMessage("access_denied"),
+  "Google sign-in was cancelled. You can try again or continue with email.",
+);
+assert.equal(
+  googleAuthErrorMessage("oauth_failed"),
+  "Google sign-in couldn't be completed. Please try again.",
+);
 
 console.log("API client QA passed.");

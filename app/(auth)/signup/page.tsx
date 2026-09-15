@@ -4,6 +4,7 @@ import { AuthShell } from "@/features/auth/auth-shell";
 import { ProviderOptions } from "@/features/auth/provider-options";
 import { authProviders } from "@/features/auth/providers";
 import { RegisterForm } from "@/features/auth/forms";
+import { RedirectIfAuthenticated } from "@/features/auth/redirect-if-authenticated";
 import { describeReturn, safeReturnPath } from "@/features/auth/return-to";
 import { serverApi } from "@/lib/api/server";
 import type { components } from "@/lib/api/schema";
@@ -24,7 +25,7 @@ export default async function SignupPage({
   const query = await searchParams;
   const next = safeReturnPath(single(query.next));
   const [providers, countries] = await Promise.all([
-    authProviders(),
+    authProviders(next),
     serverApi.get<components["schemas"]["CountryListResponse"]>("/countries"),
   ]);
 
@@ -53,7 +54,8 @@ export default async function SignupPage({
         </>
       }
     >
-      <ProviderOptions providers={providers} />
+      <RedirectIfAuthenticated next={next} />
+      <ProviderOptions providers={providers} error={single(query.error)} />
       <RegisterForm next={next} countries={countries.items} />
     </AuthShell>
   );

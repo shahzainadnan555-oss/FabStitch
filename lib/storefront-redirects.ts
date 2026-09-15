@@ -87,6 +87,14 @@ export function storefrontRedirect(pathname: string): string | null {
 
   if (canonicalCase === "/search/") return "/marketplace/";
 
+  if (
+    canonicalCase === "/oauth/callback/" ||
+    canonicalCase === "/auth/google/callback/" ||
+    canonicalCase === "/auth/google/success/"
+  ) {
+    return "/auth/callback/";
+  }
+
   if (canonicalCase === "/guide/" || canonicalCase === "/guides/index/") {
     return "/guides/";
   }

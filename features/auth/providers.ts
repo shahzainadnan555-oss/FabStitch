@@ -3,6 +3,7 @@ import "server-only";
 import { API_BASE_URL, apiUrl } from "@/lib/api/config";
 import { serverApi } from "@/lib/api/server";
 import type { components } from "@/lib/api/schema";
+import { safeReturnPath } from "./return-to";
 
 export type AuthProvider = {
   provider: "google";
@@ -12,15 +13,24 @@ export type AuthProvider = {
 
 type OAuthProvidersResponse = components["schemas"]["OAuthProvidersResponse"];
 
-function authorizeHref(path: string | null | undefined): string | null {
+function authorizeHref(
+  path: string | null | undefined,
+  next?: string,
+): string | null {
   if (!path) return null;
-  if (path.startsWith("/")) {
-    return new URL(path, new URL(API_BASE_URL).origin).toString();
-  }
-  return apiUrl(path).toString();
+  const href = path.startsWith("/")
+    ? new URL(path, new URL(API_BASE_URL).origin)
+    : apiUrl(path);
+  const destination = safeReturnPath(next);
+  const callback =
+    destination === "/"
+      ? "/auth/callback/"
+      : `/auth/callback/?next=${encodeURIComponent(destination)}`;
+  href.searchParams.set("next", callback);
+  return href.toString();
 }
 
-export async function authProviders(): Promise<AuthProvider[]> {
+export async function authProviders(next?: string): Promise<AuthProvider[]> {
   try {
     const response = await serverApi.get<OAuthProvidersResponse>(
       "/auth/oauth/providers",
@@ -34,7 +44,7 @@ export async function authProviders(): Promise<AuthProvider[]> {
           provider: name,
           configured: provider.configured,
           authorizeHref: provider.configured
-            ? authorizeHref(provider.authorize_path)
+            ? authorizeHref(provider.authorize_path, next)
             : null,
         },
       ];

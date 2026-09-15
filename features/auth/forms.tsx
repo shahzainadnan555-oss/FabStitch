@@ -12,6 +12,7 @@ import {
 } from "./controls";
 import { useSession } from "@/features/auth/session";
 import { onboardingHref } from "@/features/onboarding/profile";
+import { loginErrorView, signupErrorMessage } from "./messages";
 import { safeReturnPath } from "./return-to";
 import { api } from "@/lib/api/client";
 import { ApiError, apiErrorMessage } from "@/lib/api/errors";
@@ -32,6 +33,8 @@ type FormState = {
   error?: string;
   notice?: string;
   fieldErrors?: Record<string, string>;
+  missingAccount?: boolean;
+  signupHref?: string;
 };
 
 function destination(completed: boolean, next: string) {
@@ -74,7 +77,7 @@ export function LoginForm({
   justReset?: boolean;
 }) {
   const router = useRouter();
-  const { adoptUser } = useSession();
+  const { adoptUser, refresh } = useSession();
   const [state, setState] = useState<FormState>({});
   const [pending, setPending] = useState(false);
 
@@ -93,10 +96,17 @@ export function LoginForm({
         { body, retryAuth: false },
       );
       adoptUser(result.user);
+      await refresh({ persistOnUnauthorized: true }).catch(() => {});
       router.push(destination(result.user.onboarding_completed, next));
       router.refresh();
     } catch (error) {
-      setState(requestErrors(error));
+      const view = loginErrorView(error, next);
+      setState({
+        ...requestErrors(error),
+        error: view.message,
+        missingAccount: view.missingAccount,
+        signupHref: view.signupHref,
+      });
       setPending(false);
     }
   };
@@ -109,7 +119,20 @@ export function LoginForm({
         </AuthMessage>
       ) : null}
       {state.error ? (
-        <AuthMessage tone="error">{state.error}</AuthMessage>
+        <AuthMessage tone="error">
+          {state.error}
+          {state.missingAccount && state.signupHref ? (
+            <>
+              {" "}
+              <Link
+                href={state.signupHref}
+                className="font-semibold text-indigo underline underline-offset-4"
+              >
+                Create a FabStitch account to continue.
+              </Link>
+            </>
+          ) : null}
+        </AuthMessage>
       ) : null}
       <AuthField
         label="Work email"
@@ -146,7 +169,7 @@ export function RegisterForm({
   countries: CountryOut[];
 }) {
   const router = useRouter();
-  const { adoptUser } = useSession();
+  const { adoptUser, refresh } = useSession();
   const [state, setState] = useState<FormState>({});
   const [formValid, setFormValid] = useState(false);
   const [pending, setPending] = useState(false);
@@ -176,10 +199,14 @@ export function RegisterForm({
         { body, retryAuth: false },
       );
       adoptUser(result.user);
+      await refresh({ persistOnUnauthorized: true }).catch(() => {});
       router.push(onboardingHref(next));
       router.refresh();
     } catch (error) {
-      setState(requestErrors(error));
+      setState({
+        ...requestErrors(error),
+        error: signupErrorMessage(error),
+      });
       setPending(false);
     }
   };

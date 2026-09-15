@@ -4,6 +4,7 @@ import { AuthShell } from "@/features/auth/auth-shell";
 import { LoginForm } from "@/features/auth/forms";
 import { ProviderOptions } from "@/features/auth/provider-options";
 import { authProviders } from "@/features/auth/providers";
+import { RedirectIfAuthenticated } from "@/features/auth/redirect-if-authenticated";
 import { describeReturn, safeReturnPath } from "@/features/auth/return-to";
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const query = await searchParams;
   const next = safeReturnPath(single(query.next));
 
-  const providers = await authProviders();
+  const providers = await authProviders(next);
 
   const signupHref =
     next === "/" ? "/signup/" : `/signup/?next=${encodeURIComponent(next)}`;
@@ -47,7 +48,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         </>
       }
     >
-      <ProviderOptions providers={providers} />
+      <RedirectIfAuthenticated next={next} />
+      <ProviderOptions providers={providers} error={single(query.error)} />
       <LoginForm next={next} justReset={single(query.reset) === "1"} />
     </AuthShell>
   );

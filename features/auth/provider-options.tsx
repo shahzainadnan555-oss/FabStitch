@@ -2,26 +2,44 @@
 
 import { useState } from "react";
 import { SocialAuthButton, type SocialProvider } from "./social-auth-button";
+import { googleAuthErrorMessage } from "./messages";
 import type { AuthProvider } from "./providers";
 
 /** OAuth choices returned by `GET /auth/oauth/providers`. */
-export function ProviderOptions({ providers }: { providers: AuthProvider[] }) {
+export function ProviderOptions({
+  providers,
+  error,
+}: {
+  providers: AuthProvider[];
+  error?: string | null;
+}) {
   const [chosen, setChosen] = useState<SocialProvider | null>(null);
 
-  if (providers.length === 0) return null;
+  if (providers.length === 0 && !error) return null;
 
   return (
     <div className="mb-6">
-      <div className="flex flex-col gap-2.5">
-        {providers.map((provider) => (
-          <SocialAuthButton
-            key={provider.provider}
-            provider={provider.provider}
-            href={provider.authorizeHref}
-            onSelect={setChosen}
-          />
-        ))}
-      </div>
+      {providers.length > 0 ? (
+        <div className="flex flex-col gap-2.5">
+          {providers.map((provider) => (
+            <SocialAuthButton
+              key={provider.provider}
+              provider={provider.provider}
+              href={provider.authorizeHref}
+              onSelect={setChosen}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {error ? (
+        <p
+          role="alert"
+          className="mt-3 rounded-sm border border-caution-soft bg-caution-soft px-3 py-2 text-sm text-ink-2"
+        >
+          {googleAuthErrorMessage(error)}
+        </p>
+      ) : null}
 
       {chosen ? (
         <p

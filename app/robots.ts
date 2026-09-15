@@ -30,6 +30,7 @@ const PRIVATE_PREFIXES = [
   "/signup/",
   "/forgot-password/",
   "/reset-password/",
+  "/auth/",
 ];
 
 export default async function robots(): Promise<MetadataRoute.Robots> {

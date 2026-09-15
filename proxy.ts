@@ -30,6 +30,7 @@ const PRIVATE_PATH_PREFIXES = [
   "/signup",
   "/forgot-password",
   "/reset-password",
+  "/auth",
 ] as const;
 
 function hasPrivatePrefix(pathname: string): boolean {
