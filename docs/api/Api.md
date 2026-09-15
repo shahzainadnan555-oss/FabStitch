@@ -2,9 +2,10 @@
 
 ## Base URL
 
-- Production: `https://fabstitch-backend.fastapicloud.dev`
+- Production: `https://api.fabstitch.net`
 - Versioned API prefix: `/api/v1`
-- Frontend production API base: `https://fabstitch-backend.fastapicloud.dev/api/v1`
+- Frontend production API base: `https://api.fabstitch.net/api/v1`
+- Docs: `https://api.fabstitch.net/docs`
 
 ## Authentication model
 

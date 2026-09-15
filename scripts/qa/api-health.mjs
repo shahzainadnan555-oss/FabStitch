@@ -3,7 +3,7 @@ const base = (
   new URL(
     process.env.NEXT_PUBLIC_API_BASE_URL ??
       process.env.VITE_API_BASE_URL ??
-      "https://fabstitch-backend.fastapicloud.dev/api/v1",
+      "https://api.fabstitch.net/api/v1",
   ).origin
 ).replace(/\/$/, "");
 

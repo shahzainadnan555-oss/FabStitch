@@ -14,7 +14,7 @@
     "test": "node --import=./scripts/register-loader.mjs scripts/qa/api-client.mts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "api:types": "openapi-typescript ${OPENAPI_URL:-https://fabstitch-backend.fastapicloud.dev/openapi.json} -o lib/api/schema.ts",
+    "api:types": "openapi-typescript ${OPENAPI_URL:-https://api.fabstitch.net/openapi.json} -o lib/api/schema.ts",
     "api:health": "node scripts/qa/api-health.mjs",
     "seo": "node --import=./scripts/register-loader.mjs scripts/seo-audit.mts",
     "qa": "node scripts/qa.mjs",

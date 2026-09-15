@@ -183,8 +183,41 @@ export function MarketPreferenceProvider({
         const nextCurrencies = fallbackCurrencies();
         setCountries(nextCountries);
         setCurrencies(nextCurrencies);
-        setError(null);
-        retryAction.current = null;
+        setError({
+          retryable: true,
+          message:
+            "Country and currency options could not be loaded from FabStitch. Showing the supported market list until you retry.",
+        });
+        retryAction.current = () => {
+          setLoadingOptions(true);
+          setError(null);
+          Promise.all([
+            api.get<CountryListResponse>("/countries"),
+            api.get<CurrencyListResponse>("/currencies"),
+          ])
+            .then(([countryResponse, currencyResponse]) => {
+              const loadedCountries = validCountries(countryResponse.items);
+              const loadedCurrencies = validCurrencies(currencyResponse.items);
+              if (
+                loadedCountries.length === 0 ||
+                loadedCurrencies.length === 0
+              ) {
+                throw new Error("empty_options");
+              }
+              setCountries(loadedCountries);
+              setCurrencies(loadedCurrencies);
+              setError(null);
+              retryAction.current = null;
+            })
+            .catch(() => {
+              setError({
+                retryable: true,
+                message:
+                  "Country and currency options could not be loaded from FabStitch. Showing the supported market list until you retry.",
+              });
+            })
+            .finally(() => setLoadingOptions(false));
+        };
       })
       .finally(() => {
         if (active) setLoadingOptions(false);

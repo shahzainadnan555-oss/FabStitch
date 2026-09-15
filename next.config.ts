@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "fabstitch-backend.fastapicloud.dev",
+        hostname: "api.fabstitch.net",
       },
       {
         protocol: "https",
@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "www.fabstitch.net",
+      },
+      // Migration only: legacy absolute media URLs may still resolve on the
+      // previous API host until catalog assets are rewritten to api.fabstitch.net.
+      {
+        protocol: "https",
+        hostname: "fabstitch-backend.fastapicloud.dev",
       },
     ],
   },

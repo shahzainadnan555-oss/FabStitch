@@ -5,11 +5,12 @@ what customers are making and the material constraints they need to satisfy.
 
 ## Current phase
 
-The live FastAPI Cloud backend is the single production API:
+The live production backend is the single API:
 
-- Origin: `https://fabstitch-backend.fastapicloud.dev`
-- API: `https://fabstitch-backend.fastapicloud.dev/api/v1`
-- Admin WebSocket: `wss://fabstitch-backend.fastapicloud.dev/api/v1/realtime/ws/admin`
+- Origin: `https://api.fabstitch.net`
+- API: `https://api.fabstitch.net/api/v1`
+- Docs: `https://api.fabstitch.net/docs`
+- Admin WebSocket: `wss://api.fabstitch.net/api/v1/realtime/ws/admin`
 
 All real requests go through `lib/api` (`api` in the browser, `serverApi` on the
 server). Do not add a second client, hardcode localhost APIs in components, or
@@ -19,13 +20,13 @@ Set these on the host for production builds. Next.js inlines `NEXT_PUBLIC_*`
 into the browser bundle; `VITE_API_BASE_URL` is accepted as an alias.
 
 ```bash
-NEXT_PUBLIC_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
-VITE_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
-NEXT_PUBLIC_WS_BASE_URL=wss://fabstitch-backend.fastapicloud.dev/api/v1
+NEXT_PUBLIC_API_BASE_URL=https://api.fabstitch.net/api/v1
+VITE_API_BASE_URL=https://api.fabstitch.net/api/v1
+NEXT_PUBLIC_WS_BASE_URL=wss://api.fabstitch.net/api/v1
 ```
 
 Local development can override those values in `.env.local`. Production must
-keep the FastAPI Cloud URLs. See `.env.example` and `.env.production`.
+keep the `api.fabstitch.net` URLs. See `.env.example` and `.env.production`.
 
 ## Deploy on Vercel
 
@@ -36,9 +37,9 @@ Set these Production environment variables in the Vercel project (all public):
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://fabstitch.net
-NEXT_PUBLIC_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
-VITE_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
-NEXT_PUBLIC_WS_BASE_URL=wss://fabstitch-backend.fastapicloud.dev/api/v1
+NEXT_PUBLIC_API_BASE_URL=https://api.fabstitch.net/api/v1
+VITE_API_BASE_URL=https://api.fabstitch.net/api/v1
+NEXT_PUBLIC_WS_BASE_URL=wss://api.fabstitch.net/api/v1
 ```
 
 Leave them blank only if you want the committed `.env.production` defaults.
@@ -71,8 +72,9 @@ npm run seo
 npm run build
 ```
 
-The site runs at `http://localhost:3000` and talks to the live FastAPI Cloud
-backend unless `.env.local` overrides the API base URL.
+The site runs at `http://localhost:3000` and talks to the live production
+backend (`https://api.fabstitch.net/api/v1`) unless `.env.local` overrides the
+API base URL.
 
 For the complete pre-publish pipeline, install Chrome for Playwright once and
 run the unified QA command:

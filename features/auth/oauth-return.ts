@@ -37,6 +37,8 @@ export function isOauthReturnReferrer(referrer = ""): boolean {
   const value = referrer.toLowerCase();
   return (
     value.includes("accounts.google.com") ||
+    value.includes("api.fabstitch.net") ||
+    // Transitional OAuth returns may still arrive from the previous API host.
     value.includes("fabstitch-backend.fastapicloud.dev")
   );
 }

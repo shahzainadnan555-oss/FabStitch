@@ -1,4 +1,4 @@
-const LIVE_API_BASE_URL = "https://fabstitch-backend.fastapicloud.dev/api/v1";
+const LIVE_API_BASE_URL = "https://api.fabstitch.net/api/v1";
 
 function normalizeBaseUrl(value: string, expectedProtocol: RegExp): string {
   const url = new URL(value);
