@@ -7,6 +7,10 @@ export type Profile = Schema["UserPublic"];
 export type AuthSession = Schema["MeResponse"];
 export type SignupRequest = Schema["SignupRequest"];
 export type LoginRequest = Schema["LoginRequest"];
+export type AuthSuccess = Schema["AuthSuccessResponse"];
+export type VerificationRequired = Schema["VerificationRequiredResponse"];
+export type EmailOtpVerify = Schema["EmailOtpVerifyRequest"];
+export type EmailOtpResend = Schema["EmailOtpResendRequest"];
 export type ProfileUpdate = Schema["ProfileUpdateRequest"];
 
 export type Country = Schema["CountryOut"];

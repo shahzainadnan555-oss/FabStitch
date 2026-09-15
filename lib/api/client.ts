@@ -1,12 +1,6 @@
 import { apiUrl } from "@/lib/api/config";
-import {
-  ApiError,
-  normalizeApiError,
-} from "@/lib/api/errors";
-import {
-  appendQuery,
-  type ApiQuery,
-} from "@/lib/api/query";
+import { ApiError, normalizeApiError } from "@/lib/api/errors";
+import { appendQuery, type ApiQuery } from "@/lib/api/query";
 
 type NextFetchOptions = {
   revalidate?: number | false;
@@ -56,6 +50,7 @@ async function refreshSession(): Promise<void> {
           response.status,
           body,
           response.headers.get("x-request-id"),
+          response.headers.get("retry-after"),
         );
       }
     })().finally(() => {
@@ -114,6 +109,7 @@ async function performRequest<TResponse, TBody>(
       response.status,
       parsed,
       response.headers.get("x-request-id"),
+      response.headers.get("retry-after"),
     );
   }
   return parsed as TResponse;

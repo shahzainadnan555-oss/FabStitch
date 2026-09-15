@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthPanel } from "@/features/auth/auth-panel";
-import { GoogleAuthSection } from "@/features/auth/google-auth-section";
-import { SignUpForm } from "@/features/auth/sign-up-form";
+import { SignUpExperience } from "@/features/auth/email-auth-experience";
 import { authProviders } from "@/features/auth/providers";
-import { RedirectIfAuthenticated } from "@/features/auth/redirect-if-authenticated";
 import { describeReturn, safeReturnPath } from "@/features/auth/return-to";
 
 export const metadata: Metadata = {
@@ -49,11 +47,11 @@ export default async function SignupPage({
         </>
       }
     >
-      <RedirectIfAuthenticated next={next} />
-      <div className="flex flex-col gap-6">
-        <SignUpForm next={next} />
-        <GoogleAuthSection providers={providers} error={single(query.error)} />
-      </div>
+      <SignUpExperience
+        next={next}
+        providers={providers}
+        googleError={single(query.error)}
+      />
     </AuthPanel>
   );
 }

@@ -215,6 +215,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/email/verify-otp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify Email Otp */
+        post: operations["verify_email_otp_api_v1_auth_email_verify_otp_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/email/resend-otp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resend Email Otp */
+        post: operations["resend_email_otp_api_v1_auth_email_resend_otp_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/google": {
         parameters: {
             query?: never;
@@ -2715,6 +2749,11 @@ export interface components {
              */
             authenticated: boolean;
             user: components["schemas"]["UserPublic"];
+            /**
+             * Verification Required
+             * @default false
+             */
+            verification_required: boolean;
         };
         /** BestForCardOut */
         BestForCardOut: {
@@ -3340,6 +3379,34 @@ export interface components {
             status: string;
             /** Review Notes */
             review_notes?: string | null;
+        };
+        /** EmailOtpResendRequest */
+        EmailOtpResendRequest: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "signup" | "login";
+        };
+        /** EmailOtpVerifyRequest */
+        EmailOtpVerifyRequest: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Code */
+            code: string;
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "signup" | "login";
         };
         /**
          * ExportJobOut
@@ -5120,6 +5187,36 @@ export interface components {
              */
             created_at: string;
         };
+        /** VerificationRequiredResponse */
+        VerificationRequiredResponse: {
+            /**
+             * Authenticated
+             * @default false
+             */
+            authenticated: boolean;
+            /**
+             * Verification Required
+             * @default true
+             */
+            verification_required: boolean;
+            /**
+             * Purpose
+             * @enum {string}
+             */
+            purpose: "signup" | "login";
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Expires In Seconds */
+            expires_in_seconds: number;
+            /**
+             * Message
+             * @default Enter the 6-digit verification code sent to your email.
+             */
+            message: string;
+        };
         /** VerificationReviewRequest */
         VerificationReviewRequest: {
             /**
@@ -5359,7 +5456,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthSuccessResponse"];
+                    "application/json": components["schemas"]["VerificationRequiredResponse"];
                 };
             };
             /** @description Validation Error */
@@ -5392,7 +5489,73 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["VerificationRequiredResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_email_otp_api_v1_auth_email_verify_otp_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailOtpVerifyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["AuthSuccessResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resend_email_otp_api_v1_auth_email_resend_otp_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailOtpResendRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationRequiredResponse"];
                 };
             };
             /** @description Validation Error */

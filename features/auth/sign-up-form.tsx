@@ -1,14 +1,19 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { api } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
-import { finalizeAuthentication } from "./finalize-authentication";
+import { EmailOtpForm } from "./email-otp-form";
 import { signupErrorMessage } from "./messages";
-import { useSession } from "./session";
+import {
+  clearPendingEmailOtp,
+  isVerificationRequired,
+  readPendingEmailOtp,
+  savePendingEmailOtp,
+  type VerificationRequiredResponse,
+} from "./pending-otp";
 import {
   AuthField,
   AuthMessage,
@@ -17,7 +22,6 @@ import {
 } from "./ui";
 
 type Schema = components["schemas"];
-type AuthSuccessResponse = Schema["AuthSuccessResponse"];
 type SignupRequest = Schema["SignupRequest"];
 
 function formEmail(form: FormData) {
@@ -38,12 +42,47 @@ function fieldErrorsFrom(error: unknown): Record<string, string> {
   return fieldErrors;
 }
 
-export function SignUpForm({ next }: { next: string }) {
-  const router = useRouter();
-  const session = useSession();
+function restoredChallenge(): VerificationRequiredResponse | null {
+  const restored = readPendingEmailOtp("signup");
+  if (!restored) return null;
+  return {
+    authenticated: false,
+    verification_required: true,
+    email: restored.email,
+    purpose: "signup",
+    expires_in_seconds: Math.max(
+      1,
+      Math.ceil((restored.expiresAt - Date.now()) / 1000),
+    ),
+    message: "Enter the 6-digit verification code sent to your email.",
+  };
+}
+
+export function SignUpForm({
+  next,
+  onOtpActiveChange,
+}: {
+  next: string;
+  onOtpActiveChange?: (active: boolean) => void;
+}) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [challenge, setChallenge] =
+    useState<VerificationRequiredResponse | null>(() => restoredChallenge());
+  const [emailDraft, setEmailDraft] = useState(
+    () => readPendingEmailOtp("signup")?.email ?? "",
+  );
+  useEffect(() => {
+    onOtpActiveChange?.(Boolean(challenge));
+  }, [challenge, onOtpActiveChange]);
+
+  const backToCredentials = () => {
+    clearPendingEmailOtp();
+    setChallenge(null);
+    setError(null);
+    setFieldErrors({});
+  };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -55,7 +94,7 @@ export function SignUpForm({ next }: { next: string }) {
     const confirmation = String(form.get("confirm") ?? "");
 
     if (!email.includes("@")) {
-      setFieldErrors({ email: "Enter a valid email address." });
+      setFieldErrors({ email: "Please enter a valid email address." });
       return;
     }
     if (password.length < 8) {
@@ -75,13 +114,23 @@ export function SignUpForm({ next }: { next: string }) {
     setPending(true);
     setError(null);
     setFieldErrors({});
+    setEmailDraft(email);
 
     try {
-      const result = await api.post<AuthSuccessResponse, SignupRequest>(
-        "/auth/signup",
-        { body, retryAuth: false },
-      );
-      await finalizeAuthentication(result.user, session, router, next);
+      const result = await api.post<
+        VerificationRequiredResponse,
+        SignupRequest
+      >("/auth/signup", { body, retryAuth: false });
+
+      if (!isVerificationRequired(result)) {
+        setError("Check your email for a verification code to continue.");
+        setPending(false);
+        return;
+      }
+
+      savePendingEmailOtp(result, next);
+      setChallenge(result);
+      setPending(false);
     } catch (requestError) {
       const fields = fieldErrorsFrom(requestError);
       setFieldErrors(fields);
@@ -94,8 +143,28 @@ export function SignUpForm({ next }: { next: string }) {
     }
   };
 
+  if (challenge) {
+    return (
+      <EmailOtpForm
+        key={`${challenge.email}-${challenge.purpose}-${challenge.expires_in_seconds}`}
+        challenge={challenge}
+        next={next}
+        onChallengeUpdate={(nextChallenge) => {
+          savePendingEmailOtp(nextChallenge, next);
+          setChallenge(nextChallenge);
+        }}
+        onChangeEmail={backToCredentials}
+      />
+    );
+  }
+
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
+    <form
+      key={emailDraft || "sign-up"}
+      onSubmit={submit}
+      className="flex flex-col gap-5"
+      noValidate
+    >
       {error ? (
         <AuthMessage tone="error">
           {error}
@@ -125,6 +194,7 @@ export function SignUpForm({ next }: { next: string }) {
         inputMode="email"
         autoFocus
         required
+        defaultValue={emailDraft}
         placeholder="you@company.com"
         error={fieldErrors.email}
       />

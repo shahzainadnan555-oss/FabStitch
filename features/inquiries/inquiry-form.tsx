@@ -13,6 +13,7 @@ import { FabricMedia } from "@/components/marketplace/fabric-media";
 import { cn } from "@/lib/cn";
 import { loginHref } from "@/features/auth/return-to";
 import { useSession } from "@/features/auth/session";
+import { inquirySubmitErrorMessage } from "@/features/auth/messages";
 import { useMarketPreferences } from "@/features/preferences/market-preferences";
 import { isCountryCode, marketForCountry } from "@/features/preferences/market";
 import {
@@ -20,6 +21,7 @@ import {
   validateInquiryContact,
   type InquiryFieldErrors,
 } from "./contact";
+import { inquiryDateTime } from "./presentation";
 import type { InquiryFlowFabric } from "./types";
 
 type InquiryCreateResponse = components["schemas"]["InquiryCreateResponse"];
@@ -158,7 +160,7 @@ export function InquiryDialog({
               Fabric inquiry
             </p>
             <h2 className="mt-1 text-h2 font-semibold text-ink">
-              {success ? "Inquiry Submitted Successfully" : "Your inquiry"}
+              {success ? "Inquiry sent successfully" : "Your inquiry"}
             </h2>
           </div>
           <button
@@ -175,8 +177,8 @@ export function InquiryDialog({
         {success ? (
           <div className="px-5 py-6 sm:px-6" role="status" aria-live="polite">
             <p className="text-body leading-relaxed text-ink-2">
-              Your inquiry has been submitted successfully. Our team will
-              contact you as soon as possible at your registered email address.
+              Your inquiry has been sent. Our FabStitch team will contact you as
+              soon as possible.
             </p>
             <p className="mt-5 font-mono text-h3 tracking-[0.04em] text-ink">
               Inquiry #{success.inquiry.inquiry_number}
@@ -195,11 +197,20 @@ export function InquiryDialog({
                 label="Status"
                 value={success.inquiry.status.replaceAll("_", " ")}
               />
+              <SummaryItem
+                label="Submitted"
+                value={inquiryDateTime(success.inquiry.created_at)}
+              />
               {confirmedContact?.email ? (
                 <SummaryItem label="Email" value={confirmedContact.email} />
               ) : null}
               {confirmedContact?.country ? (
                 <SummaryItem label="Country" value={confirmedContact.country} />
+              ) : null}
+              {preferences?.currency ? (
+                <SummaryItem label="Currency" value={preferences.currency} />
+              ) : profile?.currency ? (
+                <SummaryItem label="Currency" value={profile.currency} />
               ) : null}
               {confirmedContact?.phone ? (
                 <SummaryItem label="Phone" value={confirmedContact.phone} />
@@ -390,14 +401,21 @@ function InquiryComposeForm({
         phone: trimmed(phone),
       });
     } catch (caught) {
+      const message = inquirySubmitErrorMessage(caught);
       const next =
         caught instanceof ApiError
-          ? caught
+          ? new ApiError({
+              status: caught.status,
+              code: caught.code,
+              message,
+              details: caught.details,
+              requestId: caught.requestId,
+              retryAfterSeconds: caught.retryAfterSeconds,
+            })
           : new ApiError({
               status: 0,
               code: "request_failed",
-              message:
-                "FabStitch could not submit your inquiry. Please try again.",
+              message,
             });
       onError(next);
       setFieldErrors({

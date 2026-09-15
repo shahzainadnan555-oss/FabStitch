@@ -6,14 +6,20 @@ import { postAuthDestination } from "./destination";
 import { useSession } from "./session";
 
 /** Sends an already-authenticated customer away from sign-in/sign-up. */
-export function RedirectIfAuthenticated({ next }: { next: string }) {
+export function RedirectIfAuthenticated({
+  next,
+  disabled = false,
+}: {
+  next: string;
+  disabled?: boolean;
+}) {
   const router = useRouter();
   const { hydrated, authenticated, user } = useSession();
 
   useEffect(() => {
-    if (!hydrated || !authenticated || !user) return;
+    if (disabled || !hydrated || !authenticated || !user) return;
     router.replace(postAuthDestination(user.onboarding_completed, next));
-  }, [authenticated, hydrated, next, router, user]);
+  }, [authenticated, disabled, hydrated, next, router, user]);
 
   return null;
 }

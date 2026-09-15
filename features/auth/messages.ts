@@ -20,6 +20,22 @@ const RATE_LIMIT_CODES = new Set([
   "rate_limit_exceeded",
 ]);
 
+const INVALID_OTP_CODES = new Set([
+  "invalid_otp",
+  "otp_invalid",
+  "invalid_code",
+  "code_invalid",
+  "verification_failed",
+  "otp_mismatch",
+]);
+
+const EXPIRED_OTP_CODES = new Set([
+  "otp_expired",
+  "code_expired",
+  "expired_otp",
+  "verification_expired",
+]);
+
 export type LoginErrorView = {
   message: string;
   missingAccount: boolean;
@@ -32,20 +48,37 @@ function logAuthError(error: unknown): void {
   console.info("[fabstitch:auth]", error.code, error.requestId ?? "");
 }
 
+function isNetworkFailure(error: unknown): boolean {
+  return (
+    error instanceof TypeError ||
+    (error instanceof Error &&
+      /failed to fetch|networkerror|load failed|aborted/i.test(error.message))
+  );
+}
+
+export function networkAuthMessage(): string {
+  return "Connection interrupted. Please check your internet connection and try again.";
+}
+
 function fallbackAuthMessage(error: unknown, fallback: string): string {
-  if (error instanceof TypeError) {
-    return "We couldn’t complete sign-in right now. Please try again.";
-  }
-  if (!(error instanceof ApiError)) {
-    return fallback;
-  }
+  if (isNetworkFailure(error)) return networkAuthMessage();
+  if (!(error instanceof ApiError)) return fallback;
   if (error.status === 429 || RATE_LIMIT_CODES.has(error.code)) {
-    return "Too many attempts. Please wait a moment and try again.";
+    return "You're trying too quickly. Please wait a moment and try again.";
   }
-  if (error.code === "validation_error") {
+  if (error.status === 401) {
+    return "Please sign in again to continue.";
+  }
+  if (error.status === 403) {
+    return "You don’t have permission to continue with this action.";
+  }
+  if (error.code === "validation_error" || error.status === 422) {
     return error.message || "Please check the highlighted fields.";
   }
-  return error.message || "Something went wrong. Please try again.";
+  if (error.status >= 500) {
+    return "We couldn’t complete this right now. Please try again.";
+  }
+  return error.message || fallback;
 }
 
 export function loginErrorView(
@@ -66,6 +99,16 @@ export function loginErrorView(
       missingAccount: false,
     };
   }
+  if (
+    error instanceof ApiError &&
+    (error.code === "verification_required" ||
+      error.code === "email_verification_required")
+  ) {
+    return {
+      message: "Enter the verification code we sent to your email.",
+      missingAccount: false,
+    };
+  }
   return {
     message: fallbackAuthMessage(
       error,
@@ -82,7 +125,47 @@ export function signupErrorMessage(error: unknown): string {
   }
   return fallbackAuthMessage(
     error,
-    "We couldn’t complete sign-in right now. Please try again.",
+    "We couldn’t create your account right now. Please try again.",
+  );
+}
+
+export function otpErrorMessage(error: unknown): string {
+  logAuthError(error);
+  if (isNetworkFailure(error)) return networkAuthMessage();
+  if (!(error instanceof ApiError)) {
+    return "We couldn't verify your code right now. Please try again.";
+  }
+  if (error.status === 429 || RATE_LIMIT_CODES.has(error.code)) {
+    return "Too many requests. Please wait a moment before trying again.";
+  }
+  if (EXPIRED_OTP_CODES.has(error.code) || /expir/i.test(error.message)) {
+    return "This code has expired. Request a new code.";
+  }
+  if (INVALID_OTP_CODES.has(error.code) || error.status === 400) {
+    return "The verification code is incorrect. Please try again.";
+  }
+  if (error.status === 422) {
+    return "Please enter the 6-digit verification code.";
+  }
+  if (error.status >= 500) {
+    return "We couldn't verify your code right now. Please try again.";
+  }
+  return (
+    error.message || "We couldn't verify your code right now. Please try again."
+  );
+}
+
+export function otpResendMessage(error: unknown): string {
+  logAuthError(error);
+  if (isNetworkFailure(error)) return networkAuthMessage();
+  if (!(error instanceof ApiError)) {
+    return "We couldn't send a new code right now. Please try again.";
+  }
+  if (error.status === 429 || RATE_LIMIT_CODES.has(error.code)) {
+    return "Too many requests. Please wait a moment before trying again.";
+  }
+  return (
+    error.message || "We couldn't send a new code right now. Please try again."
   );
 }
 
@@ -101,4 +184,27 @@ export function googleAuthErrorMessage(code?: string | null): string {
     return "This Google account’s email is not verified, so it cannot be used to sign in to FabStitch.";
   }
   return "Google sign-in was not completed. Please try again.";
+}
+
+export function inquirySubmitErrorMessage(error: unknown): string {
+  if (isNetworkFailure(error)) return networkAuthMessage();
+  if (!(error instanceof ApiError)) {
+    return "FabStitch could not submit your inquiry. Please try again.";
+  }
+  if (error.status === 401) {
+    return "Please sign in again to send your inquiry.";
+  }
+  if (error.status === 429 || RATE_LIMIT_CODES.has(error.code)) {
+    return "You're trying too quickly. Please wait a moment and try again.";
+  }
+  if (error.status === 422 || error.code === "validation_error") {
+    return error.message || "Please check the highlighted fields.";
+  }
+  if (error.status >= 500) {
+    return "We couldn't send your inquiry right now. Please try again.";
+  }
+  return (
+    error.message ||
+    "FabStitch could not submit your inquiry. Please try again."
+  );
 }

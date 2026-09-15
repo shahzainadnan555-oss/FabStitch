@@ -148,15 +148,20 @@ export function AuthSubmitButton({
   pendingLabel,
   busy = false,
   disabled = false,
+  type = "submit",
+  onClick,
 }: {
   children: ReactNode;
   pendingLabel?: string;
   busy?: boolean;
   disabled?: boolean;
+  type?: "submit" | "button";
+  onClick?: () => void;
 }) {
   return (
     <button
-      type="submit"
+      type={type}
+      onClick={onClick}
       disabled={busy || disabled}
       aria-busy={busy || undefined}
       className="inline-flex h-12 w-full items-center justify-center rounded-md bg-indigo text-[0.9375rem] font-semibold text-white transition-colors hover:bg-indigo-hover disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo"
