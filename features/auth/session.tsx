@@ -11,9 +11,9 @@ import {
 } from "react";
 import { api } from "@/lib/api/client";
 import { API_BASE_URL } from "@/lib/api/config";
-import { ApiError, apiErrorMessage, normalizeApiError } from "@/lib/api/errors";
+import { ApiError, normalizeApiError } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
-import { clearOauthPending, shouldRetrySessionRestore } from "./oauth-return";
+import { clearOauthPending } from "./oauth-return";
 
 type Schema = components["schemas"];
 type MeResponse = Schema["MeResponse"];
@@ -23,7 +23,7 @@ type OnboardingStateResponse = Schema["OnboardingStateResponse"];
 type LogoutResponse = Schema["LogoutResponse"];
 
 type SessionState = {
-  status: "loading" | "authenticated" | "anonymous" | "error";
+  status: "loading" | "authenticated" | "anonymous";
   user: UserPublic | null;
   profile: UserPublic | null;
   preferences: CustomerPreferencesOut | null;
@@ -33,7 +33,6 @@ type SessionState = {
 
 type SessionRefreshOptions = {
   persistOnUnauthorized?: boolean;
-  retries?: number;
 };
 
 type SessionContextValue = SessionState & {
@@ -46,6 +45,10 @@ type SessionContextValue = SessionState & {
   setOnboarding: (onboarding: OnboardingStateResponse) => void;
   signOut: () => Promise<void>;
 };
+
+const AUTH_ME_TIMEOUT_MS = 5000;
+const DIRECT_ME_TIMEOUT_MS = 3000;
+const EXTRA_TIMEOUT_MS = 4000;
 
 const INITIAL_STATE: SessionState = {
   status: "loading",
@@ -79,8 +82,30 @@ function isUnauthorized(error: unknown): boolean {
   return error instanceof ApiError && error.status === 401;
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function isTimeout(error: unknown): boolean {
+  return error instanceof ApiError && error.code === "timeout";
+}
+
+function timeoutError(): ApiError {
+  return new ApiError({
+    status: 408,
+    code: "timeout",
+    message: "Authentication check timed out.",
+  });
+}
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => reject(timeoutError()), ms);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 async function parseMe(response: Response): Promise<MeResponse> {
@@ -98,184 +123,174 @@ async function parseMe(response: Response): Promise<MeResponse> {
   return body as MeResponse;
 }
 
-async function readDirectMe(): Promise<MeResponse | null> {
-  if (typeof window === "undefined") return null;
+async function readDirectMe(): Promise<MeResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    credentials: "include",
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+  });
+  return parseMe(response);
+}
+
+async function refreshBackendSession(): Promise<void> {
+  await api.post("/auth/session/refresh", { retryAuth: false });
+}
+
+async function readMe(): Promise<MeResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      credentials: "include",
-      cache: "no-store",
-      headers: { Accept: "application/json" },
-    });
-    return await parseMe(response);
+    return await withTimeout(
+      api.get<MeResponse>("/auth/me", {
+        cache: "no-store",
+        retryAuth: false,
+      }),
+      AUTH_ME_TIMEOUT_MS,
+    );
+  } catch (error) {
+    if (isUnauthorized(error)) {
+      try {
+        await withTimeout(refreshBackendSession(), AUTH_ME_TIMEOUT_MS);
+        return await withTimeout(
+          api.get<MeResponse>("/auth/me", {
+            cache: "no-store",
+            retryAuth: false,
+          }),
+          AUTH_ME_TIMEOUT_MS,
+        );
+      } catch (refreshError) {
+        if (isUnauthorized(refreshError) || isTimeout(refreshError)) {
+          throw refreshError;
+        }
+      }
+    }
+    try {
+      return await withTimeout(readDirectMe(), DIRECT_ME_TIMEOUT_MS);
+    } catch {
+      throw error;
+    }
+  }
+}
+
+function sessionFromUser(user: UserPublic): SessionState {
+  return {
+    status: "authenticated",
+    user,
+    profile: user,
+    preferences: preferencesFromUser(user),
+    onboarding: null,
+    error: null,
+  };
+}
+
+async function loadOptional<T>(path: string): Promise<T | null> {
+  try {
+    return await withTimeout(
+      api.get<T>(path, { cache: "no-store", retryAuth: false }),
+      EXTRA_TIMEOUT_MS,
+    );
   } catch {
     return null;
   }
 }
 
-async function readMe(): Promise<MeResponse> {
-  let session: MeResponse | null = null;
-  try {
-    session = await api.get<MeResponse>("/auth/me", {
-      cache: "no-store",
-      retryAuth: false,
-    });
-  } catch (error) {
-    if (!isUnauthorized(error)) {
-      const direct = await readDirectMe();
-      if (direct) return direct;
-    }
-    throw error;
-  }
-  if (session.authenticated && session.user) return session;
-  const direct = await readDirectMe();
-  if (direct?.authenticated && direct.user) return direct;
-  return session;
-}
-
-async function loadOptional<T>(path: string): Promise<T | null> {
-  try {
-    return await api.get<T>(path, { cache: "no-store" });
-  } catch (error) {
-    if (isUnauthorized(error)) throw error;
-    return null;
-  }
-}
-
 async function loadSession(): Promise<SessionState> {
-  let session: MeResponse;
   try {
-    session = await readMe();
+    const session = await readMe();
+    if (!session.authenticated || !session.user) return ANONYMOUS_STATE;
+    return sessionFromUser(session.user);
   } catch (error) {
-    if (isUnauthorized(error)) return ANONYMOUS_STATE;
+    if (isUnauthorized(error) || isTimeout(error)) return ANONYMOUS_STATE;
     throw error;
   }
-  if (!session.authenticated || !session.user) return ANONYMOUS_STATE;
+}
 
-  const user = session.user;
+async function loadAccountExtras(
+  user: UserPublic,
+): Promise<Partial<SessionState>> {
   const profile = (await loadOptional<UserPublic>("/account/profile")) ?? user;
-
   if (user.role === "admin") {
-    return {
-      status: "authenticated",
-      user,
-      profile,
-      preferences: null,
-      onboarding: null,
-      error: null,
-    };
+    return { profile, preferences: null, onboarding: null };
   }
-
   const [preferences, onboarding] = await Promise.all([
     loadOptional<CustomerPreferencesOut>("/me/preferences"),
     loadOptional<OnboardingStateResponse>("/account/onboarding"),
   ]);
-
   return {
-    status: "authenticated",
-    user,
     profile,
     preferences: preferences ?? preferencesFromUser(profile),
     onboarding,
-    error: null,
   };
-}
-
-async function loadSessionWithRetries(retries: number): Promise<SessionState> {
-  let last = await loadSession();
-  for (let attempt = 0; attempt < retries && last.status === "anonymous";) {
-    attempt += 1;
-    await delay(250 * attempt);
-    last = await loadSession();
-  }
-  return last;
 }
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SessionState>(INITIAL_STATE);
   const generation = useRef(0);
+  const flight = useRef<Promise<void> | null>(null);
 
   const refresh = useCallback(async (options?: SessionRefreshOptions) => {
+    if (flight.current) {
+      await flight.current;
+      return;
+    }
+
     const token = ++generation.current;
+    const run = (async () => {
+      try {
+        const next = await loadSession();
+        if (token !== generation.current) return;
+        if (options?.persistOnUnauthorized && next.status === "anonymous") {
+          return;
+        }
+        clearOauthPending();
+        setState(next);
+        if (next.status === "authenticated" && next.user) {
+          const extras = await loadAccountExtras(next.user);
+          if (token !== generation.current) return;
+          setState((current) =>
+            current.status === "authenticated"
+              ? { ...current, ...extras, error: null }
+              : current,
+          );
+        }
+      } catch {
+        if (token !== generation.current) return;
+        clearOauthPending();
+        setState((current) =>
+          current.user
+            ? { ...current, status: "authenticated" }
+            : ANONYMOUS_STATE,
+        );
+      }
+    })();
+
+    flight.current = run;
     try {
-      const next = await loadSessionWithRetries(options?.retries ?? 0);
-      if (token !== generation.current) return;
-      if (options?.persistOnUnauthorized && next.status === "anonymous") {
-        return;
-      }
-      clearOauthPending();
-      setState(next);
-    } catch (error) {
-      if (token !== generation.current) return;
-      if (isUnauthorized(error)) {
-        if (!options?.persistOnUnauthorized) {
-          setState(ANONYMOUS_STATE);
-        }
-        return;
-      }
-      setState((current) => {
-        if (current.user) {
-          return {
-            ...current,
-            status: "authenticated",
-            error: apiErrorMessage(
-              error,
-              "FabStitch could not load your account. Try again.",
-            ),
-          };
-        }
-        if ((options?.retries ?? 0) > 0) {
-          return {
-            ...ANONYMOUS_STATE,
-            status: "error",
-            error: apiErrorMessage(
-              error,
-              "FabStitch could not load your account. Try again.",
-            ),
-          };
-        }
-        return ANONYMOUS_STATE;
-      });
-      throw error;
+      await run;
+    } finally {
+      if (flight.current === run) flight.current = null;
     }
   }, []);
 
   useEffect(() => {
-    const retries = shouldRetrySessionRestore() ? 4 : 0;
-    void refresh({ retries }).catch(() => {});
+    void refresh().catch(() => {});
   }, [refresh]);
 
   useEffect(() => {
     const expired = () => {
       generation.current += 1;
+      flight.current = null;
       clearOauthPending();
       setState(ANONYMOUS_STATE);
     };
-    const restore = () => {
-      if (document.visibilityState !== "visible") return;
-      if (!shouldRetrySessionRestore()) return;
-      void refresh({ retries: 3, persistOnUnauthorized: true }).catch(() => {});
-    };
     window.addEventListener("fabstitch:session-expired", expired);
-    window.addEventListener("pageshow", restore);
-    document.addEventListener("visibilitychange", restore);
-    return () => {
+    return () =>
       window.removeEventListener("fabstitch:session-expired", expired);
-      window.removeEventListener("pageshow", restore);
-      document.removeEventListener("visibilitychange", restore);
-    };
-  }, [refresh]);
+  }, []);
 
   const adoptUser = useCallback((user: UserPublic) => {
     generation.current += 1;
+    flight.current = null;
     clearOauthPending();
-    setState({
-      status: "authenticated",
-      user,
-      profile: user,
-      preferences: preferencesFromUser(user),
-      onboarding: null,
-      error: null,
-    });
+    setState(sessionFromUser(user));
   }, []);
 
   const setProfile = useCallback((profile: UserPublic) => {
@@ -328,6 +343,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     generation.current += 1;
+    flight.current = null;
     clearOauthPending();
     try {
       await api.post<LogoutResponse>("/auth/logout", {
@@ -335,7 +351,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       });
     } catch {
       // HttpOnly cookies are cleared by the backend when logout succeeds.
-      // Always drop local auth state so the header returns to Sign In.
     } finally {
       setState(ANONYMOUS_STATE);
     }
@@ -344,7 +359,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<SessionContextValue>(
     () => ({
       ...state,
-      hydrated: state.status !== "loading" && state.status !== "error",
+      hydrated: state.status !== "loading",
       authenticated: state.status === "authenticated" && Boolean(state.user),
       refresh,
       adoptUser,

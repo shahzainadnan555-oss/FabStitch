@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthMessage } from "./controls";
@@ -24,31 +24,21 @@ export function OAuthCallback({
 }) {
   const router = useRouter();
   const { hydrated, authenticated, user, refresh } = useSession();
-  const [synced, setSynced] = useState(Boolean(error));
-  const failed = error
-    ? googleAuthErrorMessage(error)
-    : synced && hydrated && !authenticated
+  const failed =
+    error || (hydrated && !authenticated)
       ? googleAuthErrorMessage(error)
       : null;
 
   useEffect(() => {
     if (error) return;
-    let cancelled = false;
-    void refresh({ retries: 4 })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setSynced(true);
-      });
-    return () => {
-      cancelled = true;
-    };
+    void refresh().catch(() => {});
   }, [error, refresh]);
 
   useEffect(() => {
-    if (error || !synced || !hydrated || !authenticated || !user) return;
+    if (error || !hydrated || !authenticated || !user) return;
     router.replace(destination(user.onboarding_completed, next));
     router.refresh();
-  }, [authenticated, error, hydrated, next, router, synced, user]);
+  }, [authenticated, error, hydrated, next, router, user]);
 
   if (failed) {
     return (

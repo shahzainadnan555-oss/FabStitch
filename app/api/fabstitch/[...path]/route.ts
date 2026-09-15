@@ -47,6 +47,7 @@ async function proxy(
     body,
     redirect: "manual",
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
 
   const responseHeaders = new Headers();
