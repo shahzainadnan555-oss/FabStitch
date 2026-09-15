@@ -5,14 +5,14 @@ import { GlobalNav } from "./global-nav";
 /**
  * Public storefront header.
  *
- * Layout: logo left · primary nav centered to the header · utilities right.
- * Nav is absolutely centered so asymmetric logo/CTA widths cannot push it off-center.
+ * Three clear zones so primary pages never collide with search/account:
+ * LEFT logo · CENTER primary pages · RIGHT utilities / CTAs
  */
 export function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-rule-brand bg-paper/94 backdrop-blur-md">
-      <div className="relative mx-auto flex h-[4.25rem] w-[calc(100%-48px)] max-w-[1400px] items-center">
-        <div className="relative z-10 shrink-0">
+      <div className="mx-auto flex h-[4.25rem] w-[calc(100%-40px)] max-w-[1440px] items-center gap-4 sm:w-[calc(100%-48px)] sm:gap-6">
+        <div className="shrink-0">
           <Link
             href="/"
             aria-label="FabStitch home"

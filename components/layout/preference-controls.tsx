@@ -64,6 +64,7 @@ function PreferenceMenu<T extends string>({
       <button
         ref={trigger}
         type="button"
+        aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={`${id}-menu`}
@@ -72,10 +73,12 @@ function PreferenceMenu<T extends string>({
         className={cn(
           "inline-flex items-center justify-between gap-1.5 rounded-xs border border-transparent text-sm font-medium text-ink-2 transition-colors hover:border-rule-2 hover:bg-paper-sunk hover:text-indigo",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo",
-          mobile ? "h-11 w-full px-3" : "h-9 px-2.5",
+          mobile ? "h-11 w-full px-3" : "h-9 px-2",
         )}
       >
-        <span>{label}</span>
+        <span className={mobile ? undefined : "hidden 2xl:inline"}>
+          {label}
+        </span>
         <span className="font-mono text-[0.69rem] text-ink-4">{value}</span>
       </button>
 

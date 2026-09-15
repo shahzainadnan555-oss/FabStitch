@@ -15,6 +15,7 @@ export function HeaderSearch({ mobile = false }: { mobile?: boolean }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
+        aria-label={mobile ? undefined : "Search fabrics"}
         className={
           mobile
             ? "mt-1 inline-flex w-full items-center gap-2 border-t border-rule px-3 py-3 text-left text-base font-medium text-ink"
@@ -22,7 +23,7 @@ export function HeaderSearch({ mobile = false }: { mobile?: boolean }) {
         }
       >
         <IconSearch width={mobile ? 16 : 15} height={mobile ? 16 : 15} />
-        Search
+        <span className={mobile ? undefined : "hidden 2xl:inline"}>Search</span>
       </button>
 
       <Dialog

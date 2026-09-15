@@ -46,7 +46,7 @@ function NavLinks({
         className={cn(
           mobile
             ? "relative rounded-sm px-3 py-3 text-base font-medium text-ink transition-colors hover:bg-indigo-wash hover:text-indigo"
-            : "group relative whitespace-nowrap rounded-xs px-1.5 py-2 text-sm font-medium tracking-[0.01em] transition-colors hover:text-indigo",
+            : "group relative whitespace-nowrap rounded-xs px-2 py-2 text-sm font-medium tracking-[0.01em] transition-colors hover:text-indigo",
           active
             ? mobile
               ? "bg-indigo-wash text-indigo"
@@ -94,25 +94,26 @@ export function GlobalNav() {
 
   return (
     <>
-      {/* Centered to the header/viewport — not to leftover flex space */}
+      {/* Middle zone: primary pages centered between logo and utilities */}
       <nav
         aria-label="Primary"
-        className="pointer-events-none absolute inset-0 hidden items-center justify-center xl:flex"
+        className="hidden min-w-0 flex-1 items-center justify-center xl:flex"
       >
-        <div className="pointer-events-auto flex items-center gap-5">
+        <div className="flex max-w-full flex-wrap items-center justify-center gap-x-1 gap-y-1 2xl:gap-x-2">
           <NavLinks />
         </div>
       </nav>
 
-      <div className="relative z-10 ml-auto hidden shrink-0 items-center gap-2 xl:flex">
+      {/* Right zone: clearly separated from primary pages */}
+      <div className="ml-auto hidden shrink-0 items-center gap-3 border-l border-rule-2 pl-5 xl:flex 2xl:gap-3.5 2xl:pl-6">
         <HeaderSearch />
         <PreferenceControls />
-        <div className="shrink-0">
+        <div className="shrink-0 pl-1">
           <AccountLink />
         </div>
       </div>
 
-      <div className="relative z-10 ml-auto xl:hidden">
+      <div className="relative ml-auto xl:hidden">
         <button
           ref={menuButton}
           type="button"
