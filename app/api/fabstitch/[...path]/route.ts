@@ -32,7 +32,9 @@ async function proxy(
 ): Promise<NextResponse> {
   const headers = new Headers();
   request.headers.forEach((value, key) => {
-    if (HOP_BY_HOP.has(key.toLowerCase())) return;
+    const name = key.toLowerCase();
+    if (HOP_BY_HOP.has(name)) return;
+    if (name === "accept-encoding") return;
     headers.set(key, value);
   });
 

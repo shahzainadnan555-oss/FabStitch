@@ -1,8 +1,5 @@
 const LIVE_API_BASE_URL = "https://fabstitch-backend.fastapicloud.dev/api/v1";
 
-/** Same-origin browser proxy so session cookies stay first-party. */
-export const BROWSER_API_PREFIX = "/api/fabstitch";
-
 function normalizeBaseUrl(value: string, expectedProtocol: RegExp): string {
   const url = new URL(value);
   if (!expectedProtocol.test(url.protocol)) {
@@ -42,20 +39,9 @@ export const WS_BASE_URL = configuredUrl(
   defaultWebSocketUrl,
 );
 
-function browserOrigin(): string | null {
-  if (typeof window === "undefined") return null;
-  const origin = window.location?.origin;
-  return origin && origin !== "null" ? origin : null;
-}
-
 export function apiUrl(path: string): URL {
   if (/^https?:\/\//i.test(path)) return new URL(path);
-  const suffix = path.replace(/^\/+/, "");
-  const origin = browserOrigin();
-  if (origin) {
-    return new URL(`${origin}${BROWSER_API_PREFIX}/${suffix}`);
-  }
-  return new URL(`${API_BASE_URL}/${suffix}`);
+  return new URL(`${API_BASE_URL}/${path.replace(/^\/+/, "")}`);
 }
 
 export function webSocketUrl(path: string): URL {

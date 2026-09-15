@@ -13,6 +13,8 @@ import { useSession } from "@/features/auth/session";
 import {
   DEFAULT_COUNTRY,
   DEFAULT_CURRENCY,
+  SUPPORTED_CURRENCIES,
+  SUPPORTED_MARKETS,
   isCountryCode,
   isCurrencyCode,
   type CountryCode,
@@ -94,6 +96,38 @@ function validCurrencies(items: CurrencyOut[]): CurrencyOption[] {
   );
 }
 
+const FALLBACK_CURRENCY_LABELS: Record<
+  (typeof SUPPORTED_CURRENCIES)[number],
+  { name: string; symbol: string }
+> = {
+  USD: { name: "US Dollar", symbol: "$" },
+  GBP: { name: "British Pound", symbol: "£" },
+  TRY: { name: "Turkish Lira", symbol: "₺" },
+  PKR: { name: "Pakistani Rupee", symbol: "Rs" },
+  INR: { name: "Indian Rupee", symbol: "₹" },
+  BDT: { name: "Bangladeshi Taka", symbol: "৳" },
+  SGD: { name: "Singapore Dollar", symbol: "S$" },
+};
+
+function fallbackCountries(): CountryOption[] {
+  return SUPPORTED_MARKETS.map((market, index) => ({
+    code: market.countryCode,
+    name: market.countryName,
+    default_currency: market.defaultCurrency,
+    ships_to: true,
+    sort_order: (index + 1) * 10,
+  }));
+}
+
+function fallbackCurrencies(): CurrencyOption[] {
+  return SUPPORTED_CURRENCIES.map((code, index) => ({
+    code,
+    name: FALLBACK_CURRENCY_LABELS[code].name,
+    symbol: FALLBACK_CURRENCY_LABELS[code].symbol,
+    sort_order: (index + 1) * 10,
+  }));
+}
+
 export function MarketPreferenceProvider({
   children,
 }: {
@@ -112,7 +146,6 @@ export function MarketPreferenceProvider({
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<PreferenceError | null>(null);
-  const [optionsAttempt, setOptionsAttempt] = useState(0);
   const retryAction = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -123,8 +156,12 @@ export function MarketPreferenceProvider({
     ])
       .then(([countryResponse, currencyResponse]) => {
         if (!active) return;
-        const nextCountries = validCountries(countryResponse.items);
-        const nextCurrencies = validCurrencies(currencyResponse.items);
+        const loadedCountries = validCountries(countryResponse.items);
+        const loadedCurrencies = validCurrencies(currencyResponse.items);
+        const nextCountries =
+          loadedCountries.length > 0 ? loadedCountries : fallbackCountries();
+        const nextCurrencies =
+          loadedCurrencies.length > 0 ? loadedCurrencies : fallbackCurrencies();
         setCountries(nextCountries);
         setCurrencies(nextCurrencies);
         setCountryState((current) =>
@@ -140,19 +177,14 @@ export function MarketPreferenceProvider({
         setError(null);
         retryAction.current = null;
       })
-      .catch((requestError: unknown) => {
+      .catch(() => {
         if (!active) return;
-        setError({
-          message: apiErrorMessage(
-            requestError,
-            "Country and currency options could not be loaded.",
-          ),
-          retryable: true,
-        });
-        retryAction.current = () => {
-          setLoadingOptions(true);
-          setOptionsAttempt((attempt) => attempt + 1);
-        };
+        const nextCountries = fallbackCountries();
+        const nextCurrencies = fallbackCurrencies();
+        setCountries(nextCountries);
+        setCurrencies(nextCurrencies);
+        setError(null);
+        retryAction.current = null;
       })
       .finally(() => {
         if (active) setLoadingOptions(false);
@@ -160,7 +192,7 @@ export function MarketPreferenceProvider({
     return () => {
       active = false;
     };
-  }, [optionsAttempt]);
+  }, []);
 
   useEffect(() => {
     const sessionCountry = sessionPreferences?.country;
