@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import { IconArrowRight, IconCheck } from "@/components/ui/icon";
 import { postAuthDestination } from "@/features/auth/destination";
 import { useSession } from "@/features/auth/session";
-import { FABRIC_OPTIONS } from "./options";
+import { resolveOnboardingFabricImage } from "./fabric-images";
 import { api } from "@/lib/api/client";
 import { apiErrorMessage } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
@@ -336,9 +336,11 @@ function FabricOptionGrid({
     <ul className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
       {options.map((option, index) => {
         const active = selected.includes(option.code);
-        const image =
-          FABRIC_OPTIONS.find((item) => item.value === option.code)?.image ??
-          FABRIC_OPTIONS[index % FABRIC_OPTIONS.length]!.image;
+        const image = resolveOnboardingFabricImage(
+          option.code,
+          option.display_name,
+          index,
+        );
         return (
           <li key={option.id}>
             <button
@@ -357,6 +359,7 @@ function FabricOptionGrid({
                 alt=""
                 fill
                 sizes="(min-width: 640px) 22vw, 46vw"
+                loading="lazy"
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
               />
               <span

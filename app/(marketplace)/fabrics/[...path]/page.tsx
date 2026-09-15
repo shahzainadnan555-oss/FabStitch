@@ -7,6 +7,7 @@ import {
   CatalogCursorPagination,
   NoResults,
 } from "@/components/marketplace/results";
+import { CatalogLoadError } from "@/components/marketplace/catalog-load-error";
 import { GSM_BOUNDS, numericParam } from "@/lib/query-params";
 import {
   getCustomerCatalogFabric,
@@ -70,7 +71,13 @@ type Props = PageProps<"/fabrics/[...path]">;
  */
 async function catalogueFabric(path: string[]) {
   if (path.length !== 1) return null;
-  return getCustomerCatalogFabric(path[0]);
+  try {
+    return await getCustomerCatalogFabric(path[0]);
+  } catch {
+    // Transient API failures must not collapse the route into a full-page
+    // crash for an otherwise valid fabric slug.
+    return "unavailable" as const;
+  }
 }
 
 export function generateStaticParams() {
@@ -91,6 +98,12 @@ export async function generateMetadata({
 }: Props): Promise<Metadata> {
   const [{ path }, query] = await Promise.all([params, searchParams]);
   const detail = await catalogueFabric(path);
+  if (detail === "unavailable") {
+    return registeredStorefrontMetadata(`/fabrics/${path[0]}/`, {
+      title: "Fabric",
+      index: false,
+    });
+  }
   if (detail) {
     const { fabric } = detail;
     return registeredStorefrontMetadata(`/fabrics/${fabric.slug}/`, {
@@ -134,6 +147,14 @@ export default async function FabricCategoryPage({
 }: Props) {
   const { path } = await params;
   const detail = await catalogueFabric(path);
+  if (detail === "unavailable") {
+    return (
+      <CatalogLoadError
+        title="Unable to load this fabric right now."
+        description="We're having trouble connecting. Try again in a moment."
+      />
+    );
+  }
   if (detail) return <CatalogFabricPage detail={detail} />;
 
   const route = resolveFabricPath(path);
@@ -156,23 +177,37 @@ export default async function FabricCategoryPage({
   // Material guides may only surface source-backed FabStitch fabrics. They
   // never read the legacy listing repository, even when an environment is
   // configured for API or fixture data.
-  const results = await listCustomerCatalog({
-    q: single(query.q) ?? route.node?.name ?? route.family?.name ?? route.title,
-    weightMin:
-      route.gsm ??
-      numericParam(
-        single(query.weight_min) ?? single(query.gsm_min),
-        GSM_BOUNDS,
-      ),
-    weightMax:
-      route.gsm ??
-      numericParam(
-        single(query.weight_max) ?? single(query.gsm_max),
-        GSM_BOUNDS,
-      ),
-    cursor: single(query.cursor),
-    limit: numericParam(single(query.page_size), { min: 1, max: 48 }) ?? 12,
-  });
+  let results;
+  let catalogFailed = false;
+  try {
+    results = await listCustomerCatalog({
+      q:
+        single(query.q) ??
+        route.node?.name ??
+        route.family?.name ??
+        route.title,
+      weightMin:
+        route.gsm ??
+        numericParam(
+          single(query.weight_min) ?? single(query.gsm_min),
+          GSM_BOUNDS,
+        ),
+      weightMax:
+        route.gsm ??
+        numericParam(
+          single(query.weight_max) ?? single(query.gsm_max),
+          GSM_BOUNDS,
+        ),
+      cursor: single(query.cursor),
+      limit: numericParam(single(query.page_size), { min: 1, max: 48 }) ?? 12,
+    });
+  } catch {
+    catalogFailed = true;
+  }
+
+  if (catalogFailed || !results) {
+    return <CatalogLoadError title="Unable to load fabrics right now." />;
+  }
 
   const crumbs = buildCrumbs(route);
   const children = route.node ? childrenOf(route.node.slug) : [];

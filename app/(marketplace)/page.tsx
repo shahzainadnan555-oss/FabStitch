@@ -57,19 +57,31 @@ export default function LandingPage() {
 }
 
 async function LandingFabricDiscovery() {
-  const discovery = await getHomepageDiscovery();
-  const candidates = discovery.recommended.length
-    ? discovery.recommended
-    : discovery.sections.flatMap((section) => section.items);
-  const catalogue = [
-    ...new Map(candidates.map((fabric) => [fabric.slug, fabric])).values(),
-  ].slice(0, 5);
+  let catalogue: CustomerCatalogFabric[] = [];
+  try {
+    const discovery = await getHomepageDiscovery();
+    const candidates = discovery.recommended.length
+      ? discovery.recommended
+      : discovery.sections.flatMap((section) => section.items);
+    catalogue = [
+      ...new Map(candidates.map((fabric) => [fabric.slug, fabric])).values(),
+    ].slice(0, 5);
+  } catch {
+    // Optional homepage widget — never take down the landing page.
+    catalogue = [];
+  }
   return <FabricDiscovery items={catalogue} />;
 }
 
 async function LandingCollections() {
-  const collections = await getCustomerCollections();
-  return <Collections items={collections.slice(0, 7)} />;
+  let items: CustomerCollectionCard[] = [];
+  try {
+    const collections = await getCustomerCollections();
+    items = collections.slice(0, 7);
+  } catch {
+    items = [];
+  }
+  return <Collections items={items} />;
 }
 
 function Hero() {

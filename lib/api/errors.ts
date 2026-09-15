@@ -110,13 +110,41 @@ export function normalizeApiError(
       status === 401
         ? "Your session has expired. Please sign in again."
         : status === 429
-          ? "You're trying too quickly. Please wait a moment and try again."
-          : "FabStitch could not complete this request.",
+          ? "You're making requests too quickly. Please wait a moment and try again."
+          : status >= 500
+            ? "We're having trouble connecting right now. Please try again."
+            : "FabStitch could not complete this request.",
     requestId: requestId ?? undefined,
     retryAfterSeconds: headerRetry,
   });
 }
 
+/** User-facing copy — never expose raw backend/stack detail. */
 export function apiErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof ApiError ? error.message : fallback;
+  if (!(error instanceof ApiError)) return fallback;
+  if (error.status === 429) {
+    return "You're making requests too quickly. Please wait a moment and try again.";
+  }
+  if (error.status >= 500 || error.code === "timeout") {
+    return "We're having trouble connecting right now. Please try again.";
+  }
+  if (error.status === 401) {
+    return "Your session has expired. Please sign in again.";
+  }
+  if (error.status === 403) {
+    return "You don't have permission to do that.";
+  }
+  if (error.status === 404) {
+    return "We couldn't find what you were looking for.";
+  }
+  // Prefer short client-safe messages; avoid dumping verbose backend detail.
+  const message = error.message?.trim();
+  if (
+    message &&
+    message.length <= 160 &&
+    !/traceback|exception|stack/i.test(message)
+  ) {
+    return message;
+  }
+  return fallback;
 }

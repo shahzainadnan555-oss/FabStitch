@@ -198,7 +198,8 @@ async function loadSession(): Promise<SessionState> {
     if (!session.authenticated || !session.user) return ANONYMOUS_STATE;
     return sessionFromUser(session.user);
   } catch (error) {
-    if (isUnauthorized(error) || isTimeout(error)) return ANONYMOUS_STATE;
+    if (isUnauthorized(error)) return ANONYMOUS_STATE;
+    // Network / timeout / 5xx: do not invent an anonymous logout.
     throw error;
   }
 }
@@ -225,6 +226,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SessionState>(INITIAL_STATE);
   const generation = useRef(0);
   const flight = useRef<Promise<void> | null>(null);
+  const networkRetries = useRef(0);
+  const refreshRef = useRef<(options?: SessionRefreshOptions) => Promise<void>>(
+    async () => {},
+  );
 
   const refresh = useCallback(async (options?: SessionRefreshOptions) => {
     if (flight.current) {
@@ -240,6 +245,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         if (options?.persistOnUnauthorized && next.status === "anonymous") {
           return;
         }
+        networkRetries.current = 0;
         clearOauthPending();
         setState(next);
         if (next.status === "authenticated" && next.user) {
@@ -251,14 +257,43 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
               : current,
           );
         }
-      } catch {
+      } catch (error) {
         if (token !== generation.current) return;
-        clearOauthPending();
-        setState((current) =>
-          current.user
-            ? { ...current, status: "authenticated" }
-            : ANONYMOUS_STATE,
-        );
+        if (isUnauthorized(error)) {
+          networkRetries.current = 0;
+          clearOauthPending();
+          setState(ANONYMOUS_STATE);
+          return;
+        }
+        setState((current) => {
+          if (current.user) {
+            return {
+              ...current,
+              status: "authenticated",
+              error:
+                "We're having trouble connecting right now. Please try again.",
+            };
+          }
+          return {
+            ...INITIAL_STATE,
+            status: "loading",
+            error:
+              "We're having trouble connecting right now. Please try again.",
+          };
+        });
+        if (networkRetries.current < 2) {
+          networkRetries.current += 1;
+          window.setTimeout(() => {
+            void refreshRef.current().catch(() => {});
+          }, 2000 * networkRetries.current);
+        } else {
+          // Exhausted retries without a known user — stop blocking the shell.
+          setState({
+            ...ANONYMOUS_STATE,
+            error:
+              "We're having trouble connecting right now. Please try again.",
+          });
+        }
       }
     })();
 
@@ -269,6 +304,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       if (flight.current === run) flight.current = null;
     }
   }, []);
+
+  useEffect(() => {
+    refreshRef.current = refresh;
+  }, [refresh]);
 
   useEffect(() => {
     void refresh().catch(() => {});

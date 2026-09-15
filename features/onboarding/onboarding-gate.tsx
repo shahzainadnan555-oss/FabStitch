@@ -58,10 +58,7 @@ export function OnboardingGate({ next }: { next: string }) {
       .catch((requestError: unknown) => {
         if (cancelled) return;
         setError(
-          apiErrorMessage(
-            requestError,
-            "Your setup questions could not be loaded. Try again.",
-          ),
+          apiErrorMessage(requestError, "We couldn't load your choices."),
         );
       });
     return () => {

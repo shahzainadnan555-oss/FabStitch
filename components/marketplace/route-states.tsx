@@ -125,12 +125,14 @@ export function RouteError({
         <p className="font-mono text-label uppercase text-alert">Error</p>
         <h1 className="mt-3 text-h1 font-semibold text-ink text-balance">
           {scope === "fabric"
-            ? "We couldn’t load this fabric right now"
-            : `We couldn’t load this ${scope} right now`}
+            ? "Unable to load this fabric right now."
+            : scope === "sign-in"
+              ? "We couldn't complete this sign-in screen."
+              : "We're having trouble loading this page."}
         </h1>
         <p className="mt-3 text-body text-ink-3 text-pretty">
-          The application shell and your session are still available. Try this
-          content again or continue browsing fabrics.
+          The rest of FabStitch is still available. Try again, or continue
+          browsing fabrics.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           <Button variant="primary" onClick={reset}>

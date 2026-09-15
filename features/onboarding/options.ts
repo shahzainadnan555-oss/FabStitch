@@ -1,9 +1,11 @@
-import { LANDING_MEDIA } from "@/components/landing/media";
 import {
   APPLICATION_GROUPS,
   FEATURED_APPLICATIONS,
 } from "@/domain/taxonomy/applications";
 import { BUYER_CATEGORIES } from "@/domain/taxonomy/buyers";
+import { FABRIC_OPTIONS } from "./fabric-images";
+
+export { FABRIC_OPTIONS };
 
 const BUSINESS_SLUGS = [
   "clothing-fashion-brands",
@@ -26,29 +28,6 @@ export const WORK_OPTIONS = APPLICATION_GROUPS.map((group) => ({
   label: group.name,
   hint: `${group.applications.length} supported uses`,
 }));
-
-export const FABRIC_OPTIONS = [
-  {
-    value: "cotton",
-    label: "Cotton",
-    image: LANDING_MEDIA.cotton,
-  },
-  { value: "silk", label: "Silk", image: LANDING_MEDIA.silk },
-  { value: "linen", label: "Linen", image: LANDING_MEDIA.linen },
-  { value: "denim", label: "Denim", image: LANDING_MEDIA.denim },
-  { value: "knitwear", label: "Knitwear", image: LANDING_MEDIA.knit },
-  { value: "tailoring", label: "Tailoring", image: LANDING_MEDIA.twill },
-  {
-    value: "performance",
-    label: "Performance",
-    image: LANDING_MEDIA.performance,
-  },
-  {
-    value: "home-contract",
-    label: "Home & Contract",
-    image: LANDING_MEDIA.linen,
-  },
-] as const;
 
 export const USE_CASE_OPTIONS = FEATURED_APPLICATIONS.map((application) => ({
   value: application.slug,

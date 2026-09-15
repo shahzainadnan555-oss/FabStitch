@@ -492,13 +492,17 @@ export async function searchCustomerCatalog(
   query: CustomerCatalogQuery = {},
 ): Promise<CustomerCatalogResults> {
   const listPath = query.q?.trim() ? "/fabrics/search" : "/fabrics";
-  const [page, filters] = await Promise.all([
-    serverApi.get<FabricPage>(listPath, { query: queryForFabrics(query) }),
-    serverApi.get<FabricFilters>("/fabrics/filters", {
+  const pagePromise = serverApi.get<FabricPage>(listPath, {
+    query: queryForFabrics(query),
+  });
+  const filtersPromise = serverApi
+    .get<FabricFilters>("/fabrics/filters", {
       query: queryForFilters(query),
-    }),
-  ]);
-  return pageToResults(page, filtersToFacets(filters));
+    })
+    .catch(() => null);
+
+  const [page, filters] = await Promise.all([pagePromise, filtersPromise]);
+  return pageToResults(page, filters ? filtersToFacets(filters) : EMPTY_FACETS);
 }
 
 export async function listCustomerCatalog(
@@ -514,13 +518,14 @@ export async function listCustomerCatalog(
 export const getCustomerCatalogFabric = cache(
   async (slug: string): Promise<CustomerCatalogDetail | null> => {
     try {
-      const [fabric, related] = await Promise.all([
-        serverApi.get<Fabric>(`/fabrics/${encodeURIComponent(slug)}`),
-        serverApi.get<FabricCard[]>(
-          `/fabrics/${encodeURIComponent(slug)}/related`,
-          { query: { limit: 6 } },
-        ),
-      ]);
+      const fabric = await serverApi.get<Fabric>(
+        `/fabrics/${encodeURIComponent(slug)}`,
+      );
+      const related = await serverApi
+        .get<FabricCard[]>(`/fabrics/${encodeURIComponent(slug)}/related`, {
+          query: { limit: 6 },
+        })
+        .catch(() => [] as FabricCard[]);
       return {
         fabric: detailToCustomerFabric(fabric),
         related: related.map(cardToCustomerFabric),
@@ -544,16 +549,20 @@ export async function getCustomerCatalogFabrics(
 export async function getCustomerCollections(): Promise<
   CustomerCollectionCard[]
 > {
-  const collections = await serverApi.get<CollectionCard[]>("/collections");
-  return collections.map((collection) => ({
-    slug: collection.slug,
-    name: collection.name,
-    description: text(collection.description),
-    imageUrl:
-      text(collection.image_url) ??
-      approvedCollectionImage(collection.slug)?.src,
-    fabricCount: collection.fabric_count,
-  }));
+  try {
+    const collections = await serverApi.get<CollectionCard[]>("/collections");
+    return collections.map((collection) => ({
+      slug: collection.slug,
+      name: collection.name,
+      description: text(collection.description),
+      imageUrl:
+        text(collection.image_url) ??
+        approvedCollectionImage(collection.slug)?.src,
+      fabricCount: collection.fabric_count,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export const getCustomerCollection = cache(
@@ -596,14 +605,18 @@ export const getCustomerCollection = cache(
 );
 
 export async function getCustomerBestFor(): Promise<CustomerBestForCard[]> {
-  const items = await serverApi.get<BestForCard[]>("/best-for");
-  return items.map((item) => ({
-    slug: item.slug,
-    name: item.name,
-    description: text(item.description),
-    imageUrl: text(item.image_url),
-    fabricCount: item.fabric_count,
-  }));
+  try {
+    const items = await serverApi.get<BestForCard[]>("/best-for");
+    return items.map((item) => ({
+      slug: item.slug,
+      name: item.name,
+      description: text(item.description),
+      imageUrl: text(item.image_url),
+      fabricCount: item.fabric_count,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export const getCustomerBestForDetail = cache(
@@ -644,49 +657,68 @@ export const getCustomerBestForDetail = cache(
 export async function getCustomerRecommendations(
   query: { limit?: number; offset?: number } = {},
 ): Promise<CustomerCatalogFabric[]> {
-  const page = await serverApi.get<RecommendationPage>("/me/recommendations", {
-    query: {
-      limit: Math.min(Math.max(query.limit ?? 12, 1), 48),
-      offset: query.offset ?? 0,
-    },
-  });
-  return page.items.map((item) => discoveryToCustomerFabric(item.fabric));
+  try {
+    const page = await serverApi.get<RecommendationPage>(
+      "/me/recommendations",
+      {
+        query: {
+          limit: Math.min(Math.max(query.limit ?? 12, 1), 48),
+          offset: query.offset ?? 0,
+        },
+      },
+    );
+    return page.items.map((item) => discoveryToCustomerFabric(item.fabric));
+  } catch {
+    return [];
+  }
 }
 
 export async function listPublishedCustomerCatalog(
   query: Pick<CustomerCatalogQuery, "sort"> = {},
 ): Promise<CustomerCatalogFabric[]> {
-  const items: CustomerCatalogFabric[] = [];
-  let cursor: string | undefined;
-  do {
-    const page = await listCustomerCatalog({
-      sort: query.sort ?? "name_asc",
-      limit: 48,
-      cursor,
-    });
-    items.push(...page.items);
-    cursor = page.hasMore && page.nextCursor ? page.nextCursor : undefined;
-  } while (cursor && items.length < 2000);
-  return items;
+  try {
+    const items: CustomerCatalogFabric[] = [];
+    let cursor: string | undefined;
+    do {
+      const page = await listCustomerCatalog({
+        sort: query.sort ?? "name_asc",
+        limit: 48,
+        cursor,
+      });
+      items.push(...page.items);
+      cursor = page.hasMore && page.nextCursor ? page.nextCursor : undefined;
+    } while (cursor && items.length < 2000);
+    return items;
+  } catch {
+    return [];
+  }
 }
 
 export async function getHomepageDiscovery(): Promise<HomepageDiscovery> {
-  const [discovery, recommended] = await Promise.all([
-    serverApi.get<Discovery>("/me/discovery"),
-    getCustomerRecommendations({ limit: 12 }).catch(() => []),
-  ]);
-  const fromDiscovery = discovery.recommended_fabrics.map((item) =>
-    discoveryToCustomerFabric(item.fabric),
-  );
-  return {
-    personalized: discovery.personalized,
-    recommended: fromDiscovery.length ? fromDiscovery : recommended,
-    sections: (discovery.sections ?? []).map((section) => ({
-      key: section.key,
-      title: section.title,
-      items: section.items.map((item) =>
-        discoveryToCustomerFabric(item.fabric),
-      ),
-    })),
-  };
+  try {
+    const [discovery, recommended] = await Promise.all([
+      serverApi.get<Discovery>("/me/discovery"),
+      getCustomerRecommendations({ limit: 12 }),
+    ]);
+    const fromDiscovery = discovery.recommended_fabrics.map((item) =>
+      discoveryToCustomerFabric(item.fabric),
+    );
+    return {
+      personalized: discovery.personalized,
+      recommended: fromDiscovery.length ? fromDiscovery : recommended,
+      sections: (discovery.sections ?? []).map((section) => ({
+        key: section.key,
+        title: section.title,
+        items: section.items.map((item) =>
+          discoveryToCustomerFabric(item.fabric),
+        ),
+      })),
+    };
+  } catch {
+    return {
+      personalized: false,
+      recommended: [],
+      sections: [],
+    };
+  }
 }

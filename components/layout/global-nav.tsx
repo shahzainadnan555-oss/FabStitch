@@ -46,7 +46,7 @@ function NavLinks({
         className={cn(
           mobile
             ? "relative rounded-sm px-3 py-3 text-base font-medium text-ink transition-colors hover:bg-indigo-wash hover:text-indigo"
-            : "group relative whitespace-nowrap rounded-xs py-2 text-[0.8125rem] font-medium tracking-[0.01em] transition-colors hover:text-indigo",
+            : "group relative whitespace-nowrap rounded-xs px-1 py-2 text-[0.8125rem] font-medium tracking-[0.01em] transition-colors hover:text-indigo",
           active
             ? mobile
               ? "bg-indigo-wash text-indigo"
@@ -94,20 +94,21 @@ export function GlobalNav() {
 
   return (
     <>
+      {/* Center column of the header grid — optically centered primary nav */}
       <nav
         aria-label="Primary"
-        className="hidden min-w-0 items-center gap-5 xl:flex"
+        className="hidden items-center justify-center gap-4 justify-self-center xl:flex 2xl:gap-5"
       >
         <NavLinks />
       </nav>
 
-      <div className="ml-auto hidden shrink-0 items-center gap-2 xl:flex">
+      <div className="hidden shrink-0 items-center justify-end gap-2 justify-self-end xl:flex">
         <HeaderSearch />
         <PreferenceControls />
         <AccountLink />
       </div>
 
-      <div className="relative ml-auto xl:hidden">
+      <div className="relative col-start-3 justify-self-end xl:hidden">
         <button
           ref={menuButton}
           type="button"

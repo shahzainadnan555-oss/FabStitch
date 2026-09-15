@@ -19,12 +19,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FabricsHubPage() {
-  const [collections, bestFor, featured] = await Promise.all([
+  const [collections, bestFor, featuredResult] = await Promise.all([
     getCustomerCollections(),
     getCustomerBestFor(),
-    listCustomerCatalog({ limit: 12, sort: "featured" }),
+    listCustomerCatalog({ limit: 12, sort: "featured" }).catch(() => null),
   ]);
-  const fabricCount = featured.total;
+  const featured = featuredResult ?? {
+    items: [],
+    total: 0,
+    totalKnown: false,
+  };
+  const fabricCount = featured.totalKnown
+    ? featured.total
+    : featured.items.length;
 
   return (
     <>

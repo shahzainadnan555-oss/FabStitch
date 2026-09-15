@@ -1,6 +1,7 @@
 import { apiUrl } from "@/lib/api/config";
 import { ApiError, normalizeApiError } from "@/lib/api/errors";
 import { appendQuery, type ApiQuery } from "@/lib/api/query";
+import { isRetryableReadError, withReadRetries } from "@/lib/api/read-retry";
 
 type NextFetchOptions = {
   revalidate?: number | false;
@@ -14,10 +15,13 @@ export type ApiRequestOptions<TBody = unknown> = Omit<
   body?: TBody;
   query?: ApiQuery;
   retryAuth?: boolean;
+  /** When false, skip automatic GET retries (default: retry safe GET failures). */
+  retryReads?: boolean;
   next?: NextFetchOptions;
 };
 
 let refreshFlight: Promise<void> | null = null;
+const inflightGets = new Map<string, Promise<unknown>>();
 
 function dispatchSessionExpired() {
   if (typeof window !== "undefined") {
@@ -75,6 +79,7 @@ async function performRequest<TResponse, TBody>(
     body: requestBody,
     query,
     retryAuth: _retryAuth,
+    retryReads: _retryReads,
     ...requestInit
   } = options;
   const headers = new Headers(options.headers);
@@ -96,23 +101,38 @@ async function performRequest<TResponse, TBody>(
     }
   }
 
-  const response = await fetch(requestUrl(path, query), {
-    ...requestInit,
-    method,
-    headers,
-    body,
-    credentials: options.credentials ?? "include",
-  });
-  const parsed = await responseBody(response);
-  if (!response.ok) {
-    throw normalizeApiError(
-      response.status,
-      parsed,
-      response.headers.get("x-request-id"),
-      response.headers.get("retry-after"),
-    );
+  const url = requestUrl(path, query).toString();
+  const execute = async () => {
+    const response = await fetch(url, {
+      ...requestInit,
+      method,
+      headers,
+      body,
+      credentials: options.credentials ?? "include",
+    });
+    const parsed = await responseBody(response);
+    if (!response.ok) {
+      throw normalizeApiError(
+        response.status,
+        parsed,
+        response.headers.get("x-request-id"),
+        response.headers.get("retry-after"),
+      );
+    }
+    return parsed as TResponse;
+  };
+
+  if (method === "GET") {
+    const existing = inflightGets.get(url);
+    if (existing) return existing as Promise<TResponse>;
+    const promise = execute().finally(() => {
+      inflightGets.delete(url);
+    });
+    inflightGets.set(url, promise);
+    return promise;
   }
-  return parsed as TResponse;
+
+  return execute();
 }
 
 export async function apiRequest<TResponse, TBody = unknown>(
@@ -120,27 +140,40 @@ export async function apiRequest<TResponse, TBody = unknown>(
   path: string,
   options: ApiRequestOptions<TBody> = {},
 ): Promise<TResponse> {
-  try {
-    return await performRequest<TResponse, TBody>(method, path, options);
-  } catch (error) {
-    const mayRefresh =
-      error instanceof ApiError &&
-      error.status === 401 &&
-      options.retryAuth !== false &&
-      typeof window !== "undefined" &&
-      !path.startsWith("/auth/");
-    if (!mayRefresh) throw error;
-
+  const runOnce = async () => {
     try {
-      await refreshSession();
-      return await performRequest<TResponse, TBody>(method, path, {
-        ...options,
-        retryAuth: false,
-      });
-    } catch (refreshError) {
-      dispatchSessionExpired();
-      throw refreshError;
+      return await performRequest<TResponse, TBody>(method, path, options);
+    } catch (error) {
+      const mayRefresh =
+        error instanceof ApiError &&
+        error.status === 401 &&
+        options.retryAuth !== false &&
+        typeof window !== "undefined" &&
+        !path.startsWith("/auth/");
+      if (!mayRefresh) throw error;
+
+      try {
+        await refreshSession();
+        return await performRequest<TResponse, TBody>(method, path, {
+          ...options,
+          retryAuth: false,
+        });
+      } catch (refreshError) {
+        dispatchSessionExpired();
+        throw refreshError;
+      }
     }
+  };
+
+  const shouldRetryReads = method === "GET" && options.retryReads !== false;
+
+  if (!shouldRetryReads) return runOnce();
+
+  try {
+    return await withReadRetries(runOnce);
+  } catch (error) {
+    if (isRetryableReadError(error) || error instanceof ApiError) throw error;
+    throw error;
   }
 }
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Container } from "@/components/ui/layout";
 import { CatalogResultsToolbar } from "@/components/marketplace/catalog-filters";
+import { CatalogLoadError } from "@/components/marketplace/catalog-load-error";
 import {
   CatalogCursorPagination,
   NoResults,
@@ -100,36 +101,49 @@ async function MarketplaceResults({ query }: { query: MarketplaceQuery }) {
     max: 48,
   });
 
-  const results = await searchCustomerCatalog({
-    q,
-    cursor: single(query.cursor),
-    limit: requestedLimit ?? PAGE_SIZE,
-    sort,
-    family: values(query.family),
-    fiber: mergeValues(values(query.fiber), values(query.material)),
-    fiberPure: values(query.fiber_pure),
-    construction: values(query.construction),
-    color: values(query.color),
-    pattern: values(query.pattern),
-    finish: values(query.finish),
-    texture: values(query.texture),
-    season: values(query.season),
-    application: mergeValues(values(query.application), values(query.use_case)),
-    bestFor: values(query.best_for),
-    collection: values(query.collection),
-    stretch: values(query.stretch),
-    weightClass: values(query.weight_class),
-    weightMin: numericParam(
-      single(query.weight_min) ?? single(query.gsm_min),
-      GSM_BOUNDS,
-    ),
-    weightMax: numericParam(
-      single(query.weight_max) ?? single(query.gsm_max),
-      GSM_BOUNDS,
-    ),
-    widthMin: numericParam(single(query.width_min), { min: 1, max: 1000 }),
-    widthMax: numericParam(single(query.width_max), { min: 1, max: 1000 }),
-  });
+  let results;
+  let catalogFailed = false;
+  try {
+    results = await searchCustomerCatalog({
+      q,
+      cursor: single(query.cursor),
+      limit: requestedLimit ?? PAGE_SIZE,
+      sort,
+      family: values(query.family),
+      fiber: mergeValues(values(query.fiber), values(query.material)),
+      fiberPure: values(query.fiber_pure),
+      construction: values(query.construction),
+      color: values(query.color),
+      pattern: values(query.pattern),
+      finish: values(query.finish),
+      texture: values(query.texture),
+      season: values(query.season),
+      application: mergeValues(
+        values(query.application),
+        values(query.use_case),
+      ),
+      bestFor: values(query.best_for),
+      collection: values(query.collection),
+      stretch: values(query.stretch),
+      weightClass: values(query.weight_class),
+      weightMin: numericParam(
+        single(query.weight_min) ?? single(query.gsm_min),
+        GSM_BOUNDS,
+      ),
+      weightMax: numericParam(
+        single(query.weight_max) ?? single(query.gsm_max),
+        GSM_BOUNDS,
+      ),
+      widthMin: numericParam(single(query.width_min), { min: 1, max: 1000 }),
+      widthMax: numericParam(single(query.width_max), { min: 1, max: 1000 }),
+    });
+  } catch {
+    catalogFailed = true;
+  }
+
+  if (catalogFailed || !results) {
+    return <CatalogLoadError title="Unable to load fabrics right now." />;
+  }
 
   const filtered = Object.keys(query).some(
     (key) => !["cursor", "page", "page_size", "sort"].includes(key),
