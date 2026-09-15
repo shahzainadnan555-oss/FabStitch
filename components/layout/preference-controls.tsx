@@ -169,7 +169,7 @@ export function PreferenceControls({ mobile = false }: { mobile?: boolean }) {
     <div
       className={cn(
         "relative",
-        mobile ? "grid grid-cols-2 gap-2" : "flex items-center",
+        mobile ? "grid grid-cols-2 gap-2" : "flex shrink-0 items-center",
       )}
     >
       <PreferenceMenu

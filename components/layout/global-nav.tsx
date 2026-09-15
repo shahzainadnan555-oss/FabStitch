@@ -46,7 +46,7 @@ function NavLinks({
         className={cn(
           mobile
             ? "relative rounded-sm px-3 py-3 text-base font-medium text-ink transition-colors hover:bg-indigo-wash hover:text-indigo"
-            : "group relative rounded-xs py-2 text-[0.8125rem] font-medium tracking-[0.01em] transition-colors hover:text-indigo",
+            : "group relative whitespace-nowrap rounded-xs py-2 text-[0.8125rem] font-medium tracking-[0.01em] transition-colors hover:text-indigo",
           active
             ? mobile
               ? "bg-indigo-wash text-indigo"
@@ -96,12 +96,12 @@ export function GlobalNav() {
     <>
       <nav
         aria-label="Primary"
-        className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 xl:flex"
+        className="hidden min-w-0 items-center gap-5 xl:flex"
       >
         <NavLinks />
       </nav>
 
-      <div className="ml-auto hidden items-center gap-1.5 xl:flex">
+      <div className="ml-auto hidden shrink-0 items-center gap-2 xl:flex">
         <HeaderSearch />
         <PreferenceControls />
         <AccountLink />
