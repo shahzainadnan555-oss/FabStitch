@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthShell } from "@/features/auth/auth-shell";
-import { LoginForm } from "@/features/auth/forms";
-import { ProviderOptions } from "@/features/auth/provider-options";
+import { AuthPanel } from "@/features/auth/auth-panel";
+import { GoogleAuthSection } from "@/features/auth/google-auth-section";
+import { SignInForm } from "@/features/auth/sign-in-form";
 import { authProviders } from "@/features/auth/providers";
 import { RedirectIfAuthenticated } from "@/features/auth/redirect-if-authenticated";
 import { describeReturn, safeReturnPath } from "@/features/auth/return-to";
@@ -20,20 +20,18 @@ function single(value: string | string[] | undefined): string | undefined {
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const query = await searchParams;
   const next = safeReturnPath(single(query.next));
-
   const providers = await authProviders(next);
-
   const signupHref =
     next === "/" ? "/signup/" : `/signup/?next=${encodeURIComponent(next)}`;
 
   return (
-    <AuthShell
+    <AuthPanel
       title="Welcome back"
-      intro="Sign in to your FabStitch account."
+      intro="Sign in to continue your FabStitch sourcing journey."
       resuming={describeReturn(next)}
       counterpart={{
-        prompt: "New to FabStitch?",
-        label: "Join",
+        prompt: "New here?",
+        label: "Join Free",
         href: signupHref,
       }}
       footer={
@@ -43,14 +41,16 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             href={signupHref}
             className="font-semibold text-indigo hover:underline"
           >
-            Join FabStitch
+            Join Free
           </Link>
         </>
       }
     >
       <RedirectIfAuthenticated next={next} />
-      <LoginForm next={next} justReset={single(query.reset) === "1"} />
-      <ProviderOptions providers={providers} error={single(query.error)} />
-    </AuthShell>
+      <div className="flex flex-col gap-6">
+        <SignInForm next={next} justReset={single(query.reset) === "1"} />
+        <GoogleAuthSection providers={providers} error={single(query.error)} />
+      </div>
+    </AuthPanel>
   );
 }

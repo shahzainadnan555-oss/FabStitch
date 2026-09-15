@@ -69,7 +69,7 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
               : "inline-flex h-9 items-center rounded-sm px-3 text-sm font-semibold text-ink-2 hover:text-indigo"
           }
         >
-          Join FabStitch
+          Join Free
         </Link>
         <Link
           href="/login/"

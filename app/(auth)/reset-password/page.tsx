@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthShell } from "@/features/auth/auth-shell";
-import { ResetPasswordForm } from "@/features/auth/forms";
-import { AuthMessage } from "@/features/auth/controls";
+import { AuthPanel } from "@/features/auth/auth-panel";
+import { ResetPasswordForm } from "@/features/auth/password-reset-forms";
+import { AuthMessage } from "@/features/auth/ui";
 
 export const metadata: Metadata = {
   title: "Set a new password",
@@ -13,14 +13,6 @@ function single(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-/**
- * Reset password.
- *
- * The token arrives in the link the API emailed. It is never displayed and
- * never put in a field the buyer edits - it is carried through as a hidden
- * value and validated server-side, which is where an expired or reused token
- * is actually detectable.
- */
 export default async function ResetPasswordPage({
   searchParams,
 }: PageProps<"/reset-password">) {
@@ -28,7 +20,7 @@ export default async function ResetPasswordPage({
   const token = single(query.token) ?? "";
 
   return (
-    <AuthShell
+    <AuthPanel
       title="Set a new password"
       intro="Choose a password you do not use anywhere else."
       counterpart={{
@@ -64,6 +56,6 @@ export default async function ResetPasswordPage({
           </Link>
         </div>
       )}
-    </AuthShell>
+    </AuthPanel>
   );
 }

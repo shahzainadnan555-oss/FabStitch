@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AuthMessage } from "./controls";
 import { postAuthDestination } from "./destination";
 import { googleAuthErrorMessage } from "./messages";
 import { useSession } from "./session";
 import { loginHref } from "./return-to";
+import { AuthMessage } from "./ui";
 
 export function OAuthCallback({
   next,
@@ -48,7 +48,7 @@ export function OAuthCallback({
         <AuthMessage tone="error">{failed}</AuthMessage>
         <Link
           href={loginHref(next)}
-          className="inline-flex h-11 items-center justify-center rounded-sm bg-indigo px-5 text-sm font-semibold text-white hover:bg-indigo-hover"
+          className="inline-flex h-12 items-center justify-center rounded-md bg-indigo px-5 text-sm font-semibold text-white hover:bg-indigo-hover"
         >
           Continue to sign in
         </Link>
@@ -57,7 +57,11 @@ export function OAuthCallback({
   }
 
   return (
-    <p aria-busy="true" aria-live="polite" className="text-body text-ink-2">
+    <p
+      aria-busy="true"
+      aria-live="polite"
+      className="text-[0.975rem] text-ink-2"
+    >
       Signing you in…
     </p>
   );

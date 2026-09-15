@@ -1,41 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthShell } from "@/features/auth/auth-shell";
-import { ProviderOptions } from "@/features/auth/provider-options";
+import { AuthPanel } from "@/features/auth/auth-panel";
+import { GoogleAuthSection } from "@/features/auth/google-auth-section";
+import { SignUpForm } from "@/features/auth/sign-up-form";
 import { authProviders } from "@/features/auth/providers";
-import { RegisterForm } from "@/features/auth/forms";
 import { RedirectIfAuthenticated } from "@/features/auth/redirect-if-authenticated";
 import { describeReturn, safeReturnPath } from "@/features/auth/return-to";
-import { serverApi } from "@/lib/api/server";
-import type { components } from "@/lib/api/schema";
 
 export const metadata: Metadata = {
   title: "Join FabStitch",
   description:
-    "Create one FabStitch account, personalise fabric discovery, and enter the marketplace.",
+    "Create a FabStitch account to discover fabrics, save preferences, and continue sourcing.",
   robots: { index: false, follow: false },
 };
 
-const single = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
+function single(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 export default async function SignupPage({
   searchParams,
 }: PageProps<"/signup">) {
   const query = await searchParams;
   const next = safeReturnPath(single(query.next));
-  const [providers, countries] = await Promise.all([
-    authProviders(next),
-    serverApi.get<components["schemas"]["CountryListResponse"]>("/countries"),
-  ]);
-
+  const providers = await authProviders(next);
   const loginHref =
     next === "/" ? "/login/" : `/login/?next=${encodeURIComponent(next)}`;
 
   return (
-    <AuthShell
+    <AuthPanel
       title="Create your FabStitch account"
-      intro="Set up your account, answer four quick preference questions once, then enter the fabric marketplace."
+      intro="Create an account to discover fabrics, save your preferences, and continue your sourcing journey."
       resuming={describeReturn(next)}
       counterpart={{
         prompt: "Already have an account?",
@@ -55,8 +50,10 @@ export default async function SignupPage({
       }
     >
       <RedirectIfAuthenticated next={next} />
-      <RegisterForm next={next} countries={countries.items} />
-      <ProviderOptions providers={providers} error={single(query.error)} />
-    </AuthShell>
+      <div className="flex flex-col gap-6">
+        <SignUpForm next={next} />
+        <GoogleAuthSection providers={providers} error={single(query.error)} />
+      </div>
+    </AuthPanel>
   );
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthShell } from "@/features/auth/auth-shell";
-import { ForgotPasswordForm } from "@/features/auth/forms";
+import { AuthPanel } from "@/features/auth/auth-panel";
+import { ForgotPasswordForm } from "@/features/auth/password-reset-forms";
 
 export const metadata: Metadata = {
   title: "Reset your password",
@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function ForgotPasswordPage() {
   return (
-    <AuthShell
+    <AuthPanel
       title="Reset your password"
-      intro="Enter the address on your FabStitch account and we will send a reset link."
+      intro="Enter the email on your FabStitch account and we will send a reset link."
       counterpart={{
         prompt: "Remembered it?",
         label: "Sign in",
@@ -31,6 +31,6 @@ export default function ForgotPasswordPage() {
       }
     >
       <ForgotPasswordForm />
-    </AuthShell>
+    </AuthPanel>
   );
 }

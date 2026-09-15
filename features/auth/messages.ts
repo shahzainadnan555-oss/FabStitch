@@ -87,10 +87,18 @@ export function signupErrorMessage(error: unknown): string {
 }
 
 export function googleAuthErrorMessage(code?: string | null): string {
-  if (!code) return "Google sign-in couldn't be completed. Please try again.";
+  if (!code) {
+    return "Google sign-in was not completed. Please try again.";
+  }
   const normalized = code.toLowerCase();
   if (normalized === "access_denied") {
     return "Google sign-in was cancelled. You can try again or continue with email.";
   }
-  return "Google sign-in couldn't be completed. Please try again.";
+  if (
+    normalized.includes("unverified") ||
+    normalized.includes("email_not_verified")
+  ) {
+    return "This Google account’s email is not verified, so it cannot be used to sign in to FabStitch.";
+  }
+  return "Google sign-in was not completed. Please try again.";
 }

@@ -14,7 +14,7 @@ export function FooterAccountLinks() {
         ]
       : [
           { href: "/login/", label: "Sign In" },
-          { href: "/signup/", label: "Join FabStitch" },
+          { href: "/signup/", label: "Join Free" },
         ];
 
   return (
