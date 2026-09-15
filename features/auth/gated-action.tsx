@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useOptionalAuthModal } from "./auth-modal";
+import { useSession } from "./session";
 import type { AuthIntent } from "./intents";
 
 /**
@@ -35,6 +36,9 @@ export function GatedAction({
   authenticated?: boolean;
 }) {
   const modal = useOptionalAuthModal();
+  const session = useSession();
+  const isAuthenticated =
+    authenticated || modal?.authenticated || session.authenticated;
 
   return (
     <Link
@@ -42,7 +46,7 @@ export function GatedAction({
       className={className}
       onClick={(event) => {
         // No provider in this shell, or already signed in: let the link work.
-        if (authenticated || modal?.authenticated || !modal) return;
+        if (isAuthenticated || !modal) return;
         // Leave the browser's own affordances alone.
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
           return;

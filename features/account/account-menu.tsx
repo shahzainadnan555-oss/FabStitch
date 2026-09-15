@@ -7,18 +7,19 @@ import { useSession } from "@/features/auth/session";
 import { cn } from "@/lib/cn";
 
 const ITEMS = [
-  { href: "/inquiries/", label: "My Inquiries" },
   { href: "/account/", label: "Account" },
-  { href: "/account/preferences/", label: "Preferences" },
+  { href: "/inquiries/", label: "My Inquiries" },
 ] as const;
 
 export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
   const router = useRouter();
-  const { hydrated, authenticated, user, signOut } = useSession();
+  const { hydrated, authenticated, user, profile, signOut } = useSession();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
+  const displayName = profile?.full_name?.trim() || user?.full_name?.trim();
+  const displayEmail = profile?.email || user?.email;
 
   useEffect(() => {
     if (!open) return;
@@ -39,29 +40,48 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
   if (!hydrated) {
     return (
       <span
+        aria-busy="true"
+        aria-live="polite"
         className={
           mobile
             ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-rule-2 bg-paper-raised text-sm text-ink-3"
             : "inline-flex h-9 items-center rounded-sm px-4 text-sm text-ink-3"
         }
       >
-        Account
+        Checking account
       </span>
     );
   }
 
   if (!authenticated) {
     return (
-      <Link
-        href="/login/"
-        className={
-          mobile
-            ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold text-white"
-            : "inline-flex h-9 items-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold tracking-[0.01em] text-white hover:border-indigo-hover hover:bg-indigo-hover"
-        }
+      <div
+        className={cn(
+          "flex items-center",
+          mobile ? "w-full flex-col gap-2" : "gap-2",
+        )}
       >
-        Sign in
-      </Link>
+        <Link
+          href="/signup/"
+          className={
+            mobile
+              ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-rule-2 px-4 text-sm font-semibold text-ink-2"
+              : "inline-flex h-9 items-center rounded-sm px-3 text-sm font-semibold text-ink-2 hover:text-indigo"
+          }
+        >
+          Join FabStitch
+        </Link>
+        <Link
+          href="/login/"
+          className={
+            mobile
+              ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold text-white"
+              : "inline-flex h-9 items-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold tracking-[0.01em] text-white hover:border-indigo-hover hover:bg-indigo-hover"
+          }
+        >
+          Sign In
+        </Link>
+      </div>
     );
   }
 
@@ -90,9 +110,18 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
             mobile ? "relative mt-2 w-full" : "absolute right-0 mt-2 w-56",
           )}
         >
-          <p className="truncate px-3 py-2 font-mono text-label text-ink-4">
-            {user?.email}
-          </p>
+          <div className="px-3 py-2">
+            {displayName ? (
+              <p className="truncate text-sm font-semibold text-ink">
+                {displayName}
+              </p>
+            ) : null}
+            {displayEmail ? (
+              <p className="truncate font-mono text-label text-ink-4">
+                {displayEmail}
+              </p>
+            ) : null}
+          </div>
           {ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -120,7 +149,7 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
             }}
             className="mt-1 block w-full rounded-sm px-3 py-2 text-left text-sm text-ink-2 hover:bg-paper-sunk hover:text-ink disabled:opacity-60"
           >
-            {pending ? "Signing out…" : "Sign out"}
+            {pending ? "Signing out…" : "Logout"}
           </button>
         </div>
       ) : null}

@@ -68,20 +68,39 @@ function preferencesFromUser(user: UserPublic): CustomerPreferencesOut {
   };
 }
 
+function isUnauthorized(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 401;
+}
+
+async function loadOptional<T>(path: string): Promise<T | null> {
+  try {
+    return await api.get<T>(path, { cache: "no-store" });
+  } catch (error) {
+    if (isUnauthorized(error)) throw error;
+    return null;
+  }
+}
+
 async function loadSession(): Promise<SessionState> {
-  const session = await api.get<MeResponse>("/auth/me", {
-    cache: "no-store",
-    retryAuth: false,
-  });
+  let session: MeResponse;
+  try {
+    session = await api.get<MeResponse>("/auth/me", {
+      cache: "no-store",
+      retryAuth: false,
+    });
+  } catch (error) {
+    if (isUnauthorized(error)) return ANONYMOUS_STATE;
+    throw error;
+  }
   if (!session.authenticated || !session.user) return ANONYMOUS_STATE;
 
-  const profile = await api.get<UserPublic>("/account/profile", {
-    cache: "no-store",
-  });
-  if (session.user.role === "admin") {
+  const user = session.user;
+  const profile = (await loadOptional<UserPublic>("/account/profile")) ?? user;
+
+  if (user.role === "admin") {
     return {
       status: "authenticated",
-      user: session.user,
+      user,
       profile,
       preferences: null,
       onboarding: null,
@@ -90,17 +109,15 @@ async function loadSession(): Promise<SessionState> {
   }
 
   const [preferences, onboarding] = await Promise.all([
-    api.get<CustomerPreferencesOut>("/me/preferences", { cache: "no-store" }),
-    api.get<OnboardingStateResponse>("/account/onboarding", {
-      cache: "no-store",
-    }),
+    loadOptional<CustomerPreferencesOut>("/me/preferences"),
+    loadOptional<OnboardingStateResponse>("/account/onboarding"),
   ]);
 
   return {
     status: "authenticated",
-    user: session.user,
+    user,
     profile,
-    preferences,
+    preferences: preferences ?? preferencesFromUser(profile),
     onboarding,
     error: null,
   };
@@ -108,18 +125,20 @@ async function loadSession(): Promise<SessionState> {
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<SessionState>(INITIAL_STATE);
-  const refreshFlight = useRef<Promise<SessionState> | null>(null);
+  const generation = useRef(0);
 
   const refresh = useCallback(async () => {
-    if (!refreshFlight.current) {
-      refreshFlight.current = loadSession().finally(() => {
-        refreshFlight.current = null;
-      });
-    }
+    const token = ++generation.current;
     try {
-      const next = await refreshFlight.current;
+      const next = await loadSession();
+      if (token !== generation.current) return;
       setState(next);
     } catch (error) {
+      if (token !== generation.current) return;
+      if (isUnauthorized(error)) {
+        setState(ANONYMOUS_STATE);
+        return;
+      }
       setState((current) => ({
         ...current,
         status: current.user ? "authenticated" : "error",
@@ -137,13 +156,17 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, [refresh]);
 
   useEffect(() => {
-    const expired = () => setState(ANONYMOUS_STATE);
+    const expired = () => {
+      generation.current += 1;
+      setState(ANONYMOUS_STATE);
+    };
     window.addEventListener("fabstitch:session-expired", expired);
     return () =>
       window.removeEventListener("fabstitch:session-expired", expired);
   }, []);
 
   const adoptUser = useCallback((user: UserPublic) => {
+    generation.current += 1;
     setState({
       status: "authenticated",
       user,
@@ -203,17 +226,16 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    generation.current += 1;
     try {
       await api.post<LogoutResponse>("/auth/logout", {
         retryAuth: false,
       });
+    } catch {
+      // HttpOnly cookies are cleared by the backend when logout succeeds.
+      // Always drop local auth state so the header returns to Sign In.
+    } finally {
       setState(ANONYMOUS_STATE);
-    } catch (error) {
-      if (error instanceof ApiError && error.status === 401) {
-        setState(ANONYMOUS_STATE);
-        return;
-      }
-      throw error;
     }
   }, []);
 

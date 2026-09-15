@@ -140,7 +140,8 @@ export function InquiryDialog({
     return nextProfile;
   }
 
-  const signIn = error?.status === 401 || status === "anonymous";
+  const checkingSession = status === "loading";
+  const needsSignIn = !authenticated && !checkingSession;
 
   return (
     <Dialog
@@ -219,7 +220,15 @@ export function InquiryDialog({
               </Link>
             </div>
           </div>
-        ) : signIn && !authenticated ? (
+        ) : checkingSession ? (
+          <div
+            className="px-5 py-8 sm:px-6"
+            aria-busy="true"
+            aria-live="polite"
+          >
+            <p className="text-body text-ink-2">Checking your account…</p>
+          </div>
+        ) : needsSignIn ? (
           <div className="px-5 py-8 sm:px-6">
             <p className="text-body text-ink-2">
               Sign in to send a fabric inquiry. FabStitch uses your account

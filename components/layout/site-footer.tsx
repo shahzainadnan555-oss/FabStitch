@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/layout";
 import { Wordmark } from "./logo";
+import { FooterAccountLinks } from "./footer-account-links";
 import { FOOTER_LINK_GROUPS } from "./nav-model";
 
 export function SiteFooter() {
@@ -36,22 +37,26 @@ export function SiteFooter() {
                   >
                     {group.label}
                   </h2>
-                  <ul
-                    aria-labelledby={`footer-${group.label.toLowerCase()}`}
-                    className="mt-5 grid gap-3"
-                  >
-                    {group.links.map((link) => (
-                      <li key={link.label}>
-                        <Link
-                          href={link.href}
-                          prefetch={false}
-                          className="relative inline-block text-sm font-normal text-on-navy-2 transition-colors duration-200 after:absolute after:right-0 after:-bottom-0.5 after:left-0 after:h-px after:origin-left after:scale-x-0 after:bg-on-ink after:transition-transform after:duration-200 hover:text-on-ink hover:after:scale-x-100 focus-visible:text-on-ink focus-visible:outline-gold-on-navy"
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  {group.label === "Account" ? (
+                    <FooterAccountLinks />
+                  ) : (
+                    <ul
+                      aria-labelledby={`footer-${group.label.toLowerCase()}`}
+                      className="mt-5 grid gap-3"
+                    >
+                      {group.links.map((link) => (
+                        <li key={link.label}>
+                          <Link
+                            href={link.href}
+                            prefetch={false}
+                            className="relative inline-block text-sm font-normal text-on-navy-2 transition-colors duration-200 after:absolute after:right-0 after:-bottom-0.5 after:left-0 after:h-px after:origin-left after:scale-x-0 after:bg-on-ink after:transition-transform after:duration-200 hover:text-on-ink hover:after:scale-x-100 focus-visible:text-on-ink focus-visible:outline-gold-on-navy"
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </div>

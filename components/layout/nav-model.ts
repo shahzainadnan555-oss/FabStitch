@@ -42,10 +42,8 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
   {
     label: "Account",
     links: [
-      { label: "My Inquiries", href: "/inquiries/" },
       { label: "Account", href: "/account/" },
-      { label: "Sign In", href: "/login/" },
-      { label: "Join FabStitch", href: "/signup/" },
+      { label: "My Inquiries", href: "/inquiries/" },
     ],
   },
 ];
