@@ -2,8 +2,9 @@
 
 ## Base URL
 
-- Local default: `http://localhost:8000`
+- Production: `https://fabstitch-backend.fastapicloud.dev`
 - Versioned API prefix: `/api/v1`
+- Frontend production API base: `https://fabstitch-backend.fastapicloud.dev/api/v1`
 
 ## Authentication model
 

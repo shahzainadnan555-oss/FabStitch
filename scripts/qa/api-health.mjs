@@ -2,7 +2,8 @@ const base = (
   process.env.BACKEND_ORIGIN ??
   new URL(
     process.env.NEXT_PUBLIC_API_BASE_URL ??
-      "http://localhost:8000/api/v1",
+      process.env.VITE_API_BASE_URL ??
+      "https://fabstitch-backend.fastapicloud.dev/api/v1",
   ).origin
 ).replace(/\/$/, "");
 

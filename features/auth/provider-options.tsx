@@ -29,8 +29,8 @@ export function ProviderOptions({ providers }: { providers: AuthProvider[] }) {
           role="status"
           className="mt-3 rounded-sm border border-caution-soft bg-caution-soft px-3 py-2 text-sm text-ink-2"
         >
-          {chosen === "google" ? "Google" : "Apple"} sign-in is not connected
-          for this environment. Continue with your email address below.
+          Google sign-in is not connected for this environment. Continue with
+          your email address below.
         </p>
       ) : null}
 

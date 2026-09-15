@@ -5,7 +5,7 @@ import { serverApi } from "@/lib/api/server";
 import type { components } from "@/lib/api/schema";
 
 export type AuthProvider = {
-  provider: "google" | "apple";
+  provider: "google";
   configured: boolean;
   authorizeHref: string | null;
 };
@@ -28,7 +28,7 @@ export async function authProviders(): Promise<AuthProvider[]> {
     );
     return response.providers.flatMap((provider) => {
       const name = provider.name.toLowerCase();
-      if (name !== "google" && name !== "apple") return [];
+      if (name !== "google") return [];
       return [
         {
           provider: name,

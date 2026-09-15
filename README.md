@@ -5,24 +5,27 @@ what customers are making and the material constraints they need to satisfy.
 
 ## Current phase
 
-This repository is frontend-only. It does not connect to a backend, database,
-authentication service, payment processor, analytics service or WebSocket.
+The live FastAPI Cloud backend is the single production API:
 
-- Product discovery uses the approved local catalogue under `catalog/`.
-- Search, filters, sorting, collections, Best For pages and fabric details run
-  entirely from local data.
-- Sign-up and sign-in are explicitly labelled browser-local demos. Passwords
-  are never stored or verified.
-- Onboarding, account preferences and legal-consent versions are stored in
-  versioned `localStorage`.
-- Comparison uses `sessionStorage`.
-- Purchase, RFQ and role workspace interfaces are non-submitting previews.
-- SEO publication uses a frontend-owned launch manifest; public and indexable
-  are separate states, and no publication API is connected.
+- Origin: `https://fabstitch-backend.fastapicloud.dev`
+- API: `https://fabstitch-backend.fastapicloud.dev/api/v1`
+- Admin WebSocket: `wss://fabstitch-backend.fastapicloud.dev/api/v1/realtime/ws/admin`
 
-A future backend should implement the existing UI-facing provider and
-repository boundaries. Do not add an API URL or reconnect the removed service
-until that backend phase is explicitly started.
+All real requests go through `lib/api` (`api` in the browser, `serverApi` on the
+server). Do not add a second client, hardcode localhost APIs in components, or
+fall back to mock catalog/auth data when the live backend fails.
+
+Set these on the host for production builds. Next.js inlines `NEXT_PUBLIC_*`
+into the browser bundle; `VITE_API_BASE_URL` is accepted as an alias.
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
+VITE_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
+NEXT_PUBLIC_WS_BASE_URL=wss://fabstitch-backend.fastapicloud.dev/api/v1
+```
+
+Local development can override those values in `.env.local`. Production must
+keep the FastAPI Cloud URLs. See `.env.example`.
 
 ## Stack
 
@@ -43,7 +46,8 @@ npm run seo
 npm run build
 ```
 
-The site runs at `http://localhost:3000` with no other service running.
+The site runs at `http://localhost:3000` and talks to the live FastAPI Cloud
+backend unless `.env.local` overrides the API base URL.
 
 For the complete pre-publish pipeline, install Chrome for Playwright once and
 run the unified QA command:
@@ -63,8 +67,9 @@ or set `QA_EXTERNAL_SERVER=1` when that origin is already running.
 `domain/seo/storefront-registry.ts` is the page inventory.
 `domain/seo/launch-manifest.ts` controls launch phase and publication state.
 Draft and pre-publication scheduled pages are unavailable; public noindex pages
-remain browseable but stay out of sitemap batches. Because the project is
-frontend-only, scheduled static changes become live through a rebuild/deploy.
+remain browseable but stay out of sitemap batches. Live SEO APIs under
+`/api/v1/seo` are used where the storefront already relies on backend-managed
+SEO data.
 
 `npm run seo` writes the private development inventory and audit findings to
 `artifacts/seo-audit.json`. `/sitemap.xml` is the public sitemap index; query
@@ -75,15 +80,13 @@ to their clean parent.
 
 ```text
 app/                 Next.js routes and route-group shells
-catalog/             authoritative local fabric catalogue
+lib/api/             single API client, config, errors and OpenAPI types
+catalog/             local media/SEO helpers (not the production catalog API)
 components/          design-system, layout and marketplace components
-features/local/      versioned local demo profile provider
-features/onboarding/ local onboarding and preference experience
-features/purchase/   non-submitting order preview
-repositories/        UI-facing local read models
+features/            auth, inquiries, admin, preferences and onboarding
+repositories/        UI-facing reads over the live backend
 domain/              normalized types, taxonomy and SEO rules
 content/             local editorial content
-config/              centralized legal and frontend configuration
 docs/                architecture and recorded decisions
 ```
 

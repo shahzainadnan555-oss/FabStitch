@@ -1,8 +1,8 @@
 "use client";
 
-/** Redirects configured providers to the backend-owned OAuth flow. */
+/** Redirects the configured Google provider to the backend-owned OAuth flow. */
 
-export type SocialProvider = "google" | "apple";
+export type SocialProvider = "google";
 
 export function SocialAuthButton({
   provider,
@@ -13,15 +13,14 @@ export function SocialAuthButton({
   onSelect: (provider: SocialProvider) => void;
   href?: string | null;
 }) {
-  const label = provider === "google" ? "Google" : "Apple";
   const className =
     "flex h-11 w-full items-center justify-center gap-2.5 rounded-sm border border-border bg-paper-raised text-body font-medium text-ink transition-colors duration-150 hover:border-ink-2 hover:bg-paper-sunk";
 
   if (href) {
     return (
       <a href={href} className={className}>
-        {provider === "google" ? <GoogleMark /> : <AppleMark />}
-        Continue with {label}
+        <GoogleMark />
+        Continue with Google
       </a>
     );
   }
@@ -33,8 +32,8 @@ export function SocialAuthButton({
       aria-describedby={`${provider}-provider-state`}
       className={className}
     >
-      {provider === "google" ? <GoogleMark /> : <AppleMark />}
-      Continue with {label}
+      <GoogleMark />
+      Continue with Google
     </button>
   );
 }
@@ -57,17 +56,6 @@ function GoogleMark() {
       <path
         fill="#EA4335"
         d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3 2.33C4.67 5.16 6.65 3.58 9 3.58Z"
-      />
-    </svg>
-  );
-}
-
-function AppleMark() {
-  return (
-    <svg viewBox="0 0 18 18" width="17" height="17" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M13.4 9.5c0-1.7 1.4-2.5 1.45-2.55-.8-1.15-2-1.3-2.45-1.32-1.05-.1-2.05.6-2.58.6-.53 0-1.35-.59-2.22-.57-1.14.02-2.19.66-2.78 1.68-1.18 2.05-.3 5.08.85 6.74.57.81 1.24 1.72 2.12 1.69.85-.04 1.17-.55 2.2-.55s1.32.55 2.22.53c.92-.02 1.5-.83 2.06-1.64.65-.94.92-1.85.93-1.9-.02-.01-1.79-.69-1.8-2.71ZM11.7 4.5c.47-.57.79-1.36.7-2.15-.68.03-1.5.45-1.99 1.02-.43.5-.81 1.31-.71 2.08.76.06 1.53-.38 2-.95Z"
       />
     </svg>
   );
