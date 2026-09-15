@@ -70,20 +70,37 @@ async function robotsDirective(request: NextRequest): Promise<string | null> {
   }
 }
 
+function hostname(value: string): string {
+  return value.split(":")[0]?.toLowerCase() ?? "";
+}
+
+function isVercelDeploymentHost(host: string): boolean {
+  return host.endsWith(".vercel.app");
+}
+
+function isProductionSiteHost(host: string, canonicalHost: string): boolean {
+  const apex = canonicalHost.replace(/^www\./, "");
+  return host === canonicalHost || host === apex || host === `www.${apex}`;
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const canonicalOrigin = new URL(SITE_URL);
+  const canonicalHost = hostname(canonicalOrigin.host);
   const requestProtocol =
     request.headers.get("x-forwarded-proto") ??
     request.nextUrl.protocol.slice(0, -1);
-  const requestHost =
+  const requestHost = hostname(
     request.headers.get("x-forwarded-host") ??
-    request.headers.get("host") ??
-    request.nextUrl.host;
+      request.headers.get("host") ??
+      request.nextUrl.host,
+  );
   if (
     process.env.NODE_ENV === "production" &&
     canonicalOrigin.protocol === "https:" &&
-    (requestProtocol !== "https" || requestHost !== canonicalOrigin.host)
+    !isVercelDeploymentHost(requestHost) &&
+    isProductionSiteHost(requestHost, canonicalHost) &&
+    (requestProtocol !== "https" || requestHost !== canonicalHost)
   ) {
     return NextResponse.redirect(
       new URL(`${pathname}${search}`, canonicalOrigin),

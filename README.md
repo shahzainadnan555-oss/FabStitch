@@ -25,7 +25,32 @@ NEXT_PUBLIC_WS_BASE_URL=wss://fabstitch-backend.fastapicloud.dev/api/v1
 ```
 
 Local development can override those values in `.env.local`. Production must
-keep the FastAPI Cloud URLs. See `.env.example`.
+keep the FastAPI Cloud URLs. See `.env.example` and `.env.production`.
+
+## Deploy on Vercel
+
+Import the GitHub repository as a Next.js project. Do not change the
+framework, build command, or output directory.
+
+Set these Production environment variables in the Vercel project (all public):
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://fabstitch.net
+NEXT_PUBLIC_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
+VITE_API_BASE_URL=https://fabstitch-backend.fastapicloud.dev/api/v1
+NEXT_PUBLIC_WS_BASE_URL=wss://fabstitch-backend.fastapicloud.dev/api/v1
+```
+
+Leave them blank only if you want the committed `.env.production` defaults.
+Do not set `NEXT_PUBLIC_SITE_URL` to an empty string in the Vercel dashboard.
+
+Then:
+
+1. Add the domain `fabstitch.net` (and `www.fabstitch.net` if you use it).
+2. Deploy from `main`.
+3. Confirm the deployment URL loads before pointing DNS, if you want a preview.
+
+Node 20+ is required. Playwright browsers are not downloaded during install.
 
 ## Stack
 

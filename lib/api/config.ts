@@ -1,13 +1,5 @@
 const LIVE_API_BASE_URL = "https://fabstitch-backend.fastapicloud.dev/api/v1";
 
-function configuredApiBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_API_BASE_URL?.trim() ||
-    process.env.VITE_API_BASE_URL?.trim() ||
-    LIVE_API_BASE_URL
-  );
-}
-
 function normalizeBaseUrl(value: string, expectedProtocol: RegExp): string {
   const url = new URL(value);
   if (!expectedProtocol.test(url.protocol)) {
@@ -16,17 +8,35 @@ function normalizeBaseUrl(value: string, expectedProtocol: RegExp): string {
   return url.toString().replace(/\/$/, "");
 }
 
-export const API_BASE_URL = normalizeBaseUrl(
-  configuredApiBaseUrl(),
+function configuredUrl(
+  value: string | undefined,
+  expectedProtocol: RegExp,
+  fallback: string,
+): string {
+  const configured = value?.trim();
+  if (configured) {
+    try {
+      return normalizeBaseUrl(configured, expectedProtocol);
+    } catch {
+      // Empty or invalid Vercel values must not crash `next build`.
+    }
+  }
+  return normalizeBaseUrl(fallback, expectedProtocol);
+}
+
+export const API_BASE_URL = configuredUrl(
+  process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL,
   /^https?:$/,
+  LIVE_API_BASE_URL,
 );
 
 const apiBase = new URL(API_BASE_URL);
 const defaultWebSocketUrl = `${apiBase.protocol === "https:" ? "wss:" : "ws:"}//${apiBase.host}${apiBase.pathname}`;
 
-export const WS_BASE_URL = normalizeBaseUrl(
-  process.env.NEXT_PUBLIC_WS_BASE_URL?.trim() || defaultWebSocketUrl,
+export const WS_BASE_URL = configuredUrl(
+  process.env.NEXT_PUBLIC_WS_BASE_URL,
   /^wss?:$/,
+  defaultWebSocketUrl,
 );
 
 export function apiUrl(path: string): URL {

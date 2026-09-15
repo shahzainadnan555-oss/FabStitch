@@ -30,6 +30,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "fabstitch-backend.fastapicloud.dev",
       },
+      {
+        protocol: "https",
+        hostname: "fabstitch.net",
+      },
+      {
+        protocol: "https",
+        hostname: "www.fabstitch.net",
+      },
     ],
   },
   allowedDevOrigins: ["127.0.0.1", "localhost"],
