@@ -189,7 +189,16 @@ export async function proxy(request: NextRequest) {
   const response = NextResponse.next();
   if (!isSitemapOrRobots) {
     const robots = await robotsDirective(request);
-    if (robots) response.headers.set("X-Robots-Tag", robots);
+    if (robots) {
+      response.headers.set("X-Robots-Tag", robots);
+    } else if (
+      isCleanPublicMoneyPath(normalizePathname(pathname)) &&
+      !hasIndexAffectingSearchParams(request.nextUrl.searchParams)
+    ) {
+      // Explicit allow — avoids stale GSC "Excluded by noindex" when a prior
+      // deployment had incorrectly sent X-Robots-Tag: noindex on money pages.
+      response.headers.set("X-Robots-Tag", "index, follow");
+    }
   }
   return response;
 }
