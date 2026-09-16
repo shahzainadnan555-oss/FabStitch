@@ -1,5 +1,32 @@
 import type { SeoSitemapIndex, SeoSitemapPage } from "@/lib/api/types";
-import { absolute } from "@/lib/seo";
+import { absolute, SITE_URL } from "@/lib/seo";
+
+const PRODUCTION_SITEMAP_ORIGIN = "https://fabstitch.net";
+
+/**
+ * Absolute public website URL for sitemap entries.
+ * Always uses the production storefront host — never API / preview hosts.
+ */
+export function absoluteSitemapUrl(pathOrUrl: string): string {
+  if (/^https?:\/\//i.test(pathOrUrl)) {
+    try {
+      const parsed = new URL(pathOrUrl);
+      const pathname = parsed.pathname.endsWith("/")
+        ? parsed.pathname
+        : `${parsed.pathname}/`;
+      if (pathname === "//") {
+        return `${PRODUCTION_SITEMAP_ORIGIN}/`;
+      }
+      return `${PRODUCTION_SITEMAP_ORIGIN}${pathname === "/" ? "/" : pathname}`;
+    } catch {
+      // Fall through to path handling.
+    }
+  }
+  const path = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
+  const normalized =
+    path === "/" ? "/" : path.endsWith("/") ? path : `${path}/`;
+  return `${PRODUCTION_SITEMAP_ORIGIN}${normalized}`;
+}
 
 export function sitemapPageNumbers(index: SeoSitemapIndex): number[] {
   return Array.from({ length: index.page_count }, (_, offset) => offset + 1);
@@ -18,7 +45,7 @@ export function renderSitemapIndex(pages: readonly number[]): string {
   const locations = pages
     .map(
       (page) =>
-        `  <sitemap><loc>${xml(absolute(`/sitemaps/${page}/`))}</loc></sitemap>`,
+        `  <sitemap><loc>${xml(absoluteSitemapUrl(`/sitemaps/${page}/`))}</loc></sitemap>`,
     )
     .join("\n");
   return [
@@ -33,6 +60,7 @@ export function renderSitemapIndex(pages: readonly number[]): string {
 export function renderUrlSet(entries: SeoSitemapPage["urls"]): string {
   const urls = entries
     .map((entry) => {
+      const loc = absoluteSitemapUrl(entry.path || entry.loc);
       const lastmod = entry.lastmod
         ? `\n    <lastmod>${xml(entry.lastmod)}</lastmod>`
         : "";
@@ -46,7 +74,7 @@ export function renderUrlSet(entries: SeoSitemapPage["urls"]): string {
           : "";
       return [
         "  <url>",
-        `    <loc>${xml(entry.loc)}</loc>${lastmod}${priority}`,
+        `    <loc>${xml(loc)}</loc>${lastmod}${priority}`,
         "  </url>",
       ].join("\n");
     })
@@ -64,7 +92,14 @@ export function xmlResponse(body: string): Response {
   return new Response(body, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=300, stale-while-revalidate=3600",
+      // Ensure intermediary caches do not keep an empty index forever.
+      "CDN-Cache-Control": "public, max-age=300",
     },
   });
+}
+
+/** @deprecated Prefer absoluteSitemapUrl for sitemap documents. */
+export function sitemapAbsolute(path: string): string {
+  return absolute(path) || `${SITE_URL}${path}`;
 }

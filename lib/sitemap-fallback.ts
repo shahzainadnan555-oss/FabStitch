@@ -1,5 +1,5 @@
 import type { SeoSitemapPage } from "@/lib/api/types";
-import { absolute } from "@/lib/seo";
+import { absoluteSitemapUrl } from "@/lib/sitemaps";
 import {
   SITEMAP_ELIGIBLE_SEO_PAGES,
   type StorefrontPageType,
@@ -25,13 +25,12 @@ const PRIORITY_BY_TYPE: Partial<Record<StorefrontPageType, string>> = {
 };
 
 /**
- * Local sitemap fallback from the curated storefront SEO registry.
- * Used when the live SEO sitemap API is empty or temporarily unavailable.
- * Prefer the backend sitemap whenever it returns real URLs.
+ * Local sitemap from the curated storefront SEO registry.
+ * Only sitemap-eligible (indexable, public, canonical) pages are included.
  */
 export function localSitemapUrls(): SeoSitemapPage["urls"] {
   return SITEMAP_ELIGIBLE_SEO_PAGES.map((page) => ({
-    loc: absolute(page.canonicalPath),
+    loc: absoluteSitemapUrl(page.canonicalPath),
     path: page.canonicalPath,
     lastmod: null,
     page_type: page.type,

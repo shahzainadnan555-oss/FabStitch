@@ -91,6 +91,15 @@ function isProductionSiteHost(host: string, canonicalHost: string): boolean {
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+
+  // Sitemap and robots must never receive X-Robots-Tag: noindex from the
+  // page classifier — that can make Google ignore the sitemap document.
+  const isSitemapOrRobots =
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
+    pathname === "/sitemap-index.xml" ||
+    pathname.startsWith("/sitemaps/");
+
   const canonicalOrigin = new URL(SITE_URL);
   const canonicalHost = hostname(canonicalOrigin.host);
   const requestProtocol =
@@ -122,8 +131,10 @@ export async function proxy(request: NextRequest) {
   }
 
   const response = NextResponse.next();
-  const robots = await robotsDirective(request);
-  if (robots) response.headers.set("X-Robots-Tag", robots);
+  if (!isSitemapOrRobots) {
+    const robots = await robotsDirective(request);
+    if (robots) response.headers.set("X-Robots-Tag", robots);
+  }
   return response;
 }
 

@@ -1,29 +1,50 @@
-import {
-  renderSitemapIndex,
-  sitemapPageNumbers,
-  xmlResponse,
-} from "@/lib/sitemaps";
-import { localSitemapPage } from "@/lib/sitemap-fallback";
-import { getSeoSitemapIndex } from "@/repositories/seo";
+import { absoluteSitemapUrl, renderUrlSet, xmlResponse } from "@/lib/sitemaps";
+import { localSitemapUrls } from "@/lib/sitemap-fallback";
+import { getSeoSitemapIndex, getSeoSitemapPage } from "@/repositories/seo";
+import type { SeoSitemapPage } from "@/lib/api/types";
+
+// Never bake an empty build-time sitemap into the deployment artifact.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 /**
- * Authoritative sitemap index.
+ * Production sitemap.
  *
- * Prefer the live SEO API. When it is empty or unavailable, fall back to the
- * curated storefront registry so Google always receives indexable public URLs.
+ * Prefer the live SEO API when it returns real URLs. Otherwise emit a single
+ * <urlset> from the curated storefront registry. Never return an empty
+ * <sitemapindex> — that is what broke Google discovery in production.
  */
-export async function GET() {
+async function resolveSitemapUrls(): Promise<SeoSitemapPage["urls"]> {
   try {
     const index = await getSeoSitemapIndex();
     if (index.page_count > 0 && index.total_urls > 0) {
-      return xmlResponse(renderSitemapIndex(sitemapPageNumbers(index)));
+      const pages = await Promise.all(
+        Array.from({ length: index.page_count }, (_, offset) =>
+          getSeoSitemapPage(offset + 1),
+        ),
+      );
+      const urls = pages
+        .flatMap((page) => page.urls)
+        .filter((entry) => entry.loc);
+      if (urls.length > 0) {
+        return urls.map((entry) => ({
+          ...entry,
+          // Force public website host — never API / localhost / vercel.app.
+          loc: absoluteSitemapUrl(entry.path || entry.loc),
+        }));
+      }
     }
   } catch {
     // Fall through to the local registry.
   }
 
-  const local = localSitemapPage();
-  if (local.total_urls === 0) {
+  return localSitemapUrls();
+}
+
+export async function GET() {
+  const urls = await resolveSitemapUrls();
+
+  if (urls.length === 0) {
     return new Response("Sitemap is temporarily unavailable", {
       status: 503,
       headers: {
@@ -34,5 +55,5 @@ export async function GET() {
     });
   }
 
-  return xmlResponse(renderSitemapIndex([1]));
+  return xmlResponse(renderUrlSet(urls));
 }

@@ -2,6 +2,14 @@ import { renderUrlSet, xmlResponse } from "@/lib/sitemaps";
 import { localSitemapPage } from "@/lib/sitemap-fallback";
 import { getSeoSitemapIndex, getSeoSitemapPage } from "@/repositories/seo";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+/**
+ * Optional child sitemap batch.
+ * Primary discovery uses /sitemap.xml as a single urlset. This route remains
+ * for compatibility and for a future multi-file split if the catalogue grows.
+ */
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ batch: string }> },
