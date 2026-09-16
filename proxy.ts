@@ -7,10 +7,11 @@ import { hasIndexAffectingSearchParams } from "@/lib/seo-query";
 import { classifySeoRoute, getSeoPageByPath } from "@/repositories/seo";
 
 /**
- * Frontend route migrations plus backend-authoritative crawl directives.
+ * Frontend route migrations plus crawl directives.
  *
- * This is not an authentication boundary. The SEO API only decides whether
- * crawlers may index or follow a public request.
+ * X-Robots-Tag is only applied for private/auth routes and real filter/query
+ * states. Clean public money pages must remain crawlable and indexable even
+ * when the SEO API has no page row or mis-labels a hub as "filter".
  */
 const NON_FOLLOWABLE_ROUTE_CLASSES = new Set([
   "admin",
@@ -35,44 +36,100 @@ const PRIVATE_PATH_PREFIXES = [
   "/auth",
 ] as const;
 
+/** Clean hubs the SEO API may still label as filter/search. */
+const ALWAYS_INDEXABLE_CLEAN_PATHS = new Set([
+  "/",
+  "/marketplace/",
+  "/fabrics/",
+  "/collections/",
+  "/fabrics/best-for/",
+  "/guides/",
+  "/about/",
+  "/how-it-works/",
+  "/contact/",
+  "/support/",
+  "/help/",
+]);
+
+function normalizePathname(pathname: string): string {
+  if (!pathname || pathname === "/") return "/";
+  const collapsed = pathname.replace(/\/{2,}/g, "/");
+  return collapsed.endsWith("/") ? collapsed : `${collapsed}/`;
+}
+
 function hasPrivatePrefix(pathname: string): boolean {
+  const raw =
+    pathname.endsWith("/") && pathname !== "/"
+      ? pathname.slice(0, -1)
+      : pathname;
   return PRIVATE_PATH_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    (prefix) => raw === prefix || raw.startsWith(`${prefix}/`),
   );
 }
 
+function isCleanPublicMoneyPath(pathname: string): boolean {
+  const path = normalizePathname(pathname);
+  if (ALWAYS_INDEXABLE_CLEAN_PATHS.has(path)) return true;
+  if (isIndexableSeoPath(path)) return true;
+  return false;
+}
+
 async function robotsDirective(request: NextRequest): Promise<string | null> {
-  if (hasPrivatePrefix(request.nextUrl.pathname)) {
+  const pathname = normalizePathname(request.nextUrl.pathname);
+
+  if (hasPrivatePrefix(pathname)) {
     return "noindex, nofollow";
   }
-  // Tracking-only params (UTM/gclid/etc.) must not force noindex.
+
+  // Faceted/query states stay noindex; clean URLs do not.
   if (hasIndexAffectingSearchParams(request.nextUrl.searchParams)) {
     return "noindex, follow";
   }
-  const requestPath = request.nextUrl.pathname;
+
+  // Known money/public pages: never emit X-Robots-Tag noindex on clean URLs.
+  if (isCleanPublicMoneyPath(pathname)) {
+    return null;
+  }
+
   try {
     const [classification, page] = await Promise.all([
-      classifySeoRoute(requestPath),
-      getSeoPageByPath(requestPath),
+      classifySeoRoute(pathname),
+      getSeoPageByPath(pathname),
     ]);
+
     if (NON_FOLLOWABLE_ROUTE_CLASSES.has(classification.route_class)) {
       return "noindex, nofollow";
     }
+
+    // Explicit backend page row saying noindex.
+    if (
+      page &&
+      (!page.is_indexable || /\bnoindex\b/i.test(page.robots_directives ?? ""))
+    ) {
+      return "noindex, follow";
+    }
+
+    // Explicit indexable page row.
+    if (page?.is_indexable) {
+      return null;
+    }
+
+    // public_seo without a row → allow (do not fail closed).
+    if (
+      classification.route_class === "public_seo" &&
+      classification.allow_index
+    ) {
+      return null;
+    }
+
     if (!classification.allow_index || classification.is_search_or_filter) {
       return "noindex, follow";
     }
 
-    if (
-      !page?.is_indexable ||
-      /\bnoindex\b/i.test(page.robots_directives ?? "")
-    ) {
-      return "noindex, follow";
-    }
     return null;
   } catch {
-    // Do not fail-closed noindex known money pages during SEO API outages.
-    if (isIndexableSeoPath(requestPath)) return null;
-    return "noindex, follow";
+    // On SEO API failure, do not blanket-noindex the site.
+    return null;
   }
 }
 
@@ -92,8 +149,7 @@ function isProductionSiteHost(host: string, canonicalHost: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // Sitemap and robots must never receive X-Robots-Tag: noindex from the
-  // page classifier — that can make Google ignore the sitemap document.
+  // Sitemap and robots must never receive X-Robots-Tag: noindex.
   const isSitemapOrRobots =
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||

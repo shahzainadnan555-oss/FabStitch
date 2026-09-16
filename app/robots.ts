@@ -2,13 +2,16 @@ import type { MetadataRoute } from "next";
 import { absolute } from "@/lib/seo";
 import { listSeoRouteClasses } from "@/repositories/seo";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 /**
- * Private routes are crawl-blocked. Public query states remain crawlable long
- * enough for their page-level noindex/canonical directives to be read; robots
- * is not used as a substitute for deindexation.
+ * Private routes are crawl-blocked.
  *
- * Obsolete public routes are also left crawlable so a crawler can receive
- * their permanent redirects and transfer signals to the final storefront URL.
+ * Public money pages are never disallowed here — use page metadata /
+ * X-Robots-Tag only for filter/query noindex states.
+ *
+ * Never emit `Disallow: /` even if the SEO API returns a root prefix.
  */
 const DISALLOWED_ROUTE_CLASSES = new Set([
   "admin",
@@ -31,29 +34,53 @@ const PRIVATE_PREFIXES = [
   "/forgot-password/",
   "/reset-password/",
   "/auth/",
-];
+] as const;
+
+/** Paths that must remain crawlable for SEO. */
+const NEVER_DISALLOW = new Set([
+  "/",
+  "/marketplace/",
+  "/fabrics/",
+  "/collections/",
+  "/fabrics/best-for/",
+  "/guides/",
+  "/about/",
+  "/how-it-works/",
+  "/contact/",
+  "/support/",
+  "/help/",
+  "/sitemap.xml",
+  "/robots.txt",
+]);
+
+function toDisallowPrefix(pathPrefix: string): string | null {
+  if (!pathPrefix || pathPrefix === "/") return null;
+  const normalized = `${pathPrefix.replace(/\/+$/, "")}/`;
+  if (NEVER_DISALLOW.has(normalized) || NEVER_DISALLOW.has(pathPrefix)) {
+    return null;
+  }
+  return normalized;
+}
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const routeClasses = await listSeoRouteClasses().catch(() => []);
-  const disallow = [
-    ...new Set([
-      ...PRIVATE_PREFIXES,
-      ...routeClasses
-        .filter((route) => DISALLOWED_ROUTE_CLASSES.has(route.route_class))
-        .map((route) =>
-          route.path_prefix === "/"
-            ? route.path_prefix
-            : `${route.path_prefix.replace(/\/+$/, "")}/`,
-        ),
-    ]),
-  ];
+  const fromApi = routeClasses
+    .filter((route) => DISALLOWED_ROUTE_CLASSES.has(route.route_class))
+    .map((route) => toDisallowPrefix(route.path_prefix))
+    .filter((prefix): prefix is string => Boolean(prefix));
+
+  const disallow = [...new Set([...PRIVATE_PREFIXES, ...fromApi])].filter(
+    (prefix) => prefix !== "/" && !NEVER_DISALLOW.has(prefix),
+  );
 
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow,
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: ["/", "/marketplace/", "/fabrics/", "/collections/", "/guides/"],
+        disallow,
+      },
+    ],
     sitemap: absolute("/sitemap.xml"),
     host: absolute("/"),
   };
