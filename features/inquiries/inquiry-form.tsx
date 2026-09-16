@@ -11,6 +11,7 @@ import { Field, Input, Select } from "@/components/ui/field";
 import { IconClose } from "@/components/ui/icon";
 import { FabricMedia } from "@/components/marketplace/fabric-media";
 import { cn } from "@/lib/cn";
+import { trackGaEvent } from "@/lib/analytics/ga4";
 import { loginHref } from "@/features/auth/return-to";
 import { useSession } from "@/features/auth/session";
 import { inquirySubmitErrorMessage } from "@/features/auth/messages";
@@ -395,6 +396,12 @@ function InquiryComposeForm({
           headers: { "Idempotency-Key": idempotencyKey.current },
         },
       );
+      trackGaEvent("inquiry_submitted", {
+        fabric_slug: fabric.slug,
+        fabric_name: fabric.name,
+        quantity: trimmed(quantity),
+        quantity_unit: quantityUnit,
+      });
       onSuccess(response, {
         email: accountEmail,
         country: countryName(country, countries),

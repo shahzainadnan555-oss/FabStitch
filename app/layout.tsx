@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { OrganizationJsonLd } from "@/components/seo/structured-data";
 import { SessionProvider } from "@/features/auth/session";
 import { BRAND_NAME, TITLE_TEMPLATE } from "@/lib/page-title";
@@ -94,6 +96,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <OrganizationJsonLd />
         <SessionProvider>{children}</SessionProvider>
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
       </body>
     </html>
   );

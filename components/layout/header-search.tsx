@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { IconClose, IconSearch } from "@/components/ui/icon";
+import { trackGaEvent } from "@/lib/analytics/ga4";
 
 export function HeaderSearch({ mobile = false }: { mobile?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -52,7 +53,21 @@ export function HeaderSearch({ mobile = false }: { mobile?: boolean }) {
             </button>
           </div>
 
-          <form action="/marketplace/" className="mt-7">
+          <form
+            action="/marketplace/"
+            className="mt-7"
+            onSubmit={(event) => {
+              const form = event.currentTarget;
+              const data = new FormData(form);
+              const query = String(data.get("q") ?? "").trim();
+              if (query) {
+                trackGaEvent("fabric_search", {
+                  search_term: query,
+                  source: mobile ? "header_mobile" : "header_desktop",
+                });
+              }
+            }}
+          >
             <label htmlFor={inputId} className="sr-only">
               Search fabrics
             </label>

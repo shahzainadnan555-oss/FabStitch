@@ -17,6 +17,7 @@ import {
 } from "./pending-otp";
 import { useSession } from "./session";
 import { AuthMessage, AuthSubmitButton } from "./ui";
+import { trackGaEvent } from "@/lib/analytics/ga4";
 
 function formatCountdown(totalSeconds: number): string {
   const seconds = Math.max(0, Math.ceil(totalSeconds));
@@ -81,11 +82,13 @@ export function EmailOtpForm({
       clearPendingEmailOtp();
 
       if (challenge.purpose === "signup") {
+        trackGaEvent("signup_completed", { method: "email_otp" });
         setWelcome(result);
         setPending(false);
         return;
       }
 
+      trackGaEvent("login_completed", { method: "email_otp" });
       await finalizeAuthentication(result.user, session, router, next);
     } catch (requestError) {
       setError(otpErrorMessage(requestError));

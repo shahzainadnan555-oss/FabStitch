@@ -23,6 +23,7 @@ import {
   AuthPasswordField,
   AuthSubmitButton,
 } from "./ui";
+import { trackGaEvent } from "@/lib/analytics/ga4";
 
 type Schema = components["schemas"];
 type LoginRequest = Schema["LoginRequest"];
@@ -123,6 +124,7 @@ export function SignInForm({
     setSignupHref(undefined);
     setFieldErrors({});
     setEmailDraft(email);
+    trackGaEvent("login_started", { method: "email" });
 
     try {
       const result = await api.post<
@@ -138,6 +140,7 @@ export function SignInForm({
       }
 
       if ("user" in result && result.user && !result.verification_required) {
+        trackGaEvent("login_completed", { method: "email" });
         await finalizeAuthentication(result.user, session, router, next);
         return;
       }

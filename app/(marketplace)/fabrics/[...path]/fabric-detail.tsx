@@ -17,6 +17,7 @@ import {
   InquiryEntryPanel,
   InquiryFlowProvider,
 } from "@/features/inquiries/inquiry-flow";
+import { FabricViewTracker } from "@/components/analytics/fabric-view-tracker";
 import { fabricSeoDescription } from "@/lib/storefront-metadata";
 
 /**
@@ -103,6 +104,7 @@ export async function CatalogFabricPage({
 
   return (
     <InquiryFlowProvider fabric={inquiryFabric}>
+      <FabricViewTracker fabricSlug={fabric.slug} fabricName={fabric.name} />
       <CatalogProductJsonLd fabric={fabric} description={description} />
       <div data-fabric-detail-slug={fabric.slug}>
         <FabricExperienceHero

@@ -12,6 +12,7 @@ import { Panel } from "@/components/ui/layout";
 import { Label } from "@/components/ui/typography";
 import { IconArrowRight } from "@/components/ui/icon";
 import { cn } from "@/lib/cn";
+import { trackGaEvent } from "@/lib/analytics/ga4";
 import { InquiryDialog } from "./inquiry-form";
 import type { InquiryFlowFabric } from "./types";
 
@@ -40,7 +41,13 @@ export function InquiryFlowProvider({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const show = useCallback(() => setOpen(true), []);
+  const show = useCallback(() => {
+    trackGaEvent("inquiry_started", {
+      fabric_slug: fabric.slug,
+      fabric_name: fabric.name,
+    });
+    setOpen(true);
+  }, [fabric.name, fabric.slug]);
   const value = useMemo(() => ({ fabric, open: show }), [fabric, show]);
 
   return (

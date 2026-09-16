@@ -20,6 +20,7 @@ import {
   AuthPasswordField,
   AuthSubmitButton,
 } from "./ui";
+import { trackGaEvent } from "@/lib/analytics/ga4";
 
 type Schema = components["schemas"];
 type SignupRequest = Schema["SignupRequest"];
@@ -115,6 +116,7 @@ export function SignUpForm({
     setError(null);
     setFieldErrors({});
     setEmailDraft(email);
+    trackGaEvent("signup_started", { method: "email" });
 
     try {
       const result = await api.post<

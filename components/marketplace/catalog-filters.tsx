@@ -13,6 +13,7 @@ import { Chip } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
 import { IconClose, IconFilter } from "@/components/ui/icon";
 import { Label } from "@/components/ui/typography";
+import { trackGaEvent } from "@/lib/analytics/ga4";
 
 const FACET_KEYS = [
   "family",
@@ -453,7 +454,16 @@ export function CatalogResultsToolbar({
                 variant="primary"
                 size="lg"
                 onClick={() => {
-                  push(new URLSearchParams(draft));
+                  const next = new URLSearchParams(draft);
+                  const used = FILTER_KEYS.filter((key) => next.has(key));
+                  if (used.length) {
+                    trackGaEvent("filter_used", {
+                      filter_count: used.length,
+                      filter_keys: used.join(","),
+                      page_path: pathname,
+                    });
+                  }
+                  push(next);
                   setOpen(false);
                 }}
               >
