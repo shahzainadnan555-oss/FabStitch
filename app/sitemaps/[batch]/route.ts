@@ -1,4 +1,5 @@
 import { renderUrlSet, xmlResponse } from "@/lib/sitemaps";
+import { localSitemapPage } from "@/lib/sitemap-fallback";
 import { getSeoSitemapIndex, getSeoSitemapPage } from "@/repositories/seo";
 
 export async function GET(
@@ -16,22 +17,29 @@ export async function GET(
 
   try {
     const index = await getSeoSitemapIndex();
-    if (page > index.page_count) {
-      return new Response("Sitemap batch not found", {
-        status: 404,
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-      });
+    if (
+      index.page_count > 0 &&
+      index.total_urls > 0 &&
+      page <= index.page_count
+    ) {
+      const sitemap = await getSeoSitemapPage(page);
+      if (sitemap.urls.length > 0) {
+        return xmlResponse(renderUrlSet(sitemap.urls));
+      }
     }
-    const sitemap = await getSeoSitemapPage(page);
-    return xmlResponse(renderUrlSet(sitemap.urls));
   } catch {
-    return new Response("Sitemap is temporarily unavailable", {
-      status: 503,
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Retry-After": "60",
-        "X-Robots-Tag": "noindex, nofollow",
-      },
-    });
+    // Fall through to the local registry.
   }
+
+  if (page === 1) {
+    const local = localSitemapPage();
+    if (local.urls.length > 0) {
+      return xmlResponse(renderUrlSet(local.urls));
+    }
+  }
+
+  return new Response("Sitemap batch not found", {
+    status: 404,
+    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  });
 }

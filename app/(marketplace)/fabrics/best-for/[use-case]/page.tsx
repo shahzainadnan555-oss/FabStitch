@@ -15,7 +15,7 @@ import {
 } from "@/repositories/customer-catalog";
 import {
   hasSeoQueryState,
-  storefrontMetadata,
+  registeredStorefrontMetadata,
 } from "@/lib/storefront-metadata";
 import { numericParam } from "@/lib/query-params";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
@@ -45,12 +45,11 @@ export async function generateMetadata({
       robots: { index: false, follow: true },
     };
   }
-  return storefrontMetadata({
+  return registeredStorefrontMetadata(`/fabrics/best-for/${useCase.slug}/`, {
     title: `${useCase.name} fabrics`,
     description:
       useCase.description ??
       `Explore fabrics selected for ${useCase.name.toLowerCase()}.`,
-    path: `/fabrics/best-for/${useCase.slug}/`,
     index: !hasSeoQueryState(query),
   });
 }

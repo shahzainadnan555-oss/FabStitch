@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isIndexableSeoPath } from "@/domain/seo/storefront-registry";
 import { storefrontRedirect } from "@/lib/storefront-redirects";
 import { SITE_URL } from "@/lib/seo";
+import { hasIndexAffectingSearchParams } from "@/lib/seo-query";
 import { classifySeoRoute, getSeoPageByPath } from "@/repositories/seo";
 
 /**
@@ -43,10 +45,11 @@ async function robotsDirective(request: NextRequest): Promise<string | null> {
   if (hasPrivatePrefix(request.nextUrl.pathname)) {
     return "noindex, nofollow";
   }
-  if (request.nextUrl.search) {
+  // Tracking-only params (UTM/gclid/etc.) must not force noindex.
+  if (hasIndexAffectingSearchParams(request.nextUrl.searchParams)) {
     return "noindex, follow";
   }
-  const requestPath = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+  const requestPath = request.nextUrl.pathname;
   try {
     const [classification, page] = await Promise.all([
       classifySeoRoute(requestPath),
@@ -67,6 +70,8 @@ async function robotsDirective(request: NextRequest): Promise<string | null> {
     }
     return null;
   } catch {
+    // Do not fail-closed noindex known money pages during SEO API outages.
+    if (isIndexableSeoPath(requestPath)) return null;
     return "noindex, follow";
   }
 }

@@ -16,6 +16,7 @@ import {
   fabricsInFamily,
   getFabric,
 } from "./fabrics";
+import { bestForPathForApplication } from "@/lib/storefront-redirects";
 
 /**
  * The relation graph.
@@ -85,7 +86,7 @@ export function applicationsForFabric(slug: Slug, limit = 6): RelatedLink[] {
     .slice(0, limit)
     .map((a) => ({
       label: a.name,
-      href: `/applications/${a.slug}/`,
+      href: bestForPathForApplication(a.slug),
       hint: a.summary,
     }));
 }
@@ -164,7 +165,11 @@ export function buyersForFabric(slug: Slug, limit = 5): RelatedLink[] {
       seen.add(buyerSlug);
       const buyer = BUYER_BY_SLUG.get(buyerSlug);
       if (!buyer) continue;
-      out.push({ label: buyer.name, href: `/for/${buyer.slug}/` });
+      out.push({
+        label: buyer.name,
+        href: "/fabrics/best-for/",
+        hint: "Browse fabrics by what you are making",
+      });
       if (out.length >= limit) return out;
     }
   }
@@ -196,7 +201,11 @@ export function buyersForApplication(slug: Slug, limit = 6): RelatedLink[] {
     .map((s) => BUYER_BY_SLUG.get(s))
     .filter((b) => b !== undefined)
     .slice(0, limit)
-    .map((b) => ({ label: b.name, href: `/for/${b.slug}/` }));
+    .map((b) => ({
+      label: b.name,
+      href: "/fabrics/best-for/",
+      hint: "Browse fabrics by what you are making",
+    }));
 }
 
 /** Other applications in the same group. */
@@ -209,7 +218,7 @@ export function siblingApplications(slug: Slug, limit = 6): RelatedLink[] {
     .slice(0, limit)
     .map((other) => ({
       label: other.name,
-      href: `/applications/${other.slug}/`,
+      href: bestForPathForApplication(other.slug),
     }));
 }
 
@@ -227,7 +236,7 @@ export function applicationsForBuyer(slug: Slug, limit = 8): RelatedLink[] {
     .slice(0, limit)
     .map((a) => ({
       label: a.name,
-      href: `/applications/${a.slug}/`,
+      href: bestForPathForApplication(a.slug),
       hint: a.summary,
     }));
 }

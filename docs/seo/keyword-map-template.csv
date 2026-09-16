@@ -1,0 +1,15 @@
+Keyword,Country,Search intent,Volume,Difficulty,Target page,Content type,Priority
+fabric sourcing,GLOBAL,commercial,TBD,TBD,/marketplace/,money,P0
+fabric marketplace,GLOBAL,commercial,TBD,TBD,/marketplace/,money,P0
+wholesale fabric,GLOBAL,commercial,TBD,TBD,/marketplace/,money,P0
+buy fabric online,GLOBAL,transactional,TBD,TBD,/marketplace/,money,P0
+fabric for shirts,GLOBAL,commercial_investigation,TBD,TBD,/fabrics/best-for/shirts/,money,P0
+fabric for dresses,GLOBAL,commercial_investigation,TBD,TBD,/fabrics/best-for/dresses/,money,P0
+cotton fabrics,GLOBAL,commercial_investigation,TBD,TBD,/collections/ (cotton collection),money,P1
+linen fabrics,GLOBAL,commercial_investigation,TBD,TBD,/collections/ (linen collection),money,P1
+silk fabrics,GLOBAL,commercial_investigation,TBD,TBD,/collections/ (silk collection),money,P1
+french terry fabric,GLOBAL,commercial_investigation,TBD,TBD,/fabrics/{slug}/,product,P1
+fabric weight gsm,GLOBAL,informational,TBD,TBD,/guides/fabric-weight-and-gsm/,article,P1
+how to source fabric for clothing brand,GLOBAL,informational,TBD,TBD,/guides/ (planned),article,P1
+textile sourcing,GLOBAL,commercial_investigation,TBD,TBD,/marketplace/,money,P2
+fabstitch,GLOBAL,navigational,TBD,TBD,/,brand,P0

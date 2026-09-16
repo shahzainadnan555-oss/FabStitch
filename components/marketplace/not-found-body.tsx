@@ -27,12 +27,12 @@ export function NotFoundBody({
     },
     {
       label: "Start from what you're making",
-      href: "/applications/",
+      href: "/fabrics/best-for/",
       hint: "T-shirts, uniforms, bedding, upholstery",
     },
     {
       label: "Search fabrics",
-      href: "/search/",
+      href: "/marketplace/",
       hint: "By material, construction and specification",
     },
     {

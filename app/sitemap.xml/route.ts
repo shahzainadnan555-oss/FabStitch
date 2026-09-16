@@ -3,19 +3,27 @@ import {
   sitemapPageNumbers,
   xmlResponse,
 } from "@/lib/sitemaps";
+import { localSitemapPage } from "@/lib/sitemap-fallback";
 import { getSeoSitemapIndex } from "@/repositories/seo";
 
 /**
  * Authoritative sitemap index.
  *
- * The current catalogue fits in one child sitemap. Keeping the index/batch
- * shape now means catalogue growth never turns into one oversized XML file.
+ * Prefer the live SEO API. When it is empty or unavailable, fall back to the
+ * curated storefront registry so Google always receives indexable public URLs.
  */
 export async function GET() {
   try {
     const index = await getSeoSitemapIndex();
-    return xmlResponse(renderSitemapIndex(sitemapPageNumbers(index)));
+    if (index.page_count > 0 && index.total_urls > 0) {
+      return xmlResponse(renderSitemapIndex(sitemapPageNumbers(index)));
+    }
   } catch {
+    // Fall through to the local registry.
+  }
+
+  const local = localSitemapPage();
+  if (local.total_urls === 0) {
     return new Response("Sitemap is temporarily unavailable", {
       status: 503,
       headers: {
@@ -25,4 +33,6 @@ export async function GET() {
       },
     });
   }
+
+  return xmlResponse(renderSitemapIndex([1]));
 }

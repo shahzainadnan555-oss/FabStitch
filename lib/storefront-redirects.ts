@@ -8,6 +8,12 @@ const BEST_FOR_REDIRECTS: Record<string, string> = {
   bedding: "bedding",
 };
 
+/** Map an obsolete application slug to a live Best For path when possible. */
+export function bestForPathForApplication(slug: string): string {
+  const mapped = BEST_FOR_REDIRECTS[slug.toLowerCase()];
+  return mapped ? `/fabrics/best-for/${mapped}/` : "/fabrics/best-for/";
+}
+
 const HELP_REDIRECTS: Record<string, string> = {
   "finding-fabrics": "how-to-find-fabrics",
   searching: "how-search-works",

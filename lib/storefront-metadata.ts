@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import type { Crumb } from "@/components/ui/breadcrumbs";
 import type { SeoPage } from "@/lib/api/types";
 import { BRAND_NAME, cleanPageTitle, metadataTitle } from "@/lib/page-title";
+import { hasIndexAffectingSearchParams } from "@/lib/seo-query";
 import { getSeoPageByPath } from "@/repositories/seo";
 import type { CustomerCatalogFabric } from "@/repositories/customer-catalog";
+import { seoPage as localSeoPage } from "@/domain/seo/storefront-registry";
 
 const DEFAULT_SOCIAL_IMAGE = "/media/hero-navy-jersey.jpg";
 
@@ -189,6 +191,28 @@ export async function loadStorefrontSeo(
     };
   }
 
+  // Registry fallback keeps curated money pages indexable when the SEO API
+  // has no row yet or is temporarily unavailable.
+  const local = localSeoPage(path);
+  if (local?.indexable) {
+    return {
+      page: null,
+      metadata: storefrontMetadata({
+        title: overrides.title ?? local.title,
+        description: overrides.description ?? local.description,
+        path: local.canonicalPath,
+        image: overrides.image ?? local.image,
+        index: overrides.index !== false,
+        type:
+          overrides.type ??
+          (local.type === "guide" || local.type === "help"
+            ? "article"
+            : "website"),
+      }),
+      breadcrumbs: [],
+    };
+  }
+
   return {
     page: null,
     metadata: storefrontMetadata({
@@ -220,7 +244,7 @@ export async function registeredStorefrontMetadata(
 export function hasSeoQueryState(
   query: Record<string, string | string[] | undefined>,
 ): boolean {
-  return Object.values(query).some((value) => value !== undefined);
+  return hasIndexAffectingSearchParams(query);
 }
 
 export function fabricSeoDescription(fabric: CustomerCatalogFabric): string {
