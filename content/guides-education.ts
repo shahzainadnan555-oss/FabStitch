@@ -434,6 +434,14 @@ export const EDUCATION_GUIDES: CatalogGuide[] = [
           "Inquiry notes should name the end product.",
         ],
       },
+      {
+        heading: "Avoid common activewear mistakes",
+        body: "Do not treat every stretch cloth as interchangeable. A compression woven, a cooling construction and a retro-sport knit answer different briefs even when all feel “athletic” in a photo.\n\nIf recovery, opacity or swim suitability matters, confirm it on the product record or ask in the inquiry. Guessing from handfeel language alone creates sampling waste.",
+        keyPoints: [
+          "Stretch type and construction are not the same brief.",
+          "Ask about undocumented performance needs in the inquiry.",
+        ],
+      },
     ],
     faqs: [
       {
@@ -448,5 +456,117 @@ export const EDUCATION_GUIDES: CatalogGuide[] = [
       "cooling-performance-construction",
     ],
     applicationSlugs: ["activewear"],
+  }),
+  educationGuide({
+    slug: "how-to-buy-fabric-online",
+    type: "buyer_guide",
+    title: "How to buy fabric online",
+    heading: "How to buy fabric online with confidence",
+    metaDescription:
+      "A practical guide to buying fabric online: search by material and use, compare specs, then inquire for quantity on FabStitch.",
+    summary:
+      "Buying fabric online works best when you start from the product you are making, compare documented composition and weight, and inquire with a clear quantity — not when you shop by fibre name alone.",
+    cluster: "choosing-fabrics",
+    sections: [
+      {
+        heading: "Start from the product, not a fibre buzzword",
+        body: "Online fabric shopping fails most often when a brief starts with “I need cotton” and stops there. Cotton poplin, cotton voile and cotton moleskin serve different garments. The same is true for linen blends, silk sheers and technical knits.\n\nOn FabStitch, begin in the marketplace search or a Best For edit that matches what you are making — shirts, dresses, activewear, outerwear or home textiles. Then open named fabrics and read the documented composition, construction and weight before you inquire.",
+        keyPoints: [
+          "Name the end use before you shortlist cloth.",
+          "Compare named fabrics, not fibre labels alone.",
+        ],
+      },
+      {
+        heading: "What to compare on every fabric page",
+        body: "A useful online fabric record shows what you can verify: composition, construction, stated measurements, character notes and Best For uses. If a property is not documented, do not invent it from a photo.\n\nUse collections when you already know the material family — for example Cotton, Linen & Lightweight, or Silk & Sheer — and use Best For when the garment decides the shortlist. Both paths should land on the same product page with the same specifications.",
+        keyPoints: [
+          "Trust documented specs over lifestyle imagery.",
+          "Collections and Best For should converge on the same fabric page.",
+        ],
+      },
+      {
+        heading: "From shortlist to inquiry",
+        body: "When a fabric fits, send an inquiry with quantity in metres and a short note about the product. That is how FabStitch turns discovery into a sourcing conversation without forcing a self-serve checkout for every brief.\n\nIf you are still comparing options, keep two or three fabric pages open, note the differences in weight and drape, and only inquire when the brief is clear enough for a supplier conversation.",
+        keyPoints: [
+          "Include quantity and end use in the inquiry.",
+          "Narrow the shortlist before you ask for commercial follow-up.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Can I buy fabric online without knowing GSM?",
+        answer:
+          "Yes, but you should still compare the stated weight or measurement on each product. If weight is missing, ask in the inquiry rather than guessing from a photo.",
+      },
+      {
+        question: "Is marketplace search the same as Best For?",
+        answer:
+          "No. Search and filters explore the full catalog. Best For groups fabrics already documented for a specific end use. Use both when you need breadth and a focused shortlist.",
+      },
+    ],
+    fabricSlugs: [
+      "european-flax-linen",
+      "cotton-poplin",
+      "silk-chiffon",
+      "stretch-woven-compression",
+    ],
+    applicationSlugs: ["shirts", "dresses", "activewear"],
+  }),
+  educationGuide({
+    slug: "how-to-source-fabric-for-clothing-brands",
+    type: "buyer_guide",
+    title: "How to source fabric for clothing brands",
+    heading: "How to source fabric for clothing brands",
+    metaDescription:
+      "A clear fabric sourcing workflow for clothing brands and boutiques: brief, shortlist, compare specs, then inquire on FabStitch.",
+    summary:
+      "Brand fabric sourcing is a brief-driven process. Define the garment and constraints first, shortlist named fabrics with documented properties, then inquire with quantity and timeline — without inventing certifications or MOQs that are not stated.",
+    cluster: "choosing-fabrics",
+    sections: [
+      {
+        heading: "Write a brief before you browse",
+        body: "Clothing brands waste time when the team searches “nice linen” without stating season, silhouette, stretch needs or approximate quantity. A workable brief names the product, the handfeel range, any hard constraints, and whether the cloth must be sheer, structured, stretch or technical.\n\nFabStitch is built for that kind of brief. Use Best For edits for shirts, dresses, tailoring, activewear and outerwear, then open fabric pages that already document composition and uses.",
+        keyPoints: [
+          "A sourcing brief beats an open-ended fibre search.",
+          "Quantity and silhouette belong in the brief early.",
+        ],
+      },
+      {
+        heading: "Shortlist with collections and Best For together",
+        body: "Collections help when the material family is already decided — cotton shirting, silk sheers, denim, performance. Best For helps when the garment is decided and the fibre is still open.\n\nKeep the shortlist small. Three to five named fabrics with clear differences in weight or construction are easier to evaluate than twenty near-duplicates. Link each candidate back to the marketplace filters if you need a wider scan.",
+        keyPoints: [
+          "Collections answer material-first briefs.",
+          "Best For answers product-first briefs.",
+        ],
+      },
+      {
+        heading: "Inquire like a brand, not like a browser",
+        body: "When you inquire, include the fabric name, quantity in metres, the garment, and any timing constraints you can share. Do not claim a certification, MOQ or price that the product page does not state.\n\nIf two fabrics remain in contention, say so in the note. Clear commercial context helps the follow-up without turning the storefront into a content farm of invented supplier claims.",
+        keyPoints: [
+          "Inquiry notes should carry brand context.",
+          "Only claim properties that are documented on the fabric page.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Do boutiques and manufacturers use the same workflow?",
+        answer:
+          "The discovery path is similar. The inquiry note changes: boutiques often need smaller quantities and clearer delivery context, while manufacturers may specify production runs. Start from the same fabric record either way.",
+      },
+      {
+        question: "Where should I go after reading this guide?",
+        answer:
+          "Open the marketplace for search, a relevant Best For edit for the garment, or a material collection if the fibre family is already fixed. Then inquire from the fabric page that fits the brief.",
+      },
+    ],
+    fabricSlugs: [
+      "cotton-poplin",
+      "european-flax-linen",
+      "merino-roica-stretch-tailoring",
+      "lightweight-denim",
+    ],
+    applicationSlugs: ["shirts", "tailoring", "dresses"],
   }),
 ];

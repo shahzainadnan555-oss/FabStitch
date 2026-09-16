@@ -163,6 +163,8 @@ const staticPages: SeoPageDefinition[] = [
       "/collections/",
       "/fabrics/best-for/",
       "/guides/",
+      "/guides/how-to-buy-fabric-online/",
+      "/guides/how-to-source-fabric-for-clothing-brands/",
       ...CURATED_FABRIC_SLUGS.map((slug) => `/fabrics/${slug}/`),
     ],
     qualityGatePassed: true,
@@ -440,7 +442,12 @@ const collectionPages: SeoPageDefinition[] = CATALOG_COLLECTION_CARDS.map(
       audience: "Fabric customers",
       contentOwner: "FabStitch",
       contentSource: "FabStitch 2027 collection registry",
-      relatedPaths: products.map((fabric) => `/fabrics/${fabric.slug}/`),
+      relatedPaths: [
+        "/marketplace/",
+        "/fabrics/best-for/",
+        "/guides/",
+        ...products.map((fabric) => `/fabrics/${fabric.slug}/`),
+      ],
       productCount: products.length,
       qualityGatePassed: products.length >= 3,
       image:

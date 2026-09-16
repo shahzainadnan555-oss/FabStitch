@@ -46,11 +46,11 @@ export async function generateMetadata({
     };
   }
   return registeredStorefrontMetadata(`/collections/${collection.slug}/`, {
-    title: collection.seoTitle ?? collection.name,
+    title: collection.seoTitle ?? `${collection.name} fabrics`,
     description:
       collection.seoDescription ??
       collection.description ??
-      `Explore ${collection.name} fabrics on FabStitch.`,
+      `Explore ${collection.name} fabrics on FabStitch — compare composition, construction, and documented uses before you inquire.`,
     index: !hasSeoQueryState(query),
   });
 }
@@ -103,7 +103,11 @@ export default async function CollectionPage({ params, searchParams }: Props) {
           { label: collection.name },
         ]}
         eyebrow="Fabric collection"
-        title={collection.name}
+        title={
+          /\bfabrics?\b/i.test(collection.name)
+            ? collection.name
+            : `${collection.name} fabrics`
+        }
         intro={description}
         meta={[
           {
@@ -199,6 +203,34 @@ export default async function CollectionPage({ params, searchParams }: Props) {
             </ul>
           </section>
         ) : null}
+
+        <section className="mt-14 border-t border-rule pt-10">
+          <h2 className="text-h3 font-semibold text-ink">Keep exploring</h2>
+          <p className="mt-2 max-w-[48ch] text-sm text-ink-3">
+            Search the full marketplace, or read a guide before you inquire.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-4">
+            <Link
+              href="/marketplace/"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+            >
+              Open marketplace
+              <IconArrowRight width={14} height={14} aria-hidden />
+            </Link>
+            <Link
+              href="/guides/how-to-buy-fabric-online/"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+            >
+              How to buy fabric online
+            </Link>
+            <Link
+              href="/guides/"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+            >
+              All fabric guides
+            </Link>
+          </div>
+        </section>
       </Container>
     </>
   );

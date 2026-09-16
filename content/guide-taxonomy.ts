@@ -29,6 +29,8 @@ export const GUIDE_CATEGORY_BY_SLUG: Record<string, GuideCategorySlug> = {
   "how-fabric-composition-affects-performance": "weight-performance",
   "how-to-choose-fabric-for-dresses": "fabric-applications",
   "choosing-fabric-for-activewear": "fabric-applications",
+  "how-to-buy-fabric-online": "sourcing-buying",
+  "how-to-source-fabric-for-clothing-brands": "sourcing-buying",
 };
 
 export const GUIDE_RELATED_BY_SLUG: Record<string, readonly string[]> = {
@@ -52,9 +54,15 @@ export const GUIDE_RELATED_BY_SLUG: Record<string, readonly string[]> = {
     "how-to-choose-the-right-fabric-weight",
   ],
   "chiffon-vs-georgette": ["silk-vs-satin", "how-to-choose-fabric-for-dresses"],
-  "denim-2027": ["woven-vs-knit-fabrics", "how-to-choose-the-right-fabric-weight"],
+  "denim-2027": [
+    "woven-vs-knit-fabrics",
+    "how-to-choose-the-right-fabric-weight",
+  ],
   "linen-fabrics-2027": ["cotton-vs-linen", "what-is-cotton-fabric"],
-  "what-is-cotton-fabric": ["cotton-vs-linen", "how-to-choose-fabric-for-shirts"],
+  "what-is-cotton-fabric": [
+    "cotton-vs-linen",
+    "how-to-choose-fabric-for-shirts",
+  ],
   "understanding-fabric-width": [
     "fabric-weight-and-gsm",
     "how-to-choose-the-right-fabric-weight",
@@ -77,13 +85,21 @@ export const GUIDE_RELATED_BY_SLUG: Record<string, readonly string[]> = {
     "what-is-cotton-fabric",
     "choosing-fabric-for-activewear",
   ],
-  "how-to-choose-fabric-for-dresses": [
-    "silk-vs-satin",
-    "chiffon-vs-georgette",
-  ],
+  "how-to-choose-fabric-for-dresses": ["silk-vs-satin", "chiffon-vs-georgette"],
   "choosing-fabric-for-activewear": [
     "understanding-stretch-in-fabric",
     "how-fabric-composition-affects-performance",
+    "how-to-buy-fabric-online",
+  ],
+  "how-to-buy-fabric-online": [
+    "how-to-source-fabric-for-clothing-brands",
+    "how-to-choose-fabric-for-shirts",
+    "fabric-weight-and-gsm",
+  ],
+  "how-to-source-fabric-for-clothing-brands": [
+    "how-to-buy-fabric-online",
+    "fabrics-2027",
+    "how-to-choose-fabric-for-dresses",
   ],
 };
 

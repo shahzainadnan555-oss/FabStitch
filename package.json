@@ -17,6 +17,7 @@
     "api:types": "openapi-typescript ${OPENAPI_URL:-https://api.fabstitch.net/openapi.json} -o lib/api/schema.ts",
     "api:health": "node scripts/qa/api-health.mjs",
     "seo": "node --import=./scripts/register-loader.mjs scripts/seo-audit.mts",
+    "seo:keywords": "node --import=./scripts/register-loader.mjs scripts/seo/generate-keyword-map.mts",
     "qa": "node scripts/qa.mjs",
     "qa:backend": "node --import=./scripts/register-loader.mjs scripts/qa/backend-contract.mts",
     "qa:live": "node --import=./scripts/register-loader.mjs scripts/qa/live-journey.mts",
