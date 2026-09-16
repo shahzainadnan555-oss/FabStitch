@@ -877,6 +877,12 @@ function ClosingCta() {
             >
               Discover fabrics
             </Link>
+            <Link
+              href="/guides/"
+              className="inline-flex h-12 items-center rounded-sm border border-white/35 bg-navy-surface/30 px-6 text-sm font-semibold whitespace-nowrap text-on-ink transition-colors hover:bg-navy-surface/55"
+            >
+              Read fabric guides
+            </Link>
           </div>
         </ScrollReveal>
       </Container>

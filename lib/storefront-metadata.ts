@@ -52,7 +52,9 @@ export function storefrontMetadata({
       description,
       url: canonical,
       locale: "en_US",
-      images: [{ url: socialImage, alt: socialTitle }],
+      images: [
+        { url: socialImage, alt: socialTitle, width: 1200, height: 630 },
+      ],
     },
     twitter: {
       card: "summary_large_image",
@@ -214,6 +216,9 @@ export async function loadStorefrontSeo(
     };
   }
 
+  // Explicit opt-in: when a page supplies full metadata and asks to be
+  // indexed, honor that. Unknown thin routes stay noindex by default.
+  const explicitIndex = overrides.index === true;
   return {
     page: null,
     metadata: storefrontMetadata({
@@ -222,7 +227,7 @@ export async function loadStorefrontSeo(
         overrides.description ?? "FabStitch fabric sourcing marketplace.",
       path: canonicalPath(path),
       image: overrides.image,
-      index: false,
+      index: explicitIndex,
       type: overrides.type,
     }),
     breadcrumbs: [],

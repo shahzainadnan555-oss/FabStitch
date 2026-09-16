@@ -39,6 +39,18 @@ export default async function FabricsHubPage() {
         name="Explore Fabrics | FabStitch"
         description="Explore FabStitch fabrics through material collections, Best For uses, and the searchable marketplace."
         path="/fabrics/"
+        items={[
+          ...collections.slice(0, 8).map((collection) => ({
+            name: collection.name,
+            path: `/collections/${collection.slug}/`,
+            image: collection.imageUrl,
+          })),
+          ...bestFor.slice(0, 6).map((useCase) => ({
+            name: useCase.name,
+            path: `/fabrics/best-for/${useCase.slug}/`,
+            image: useCase.imageUrl,
+          })),
+        ]}
       />
       <PageHeader
         crumbs={[{ label: "Home", href: "/" }, { label: "Fabrics" }]}

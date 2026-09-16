@@ -134,10 +134,13 @@ export async function generateMetadata({
   // otherwise index it anyway.
   // The backend publication record is the only path that can opt the clean URL
   // into indexing. Missing records and query variants remain conservative.
+  // Taxonomy family/node guides remain public for browse continuity but are
+  // not indexed until they pass the storefront SEO registry quality gate.
+  // Clean query URLs still canonicalize here; filtered states stay noindex.
   return registeredStorefrontMetadata(route.canonical, {
     title: `${route.title} fabrics`,
     description: `Explore source-backed ${route.title.toLowerCase()} fabric directions, specifications and uses in the approved FabStitch 2027 collection.`,
-    index: !hasSeoQueryState(query),
+    index: false,
   });
 }
 

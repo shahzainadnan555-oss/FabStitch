@@ -98,11 +98,12 @@ export function guideLinks(guide: Guide): { href: string; label: string }[] {
       .filter((slug) => slug in COLLECTION_BY_SLUG)
       .map((slug) => ({
         href: `/collections/${slug}/`,
-        label: COLLECTION_BY_SLUG[slug as keyof typeof COLLECTION_BY_SLUG].label,
+        label:
+          COLLECTION_BY_SLUG[slug as keyof typeof COLLECTION_BY_SLUG].label,
       })),
     {
-      href: `/guides/?category=${guide.category}`,
-      label: guide.categoryLabel,
+      href: "/guides/",
+      label: "All fabric guides",
     },
   ];
 }

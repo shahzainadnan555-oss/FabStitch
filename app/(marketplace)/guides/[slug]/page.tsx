@@ -38,6 +38,7 @@ export async function generateMetadata({
     description: guide.metaDescription ?? guide.summary ?? undefined,
     type: "article",
     index: true,
+    image: "/media/hero-navy-jersey.jpg",
   });
 }
 
@@ -67,6 +68,7 @@ export default async function GuidePage({
         headline={guide.heading}
         description={guide.metaDescription}
         path={guide.path}
+        image="/media/hero-navy-jersey.jpg"
         author={guide.author}
         publishedAt={guide.publishedAt}
         updatedAt={guide.updatedAt}
@@ -81,7 +83,7 @@ export default async function GuidePage({
         crumbs={[
           { label: "Home", href: "/" },
           { label: "Guides", href: "/guides/" },
-          { label: guide.categoryLabel },
+          { label: guide.categoryLabel, href: "/guides/" },
           { label: guide.title },
         ]}
         eyebrow={guide.categoryLabel}

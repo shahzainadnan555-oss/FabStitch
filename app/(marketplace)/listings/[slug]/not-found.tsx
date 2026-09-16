@@ -3,6 +3,8 @@ import { NotFoundBody } from "@/components/marketplace/not-found-body";
 
 export const metadata: Metadata = {
   title: "Listing not found",
+  description:
+    "This fabric listing is no longer available. Browse the FabStitch marketplace or fabric collections instead.",
   robots: { index: false, follow: true },
 };
 
@@ -10,7 +12,7 @@ export default function ListingNotFound() {
   return (
     <NotFoundBody
       title="This listing is no longer available"
-      body="Availability changes as production runs move. The fabric itself may still be available elsewhere in the FabStitch catalogue."
+      body="Availability changes as production runs move. The fabric itself may still be available in the FabStitch catalogue."
       suggestions={[
         {
           label: "Browse every fabric family",
@@ -18,11 +20,15 @@ export default function ListingNotFound() {
           hint: "Find the same construction in the catalogue",
         },
         {
-          label: "Search by specification",
-          href: "/search/",
-          hint: "Weight, width, composition and MOQ",
+          label: "Search the marketplace",
+          href: "/marketplace/",
+          hint: "Filter by material, construction, and use",
         },
-        { label: "Open marketplace", href: "/marketplace/" },
+        {
+          label: "Browse collections",
+          href: "/collections/",
+          hint: "Linen, cotton, silk, denim, and more",
+        },
       ]}
     />
   );

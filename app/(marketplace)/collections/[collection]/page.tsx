@@ -76,6 +76,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   const description =
     collection.description ??
     `Explore the published fabrics in the ${collection.name} collection.`;
+  const bodyIntro = `Compare the named fabrics in this ${collection.name} edit for composition, construction, and documented Best For uses. Open any fabric for the full specification, then inquire with the quantity you need.`;
   const bestFor = [
     ...new Map(
       collection.fabrics
@@ -129,7 +130,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
             Inside this collection
           </h2>
           <p className="mt-4 text-body leading-relaxed text-ink-2 text-pretty">
-            {description}
+            {bodyIntro}
           </p>
         </section>
 

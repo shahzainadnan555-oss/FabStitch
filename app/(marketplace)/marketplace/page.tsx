@@ -153,14 +153,18 @@ async function MarketplaceResults({ query }: { query: MarketplaceQuery }) {
   return (
     <>
       <CollectionPageJsonLd
-        name="Fabric marketplace"
-        description="Search and filter the complete FabStitch 2027 fabric collection by material, construction, season, weight and Best For use."
+        name="Fabric Marketplace | FabStitch"
+        description="Search and filter FabStitch fabrics by material, construction, season, weight, and Best For use."
         path="/marketplace/"
-        items={fabrics.map((fabric) => ({
-          name: fabric.name,
-          path: `/fabrics/${fabric.slug}/`,
-          image: fabric.media.src,
-        }))}
+        items={
+          filtered
+            ? []
+            : fabrics.slice(0, 24).map((fabric) => ({
+                name: fabric.name,
+                path: `/fabrics/${fabric.slug}/`,
+                image: fabric.media.src,
+              }))
+        }
       />
       <Container className="py-8 sm:py-10">
         <div className="min-w-0">

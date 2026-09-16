@@ -163,6 +163,7 @@ export function ArticleJsonLd({
           "@type": "Organization",
           name: "FabStitch",
           url: SITE_URL,
+          logo: absolute("/media/fabstitch-mark.png"),
         },
       }}
     />

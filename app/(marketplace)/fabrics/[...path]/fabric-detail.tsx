@@ -19,6 +19,7 @@ import {
 } from "@/features/inquiries/inquiry-flow";
 import { FabricViewTracker } from "@/components/analytics/fabric-view-tracker";
 import { fabricSeoDescription } from "@/lib/storefront-metadata";
+import { listGuides } from "@/repositories/guides";
 
 /**
  * The FabStitch product page. It accepts the source-neutral customer catalogue
@@ -33,6 +34,9 @@ export async function CatalogFabricPage({
   detail: CustomerCatalogDetail;
 }) {
   const { fabric } = detail;
+  const relatedGuides = (await listGuides())
+    .filter((guide) => guide.fabricSlugs.includes(fabric.slug))
+    .slice(0, 4);
 
   const specRows = [
     fabric.composition.length
@@ -186,6 +190,36 @@ export async function CatalogFabricPage({
               </p>
 
               <RelatedFabricTiles items={related} className="mt-10" />
+
+              {relatedGuides.length ? (
+                <section
+                  className="mt-10"
+                  aria-labelledby="related-guides-heading"
+                >
+                  <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+                    Learn more
+                  </p>
+                  <h2
+                    id="related-guides-heading"
+                    className="mt-2 text-h2 font-semibold text-ink"
+                  >
+                    Related fabric guides
+                  </h2>
+                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {relatedGuides.map((guide) => (
+                      <li key={guide.slug}>
+                        <Link
+                          href={guide.path}
+                          prefetch={false}
+                          className="block rounded-sm border border-rule-2 bg-paper-raised px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-indigo hover:text-indigo"
+                        >
+                          {guide.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
             </div>
 
             <aside className="flex flex-col gap-5 lg:sticky lg:top-20 lg:self-start">

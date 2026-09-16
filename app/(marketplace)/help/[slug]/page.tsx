@@ -7,6 +7,7 @@ import { ContactSupport } from "@/components/marketplace/contact-support";
 import { ResourceNav } from "@/components/resources/resource-nav";
 import { getHelpArticle, HELP_ARTICLES } from "@/features/help/content";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { ArticleJsonLd } from "@/components/seo/structured-data";
 
 type Props = PageProps<"/help/[slug]">;
 
@@ -39,6 +40,13 @@ export default async function HelpArticlePage({ params }: Props) {
 
   return (
     <>
+      {article.indexable ? (
+        <ArticleJsonLd
+          headline={article.title}
+          description={article.summary}
+          path={`/help/${article.slug}/`}
+        />
+      ) : null}
       <Container className="pt-8">
         <ResourceNav current="help" />
       </Container>

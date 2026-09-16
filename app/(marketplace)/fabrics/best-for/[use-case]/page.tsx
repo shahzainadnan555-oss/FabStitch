@@ -19,6 +19,7 @@ import {
 } from "@/lib/storefront-metadata";
 import { numericParam } from "@/lib/query-params";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
+import { SEO_USE_CASE_BY_SLUG } from "@/catalog";
 
 type Props = {
   params: Promise<{ "use-case": string }>;
@@ -75,6 +76,11 @@ export default async function BestForPage({ params, searchParams }: Props) {
   const description =
     useCase.description ??
     `Explore fabrics selected for ${useCase.name.toLowerCase()}.`;
+  const editorial =
+    SEO_USE_CASE_BY_SLUG[useCase.slug as keyof typeof SEO_USE_CASE_BY_SLUG];
+  const bodyIntro =
+    editorial?.introduction?.join(" ") ??
+    `This Best For edit groups FabStitch fabrics whose documented applications include ${useCase.name.toLowerCase()}. Compare composition, construction, and stated weight on each fabric page before you inquire.`;
 
   return (
     <>
@@ -112,7 +118,7 @@ export default async function BestForPage({ params, searchParams }: Props) {
             Choosing for {useCase.name.toLowerCase()}
           </h2>
           <p className="mt-4 text-body leading-relaxed text-ink-2 text-pretty">
-            {description}
+            {bodyIntro}
           </p>
         </section>
 

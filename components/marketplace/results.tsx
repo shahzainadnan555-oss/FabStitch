@@ -193,7 +193,7 @@ function ListingTable({
                   />
                   <span className="min-w-0">
                     <Link
-                      href={`/listings/${listing.slug}/`}
+                      href="/marketplace/"
                       className="block max-w-[22ch] truncate text-sm font-medium text-ink hover:text-indigo"
                     >
                       {listing.name}
@@ -455,10 +455,7 @@ export function CatalogCursorPagination({
             <Link
               href={href({ cursor: null })}
               rel="prev"
-              className={cn(
-                pageLink,
-                "text-ink-2 hover:text-ink",
-              )}
+              className={cn(pageLink, "text-ink-2 hover:text-ink")}
             >
               <span aria-hidden="true">‹</span>
               Previous

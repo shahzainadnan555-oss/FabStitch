@@ -55,7 +55,7 @@ export function FabricCard({
   action?: ReactNode;
   className?: string;
 }) {
-  const href = `/listings/${listing.slug}/`;
+  const href = `/marketplace/`;
 
   return (
     <article
@@ -198,7 +198,7 @@ export function CatalogCard({
   saveHref: string;
   className?: string;
 }) {
-  const href = `/listings/${listing.slug}/`;
+  const href = `/marketplace/`;
 
   // Three columns, fixed order, always rendered. A missing value shows an em
   // dash rather than collapsing the column - a card whose fields move around
@@ -354,7 +354,7 @@ export function FabricCardGrid({
 export function FabricRowLink({ listing }: { listing: BuyerFabricListing }) {
   return (
     <Link
-      href={`/listings/${listing.slug}/`}
+      href="/marketplace/"
       className="group flex items-center justify-between gap-4 border-b border-rule px-1 py-3 transition-colors hover:bg-paper-sunk"
     >
       <span className="min-w-0">
@@ -405,7 +405,10 @@ export function FabricCatalogueCard({
   const primaryMeasurement = fabric.measurements[0];
   const gsm = fabric.measurements.find((item) => item.unit === "gsm");
   const asset = fabric.media.src
-    ? { src: fabric.media.src, alt: fabric.media.alt ?? fabric.name }
+    ? {
+        src: fabric.media.src,
+        alt: fabric.media.alt ?? `${fabric.name} fabric`,
+      }
     : undefined;
 
   const specs: { label: string; value: string }[] = [
