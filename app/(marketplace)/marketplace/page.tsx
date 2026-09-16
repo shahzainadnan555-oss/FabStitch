@@ -48,9 +48,9 @@ export async function generateMetadata({
   const query = await searchParams;
   const filtered = hasSeoQueryState(query);
   return registeredStorefrontMetadata("/marketplace/", {
-    title: filtered ? "Fabric search results" : undefined,
+    title: filtered ? "Fabric search results" : "Fabric Marketplace",
     description: filtered
-      ? "Search and filter the FabStitch 2027 fabric catalog. This result view canonicalizes to the main marketplace."
+      ? "Search and filter the FabStitch 2027 fabric catalog. Filtered result views canonicalize to the main marketplace."
       : undefined,
     index: !filtered,
   });

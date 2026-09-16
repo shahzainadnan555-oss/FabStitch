@@ -42,7 +42,7 @@ export function OrganizationJsonLd() {
         url: SITE_URL,
         logo: absolute("/media/fabstitch-mark.png"),
         description:
-          "A fabric storefront for discovering materials by properties and intended use.",
+          "A fabric storefront for discovering materials by properties and intended use — then inquiring with confidence.",
       }}
     />
   );
@@ -51,14 +51,8 @@ export function OrganizationJsonLd() {
 /**
  * The site and its search box. Emitted once, on the homepage only.
  *
- * `SearchAction` is the one piece of structured data on this page that makes a
- * claim a crawler can test: it says "this URL template runs a search". So the
- * template is the URL the homepage search box actually navigates to -
- * `/search/?q=` - rather than a plausible-looking guess. A template pointing at
- * a route that 404s is worse than no `WebSite` block at all.
- *
- * `alternateName` is the one abbreviation the brand is genuinely known by. No
- * keyword stuffing: this field is not a place to list what the site sells.
+ * `SearchAction` points at the live marketplace search URL template
+ * (`/marketplace/?q=`) — the same destination the site search uses.
  */
 export function WebSiteJsonLd() {
   return (
@@ -68,6 +62,8 @@ export function WebSiteJsonLd() {
         "@type": "WebSite",
         name: "FabStitch",
         url: SITE_URL,
+        description:
+          "Discover FabStitch fabrics by material, construction, and intended use.",
         potentialAction: {
           "@type": "SearchAction",
           target: {
@@ -160,9 +156,7 @@ export function ArticleJsonLd({
               image: image.startsWith("http") ? image : absolute(image),
             }
           : {}),
-        ...(author
-          ? { author: { "@type": "Person", name: author } }
-          : {}),
+        ...(author ? { author: { "@type": "Person", name: author } } : {}),
         ...(publishedAt ? { datePublished: publishedAt } : {}),
         ...(updatedAt ? { dateModified: updatedAt } : {}),
         publisher: {

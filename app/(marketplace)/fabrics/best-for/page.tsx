@@ -7,7 +7,9 @@ import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 import { getCustomerBestFor } from "@/repositories/customer-catalog";
 
 export async function generateMetadata() {
-  return registeredStorefrontMetadata("/fabrics/best-for/");
+  return registeredStorefrontMetadata("/fabrics/best-for/", {
+    title: "Fabrics by Use",
+  });
 }
 
 export default async function BestForHubPage() {
@@ -16,8 +18,8 @@ export default async function BestForHubPage() {
   return (
     <>
       <CollectionPageJsonLd
-        name="Find fabrics by what you are making"
-        description="Explore published FabStitch fabric edits organized by intended use."
+        name="Fabrics by Use | FabStitch"
+        description="Choose FabStitch fabrics by end use — shirts, dresses, activewear, outerwear, bedding, and more."
         path="/fabrics/best-for/"
         items={useCases.map((useCase) => ({
           name: useCase.name,
@@ -33,7 +35,7 @@ export default async function BestForHubPage() {
         ]}
         eyebrow="Start with the product"
         title="Find fabric for what you are making."
-        intro="Each published edit groups fabrics by a documented Best For use."
+        intro="Best For edits group fabrics by a documented end use. Pick the product you are building — a shirt, dress, knit, outer layer, or home textile — then compare the fabrics FabStitch has already mapped to that use."
         meta={[{ label: "Published edits", value: useCases.length }]}
       />
 

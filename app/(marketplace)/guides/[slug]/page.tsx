@@ -81,10 +81,7 @@ export default async function GuidePage({
         crumbs={[
           { label: "Home", href: "/" },
           { label: "Guides", href: "/guides/" },
-          {
-            label: guide.categoryLabel,
-            href: `/guides/?category=${guide.category}`,
-          },
+          { label: guide.categoryLabel },
           { label: guide.title },
         ]}
         eyebrow={guide.categoryLabel}
@@ -169,10 +166,13 @@ export default async function GuidePage({
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <ButtonLink href="/marketplace/" variant="primary">
-                  Explore fabrics
+                  Open marketplace
                 </ButtonLink>
-                <ButtonLink href="/help/" variant="secondary">
-                  Help
+                <ButtonLink href="/collections/" variant="secondary">
+                  Browse collections
+                </ButtonLink>
+                <ButtonLink href="/fabrics/best-for/" variant="secondary">
+                  Fabrics by use
                 </ButtonLink>
               </div>
             </div>

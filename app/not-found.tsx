@@ -6,6 +6,8 @@ import { MarketPreferenceProvider } from "@/features/preferences/market-preferen
 
 export const metadata: Metadata = {
   title: "Page not found",
+  description:
+    "This FabStitch page could not be found. Continue to the marketplace, collections, or fabric guides.",
   robots: { index: false, follow: true },
 };
 

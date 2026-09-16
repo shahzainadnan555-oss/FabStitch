@@ -174,16 +174,30 @@ export default async function BestForPage({ params, searchParams }: Props) {
             Need a wider starting point?
           </h2>
           <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-ink-3">
-            Search the full catalog by material, construction, season or stated
-            measurement.
+            Search the full catalog by material and construction, browse
+            collections, or read a guide before you inquire.
           </p>
-          <Link
-            href="/marketplace/"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo"
-          >
-            Search all fabrics
-            <IconArrowRight width={14} height={14} aria-hidden />
-          </Link>
+          <div className="mt-4 flex flex-wrap gap-4">
+            <Link
+              href="/marketplace/"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+            >
+              Search all fabrics
+              <IconArrowRight width={14} height={14} aria-hidden />
+            </Link>
+            <Link
+              href="/collections/"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+            >
+              Browse collections
+            </Link>
+            <Link
+              href="/guides/"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+            >
+              Read fabric guides
+            </Link>
+          </div>
         </section>
       </Container>
     </>

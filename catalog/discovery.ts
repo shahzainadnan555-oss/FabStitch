@@ -71,10 +71,15 @@ export const CATALOG_COLLECTION_CARDS: readonly CatalogCollectionCard[] = [
 
 export const CURATED_FABRIC_SLUGS = [
   "european-flax-linen",
+  "linen-cotton",
   "cotton-poplin",
+  "cotton-voile",
+  "cotton-seersucker",
   "silk-chiffon",
+  "silk-georgette",
   "pointelle-knit",
   "stretch-woven-compression",
   "lightweight-denim",
   "melton",
+  "boiled-wool",
 ] as const;

@@ -60,9 +60,31 @@ export default async function GuidesPage({
             Fabric knowledge for better sourcing.
           </h1>
           <p className="mt-5 max-w-[38rem] text-lead text-ink-2">
-            Explore practical guides on fabrics, materials, applications,
-            sourcing, and choosing the right textile for your next project.
+            Practical guides on fabric weight, composition, weaves, and choosing
+            materials for shirts, dresses, activewear, and home textiles —
+            written to support better FabStitch sourcing decisions.
           </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/marketplace/"
+              className="inline-flex items-center gap-2 rounded-sm border border-indigo bg-indigo px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-hover"
+            >
+              Open marketplace
+              <IconArrowRight width={14} height={14} aria-hidden />
+            </Link>
+            <Link
+              href="/fabrics/best-for/"
+              className="inline-flex items-center gap-2 rounded-sm border border-rule-2 bg-paper-raised px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-indigo hover:text-indigo"
+            >
+              Fabrics by use
+            </Link>
+            <Link
+              href="/collections/"
+              className="inline-flex items-center gap-2 rounded-sm border border-rule-2 bg-paper-raised px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-indigo hover:text-indigo"
+            >
+              Browse collections
+            </Link>
+          </div>
         </Container>
       </section>
 

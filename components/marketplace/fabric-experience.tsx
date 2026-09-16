@@ -4,9 +4,19 @@ import { Breadcrumbs, type Crumb } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/layout";
 import { IconArrowRight } from "@/components/ui/icon";
 import type { RelatedLink } from "@/domain/taxonomy/relations";
+import { seoPage } from "@/domain/seo/storefront-registry";
 import { Swatch } from "./swatch";
 import type { MediaSubject } from "./fabric-media";
 import { ResilientFabricImage } from "./resilient-fabric-image";
+
+/** Prefer SEO-eligible destinations; keep unknown browse paths. */
+function eligibleRelatedLinks(items: RelatedLink[]): RelatedLink[] {
+  return items.filter((item) => {
+    const page = seoPage(item.href);
+    if (!page) return true;
+    return page.internalLinkEligible;
+  });
+}
 
 export function FabricExperienceHero({
   crumbs,
@@ -118,7 +128,7 @@ export function BestFor({
   items: RelatedLink[];
   className?: string;
 }) {
-  const eligibleItems = items;
+  const eligibleItems = eligibleRelatedLinks(items);
   if (!eligibleItems.length) return null;
 
   return (
@@ -184,7 +194,7 @@ export function RelatedFabricTiles({
   items: RelatedLink[];
   className?: string;
 }) {
-  const eligibleItems = items;
+  const eligibleItems = eligibleRelatedLinks(items);
   if (!eligibleItems.length) return null;
 
   return (

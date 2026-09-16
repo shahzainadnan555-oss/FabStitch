@@ -45,6 +45,11 @@ export const STOREFRONT_REDIRECT_FAMILIES: readonly StorefrontRedirect[] = [
     reason: "One public canonical product URL",
   },
   {
+    from: "/best-for/:slug?/",
+    to: "/fabrics/best-for/:slug?/",
+    reason: "Best For lives under the fabrics hierarchy",
+  },
+  {
     from: "/applications/:slug/",
     to: "/fabrics/best-for/:slug/ or /marketplace/",
     reason: "Applications are now customer Best For pages",
@@ -83,6 +88,13 @@ export function storefrontRedirect(pathname: string): string | null {
   if (marketplaceFabric) return `/fabrics/${marketplaceFabric[1]}/`;
 
   if (canonicalCase === "/fabrics/index/") return "/fabrics/";
+
+  // Legacy Best For hub lived at /best-for/ before the fabrics hierarchy.
+  if (canonicalCase === "/best-for/") return "/fabrics/best-for/";
+  const legacyBestFor = canonicalCase.match(/^\/best-for\/([^/]+)\/$/);
+  if (legacyBestFor) {
+    return `/fabrics/best-for/${legacyBestFor[1]}/`;
+  }
 
   if (canonicalCase === "/applications/") return "/fabrics/best-for/";
   const application = canonicalCase.match(/^\/applications\/([^/]+)\/$/);

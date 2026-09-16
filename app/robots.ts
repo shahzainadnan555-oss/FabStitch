@@ -77,7 +77,14 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/marketplace/", "/fabrics/", "/collections/", "/guides/"],
+        allow: [
+          "/",
+          "/marketplace/",
+          "/fabrics/",
+          "/fabrics/best-for/",
+          "/collections/",
+          "/guides/",
+        ],
         disallow,
       },
     ],

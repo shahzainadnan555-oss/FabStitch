@@ -1,5 +1,6 @@
 import { renderUrlSet, xmlResponse } from "@/lib/sitemaps";
 import { localSitemapPage } from "@/lib/sitemap-fallback";
+import { sanitizeSitemapUrls } from "@/lib/sitemap-sanitize";
 import { getSeoSitemapIndex, getSeoSitemapPage } from "@/repositories/seo";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +33,7 @@ export async function GET(
     ) {
       const sitemap = await getSeoSitemapPage(page);
       if (sitemap.urls.length > 0) {
-        return xmlResponse(renderUrlSet(sitemap.urls));
+        return xmlResponse(renderUrlSet(sanitizeSitemapUrls(sitemap.urls)));
       }
     }
   } catch {

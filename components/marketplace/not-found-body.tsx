@@ -4,15 +4,14 @@ import { Label } from "@/components/ui/typography";
 import { IconArrowRight } from "@/components/ui/icon";
 
 /**
- * Not-found body.
+ * Premium 404 recovery body.
  *
- * A 404 in a marketplace is a routing opportunity, not a dead end: the buyer
- * was looking for something specific, so the page offers the doors that
- * actually lead somewhere rather than a single "go home" link.
+ * Keep this page useful and noindex: clear message, brand continuity, and
+ * recovery paths into money pages — never a dead end.
  */
 export function NotFoundBody({
-  title = "That page does not exist",
-  body = "The link may be out of date, or the record may no longer be published.",
+  title = "That page is not available",
+  body = "The link may be out of date, or the page may have moved. Use one of the paths below to keep exploring FabStitch fabrics.",
   suggestions,
 }: {
   title?: string;
@@ -21,41 +20,56 @@ export function NotFoundBody({
 }) {
   const links = suggestions ?? [
     {
-      label: "Browse every fabric family",
-      href: "/fabrics/",
-      hint: "Cotton, knits, wovens, synthetics and more",
+      label: "Go to homepage",
+      href: "/",
+      hint: "Start from the FabStitch landing experience",
     },
     {
-      label: "Start from what you're making",
+      label: "Open the fabric marketplace",
+      href: "/marketplace/",
+      hint: "Search and filter the full 2027 catalog",
+    },
+    {
+      label: "Browse fabric collections",
+      href: "/collections/",
+      hint: "Linen, cotton, silk, denim, and more",
+    },
+    {
+      label: "Find fabrics by use",
       href: "/fabrics/best-for/",
-      hint: "T-shirts, uniforms, bedding, upholstery",
+      hint: "Shirts, dresses, activewear, bedding, outerwear",
     },
     {
-      label: "Search fabrics",
-      href: "/marketplace/",
-      hint: "By material, construction and specification",
+      label: "Explore all fabrics",
+      href: "/fabrics/",
+      hint: "Hub for collections, Best For, and featured cloth",
     },
     {
-      label: "Open the marketplace",
-      href: "/marketplace/",
-      hint: "Search, filter and sort FabStitch fabrics",
+      label: "Read fabric guides",
+      href: "/guides/",
+      hint: "Weight, composition, weaves, and sourcing basics",
     },
   ];
 
   return (
     <Container className="py-16">
       <div className="max-w-[56ch]">
-        <p className="font-mono text-label uppercase text-ink-3">404</p>
+        <p className="font-mono text-label uppercase text-ink-3">
+          404 · FabStitch
+        </p>
         <h1 className="mt-3 text-h1 font-semibold text-ink text-balance">
           {title}
         </h1>
         <p className="mt-3 text-body text-ink-3 text-pretty">{body}</p>
 
         <div className="mt-8">
-          <Label>Try one of these</Label>
+          <Label>Continue exploring</Label>
           <ul className="mt-2.5 border-t border-rule-2">
             {links.map((link) => (
-              <li key={link.href} className="border-b border-rule-2">
+              <li
+                key={`${link.href}-${link.label}`}
+                className="border-b border-rule-2"
+              >
                 <Link href={link.href} className="group block py-3.5">
                   <span className="flex items-center justify-between gap-3">
                     <span className="text-body font-medium text-ink group-hover:text-indigo">

@@ -95,24 +95,30 @@ function Hero() {
           <h1 className="mt-4 max-w-[11.5ch] text-[clamp(2.7rem,5.3vw,5.35rem)] leading-[0.9] font-bold tracking-[-0.06em] text-balance text-ink">
             Find fabric that fits your vision.
           </h1>
-          <p className="mt-5 max-w-[29rem] text-lead text-ink-2">
-            Explore fabrics, understand the material, and source what your next
-            creation needs.
+          <p className="mt-5 max-w-[32rem] text-lead text-ink-2">
+            Explore FabStitch fabrics by material and use, compare source-backed
+            specs, and inquire when the cloth fits your next make.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/marketplace/"
               className="inline-flex h-12 items-center gap-2 rounded-sm border border-indigo bg-indigo px-6 text-sm font-semibold whitespace-nowrap text-white transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-indigo-hover active:translate-y-0"
             >
-              Start exploring
+              Open marketplace
               <IconArrowRight width={15} height={15} aria-hidden />
             </Link>
             <Link
-              href="/marketplace/"
+              href="/collections/"
+              className="inline-flex h-12 items-center gap-2 rounded-sm border border-border bg-paper/50 px-6 text-sm font-semibold whitespace-nowrap text-ink transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-paper-raised active:translate-y-0"
+            >
+              Browse collections
+            </Link>
+            <Link
+              href="/fabrics/best-for/"
               className="inline-flex h-12 items-center gap-2 rounded-sm border border-border bg-paper/50 px-6 text-sm font-semibold whitespace-nowrap text-ink transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-paper-raised active:translate-y-0"
             >
               <IconSearch width={15} height={15} aria-hidden />
-              Discover fabrics
+              Fabrics by use
             </Link>
           </div>
           <dl className="mt-7 grid max-w-[32rem] grid-cols-2 gap-x-5 gap-y-3 border-t border-rule-2 pt-3.5 sm:grid-cols-4">

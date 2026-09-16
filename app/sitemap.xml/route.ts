@@ -1,5 +1,6 @@
-import { absoluteSitemapUrl, renderUrlSet, xmlResponse } from "@/lib/sitemaps";
+import { renderUrlSet, xmlResponse } from "@/lib/sitemaps";
 import { localSitemapUrls } from "@/lib/sitemap-fallback";
+import { sanitizeSitemapUrls } from "@/lib/sitemap-sanitize";
 import { getSeoSitemapIndex, getSeoSitemapPage } from "@/repositories/seo";
 import type { SeoSitemapPage } from "@/lib/api/types";
 
@@ -10,9 +11,9 @@ export const revalidate = 0;
 /**
  * Production sitemap.
  *
- * Prefer the live SEO API when it returns real URLs. Otherwise emit a single
- * <urlset> from the curated storefront registry. Never return an empty
- * <sitemapindex> — that is what broke Google discovery in production.
+ * Prefer the live SEO API when it returns real URLs, then sanitize obsolete
+ * paths (e.g. /best-for/ → /fabrics/best-for/) and merge the curated local
+ * registry. Never return an empty <sitemapindex>.
  */
 async function resolveSitemapUrls(): Promise<SeoSitemapPage["urls"]> {
   try {
@@ -27,11 +28,7 @@ async function resolveSitemapUrls(): Promise<SeoSitemapPage["urls"]> {
         .flatMap((page) => page.urls)
         .filter((entry) => entry.loc);
       if (urls.length > 0) {
-        return urls.map((entry) => ({
-          ...entry,
-          // Force public website host — never API / localhost / vercel.app.
-          loc: absoluteSitemapUrl(entry.path || entry.loc),
-        }));
+        return sanitizeSitemapUrls(urls);
       }
     }
   } catch {

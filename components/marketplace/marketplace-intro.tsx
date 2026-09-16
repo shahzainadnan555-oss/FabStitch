@@ -3,6 +3,13 @@ import { Container } from "@/components/ui/layout";
 import { IconArrowRight, IconSearch } from "@/components/ui/icon";
 import type { CustomerCollectionCard } from "@/repositories/customer-catalog";
 
+const DISCOVERY_LINKS = [
+  { href: "/fabrics/", label: "All fabrics" },
+  { href: "/collections/", label: "Collections" },
+  { href: "/fabrics/best-for/", label: "Best For" },
+  { href: "/guides/", label: "Guides" },
+] as const;
+
 export function MarketplaceIntro({
   query,
   collections,
@@ -18,14 +25,15 @@ export function MarketplaceIntro({
       />
       <Container className="relative py-12 sm:py-16 lg:py-20">
         <p className="font-mono text-label tracking-[0.12em] text-gold-on-navy uppercase">
-          FabStitch marketplace
+          Fabric marketplace
         </p>
         <h1 className="mt-4 max-w-[16ch] text-[clamp(2.4rem,4.6vw,4.5rem)] leading-[0.98] font-semibold tracking-[-0.05em] text-balance">
           Discover fabrics for what comes next.
         </h1>
-        <p className="mt-4 max-w-[34rem] text-lead text-on-navy-2">
-          Explore the FabStitch 2027 collection by material, construction,
-          season or what you are making.
+        <p className="mt-4 max-w-[36rem] text-lead text-on-navy-2">
+          Search the FabStitch 2027 catalog by fiber, construction, season,
+          weight, or what you are making. Open a fabric for specs, then inquire
+          when the material fits.
         </p>
 
         <form
@@ -62,8 +70,24 @@ export function MarketplaceIntro({
         </form>
 
         <nav
+          aria-label="Marketplace discovery"
+          className="mt-5 flex flex-wrap gap-2"
+        >
+          {DISCOVERY_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              prefetch={false}
+              className="rounded-sm border border-white/20 bg-white/6 px-3 py-2 text-sm font-medium text-on-ink transition-colors hover:border-white/45 hover:bg-white/10"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <nav
           aria-label="Fabric collections"
-          className="mt-6 flex gap-2 overflow-x-auto pb-1"
+          className="mt-4 flex gap-2 overflow-x-auto pb-1"
         >
           {collections.map((collection) => (
             <Link

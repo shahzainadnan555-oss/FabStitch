@@ -8,6 +8,7 @@ export type FooterLinkGroup = {
   links: NavLink[];
 };
 
+/** Primary header destinations — keep compact to avoid overlap with utilities. */
 export const NAV_SECTIONS: NavLink[] = [
   { label: "Fabrics", href: "/fabrics/" },
   { label: "Marketplace", href: "/marketplace/" },
@@ -25,6 +26,7 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
       NAV_SECTIONS[1],
       NAV_SECTIONS[2],
       { label: "Best For", href: "/fabrics/best-for/" },
+      { label: "Guides", href: "/guides/" },
     ],
   },
   {
@@ -34,9 +36,9 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
   {
     label: "Resources",
     links: [
-      { label: "Guides", href: "/guides/" },
       { label: "Help", href: "/help/" },
       { label: "Support", href: "/support/" },
+      { label: "How FabStitch works", href: "/help/how-fabstitch-works/" },
     ],
   },
   {

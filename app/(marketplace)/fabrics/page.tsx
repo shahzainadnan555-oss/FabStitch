@@ -14,7 +14,7 @@ import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/fabrics/", {
-    title: "Fabrics",
+    title: "Explore Fabrics",
   });
 }
 
@@ -36,15 +36,15 @@ export default async function FabricsHubPage() {
   return (
     <>
       <CollectionPageJsonLd
-        name="FabStitch fabrics"
-        description="Browse published FabStitch fabrics through material collections, Best For uses and the searchable marketplace."
+        name="Explore Fabrics | FabStitch"
+        description="Explore FabStitch fabrics through material collections, Best For uses, and the searchable marketplace."
         path="/fabrics/"
       />
       <PageHeader
         crumbs={[{ label: "Home", href: "/" }, { label: "Fabrics" }]}
         eyebrow="FabStitch catalog"
         title="Find the fabric, then read the detail."
-        intro="Browse published fabrics through material collections, what you are making, or the complete searchable catalog."
+        intro="Start with a material collection, a Best For use case, or the full marketplace search. Every fabric page leads with composition, construction, and documented uses — so you can compare cloth before you inquire."
         meta={[
           { label: "Fabrics", value: fabricCount },
           { label: "Collections", value: collections.length },
@@ -139,6 +139,37 @@ export default async function FabricsHubPage() {
               No Best For edits are published yet.
             </p>
           )}
+        </section>
+
+        <section className="mt-14" aria-labelledby="guides-heading">
+          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+            Learn first
+          </p>
+          <h2
+            id="guides-heading"
+            className="mt-2 text-h2 font-semibold text-ink"
+          >
+            Fabric guides for clearer sourcing
+          </h2>
+          <p className="mt-3 max-w-[40rem] text-sm leading-relaxed text-ink-3">
+            Read practical notes on weight, composition, and construction, then
+            return to collections or the marketplace with a clearer brief.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href="/guides/"
+              className="inline-flex items-center gap-2 rounded-sm border border-rule-2 bg-paper-raised px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-indigo hover:text-indigo"
+            >
+              Browse fabric guides
+              <IconArrowRight width={14} height={14} aria-hidden />
+            </Link>
+            <Link
+              href="/marketplace/"
+              className="inline-flex items-center gap-2 rounded-sm border border-indigo bg-indigo px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-hover"
+            >
+              Search the marketplace
+            </Link>
+          </div>
         </section>
 
         <section className="mt-14" aria-labelledby="featured-fabrics-heading">

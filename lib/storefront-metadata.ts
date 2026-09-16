@@ -51,6 +51,7 @@ export function storefrontMetadata({
       title: socialTitle,
       description,
       url: canonical,
+      locale: "en_US",
       images: [{ url: socialImage, alt: socialTitle }],
     },
     twitter: {
@@ -248,16 +249,16 @@ export function hasSeoQueryState(
 }
 
 export function fabricSeoDescription(fabric: CustomerCatalogFabric): string {
-  if (fabric.description) return fabric.description;
-  const details = [
-    fabric.composition[0],
-    fabric.characteristics.slice(0, 2).join(" and "),
-    fabric.applications.length
-      ? `best for ${fabric.applications
-          .slice(0, 3)
-          .map((item) => item.label.toLowerCase())
-          .join(", ")}`
-      : undefined,
-  ].filter(Boolean);
-  return `Explore ${fabric.name} in the FabStitch 2027 collection${details.length ? `: ${details.join(", ")}` : ""}.`;
+  if (fabric.description?.trim()) return fabric.description.trim();
+  const composition = fabric.composition[0];
+  const character = fabric.characteristics.slice(0, 2).join(" and ");
+  const uses = fabric.applications.length
+    ? `Documented Best For uses include ${fabric.applications
+        .slice(0, 3)
+        .map((item) => item.label.toLowerCase())
+        .join(", ")}.`
+    : "";
+  const lead = `Explore ${fabric.name} in the FabStitch 2027 collection`;
+  const mid = [composition, character].filter(Boolean).join("; ");
+  return `${lead}${mid ? ` — ${mid}` : ""}. ${uses}`.trim();
 }
