@@ -125,6 +125,90 @@ export default async function FabricsHubPage() {
           </ul>
         </section>
 
+        <section className="mt-14" aria-labelledby="material-guides-heading">
+          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+            By material and garment
+          </p>
+          <h2
+            id="material-guides-heading"
+            className="mt-2 text-h2 font-semibold text-ink"
+          >
+            Shirt, dress, wool and fibre collections
+          </h2>
+          <ul className="mt-5 grid gap-px border border-rule-2 bg-rule-2 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                href: "/fabrics/shirt-fabric/",
+                title: "Shirt fabric",
+                body: "Types, weaves and dress-shirt materials.",
+              },
+              {
+                href: "/fabrics/dress-fabric/",
+                title: "Dress fabric",
+                body: "Drape, opacity and dressmaking directions.",
+              },
+              {
+                href: "/fabrics/wool-fabric/",
+                title: "Wool fabric",
+                body: "Tailoring, textures and outerwear wools.",
+              },
+              {
+                href: "/collections/cotton/",
+                title: "Cotton fabric",
+                body: "Woven cottons for apparel programmes.",
+              },
+              {
+                href: "/collections/linen-lightweight/",
+                title: "Linen fabric",
+                body: "Linen and lightweight blends.",
+              },
+              {
+                href: "/collections/silk-sheer/",
+                title: "Silk fabric",
+                body: "Sheer and fluid silk constructions.",
+              },
+              {
+                href: "/collections/denim/",
+                title: "Denim fabric",
+                body: "Denim for jeans and apparel.",
+              },
+              {
+                href: "/guides/fabric-weight-and-gsm/",
+                title: "Fabric GSM",
+                body: "What GSM means for buyers.",
+              },
+              {
+                href: "/guides/lightweight-fabric/",
+                title: "Lightweight fabric",
+                body: "Light programmes without invented thresholds.",
+              },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  prefetch={false}
+                  className="group flex h-full items-start justify-between gap-4 bg-paper-raised p-5 transition-colors hover:bg-indigo-wash"
+                >
+                  <span>
+                    <span className="block font-semibold text-ink group-hover:text-indigo">
+                      {item.title}
+                    </span>
+                    <span className="mt-1 block text-sm text-ink-3">
+                      {item.body}
+                    </span>
+                  </span>
+                  <IconArrowRight
+                    width={14}
+                    height={14}
+                    className="mt-1 shrink-0 text-indigo"
+                    aria-hidden
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="mt-14" aria-labelledby="commercial-paths-heading">
           <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
             Commercial paths

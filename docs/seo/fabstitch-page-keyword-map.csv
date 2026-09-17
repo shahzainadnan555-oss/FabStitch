@@ -137,3 +137,30 @@ wholesale fabric warehouse,Wholesale Fabric,Secondary,commercial,/wholesale-fabr
 wholesale fabric shopping,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,live
 wholesale fabric online store,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
 wholesale fashion fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+shirt fabric,Shirt Fabric,Primary,commercial_investigation,/fabrics/shirt-fabric/,intent_hub,P0,live
+shirt fabrics,Shirt Fabric,Secondary,commercial_investigation,/fabrics/shirt-fabric/,intent_hub,P0,live
+types of shirt fabric,Shirt Fabric,Secondary,informational,/fabrics/shirt-fabric/,intent_hub,P0,live
+cotton shirt fabric,Shirt Fabric,Secondary,commercial_investigation,/fabrics/shirt-fabric/,intent_hub,P1,live
+dress shirt fabric,Shirt Fabric,Secondary,commercial_investigation,/fabrics/shirt-fabric/,intent_hub,P0,live
+fabric for shirts,Shirt Fabric Product Grid,Primary,commercial,/fabrics/best-for/shirts/,best_for,P0,mapped
+fabrics for shirts,Shirt Fabric Product Grid,Secondary,commercial,/fabrics/best-for/shirts/,best_for,P0,mapped
+fabric for dresses,Dress Fabric,Primary,commercial_investigation,/fabrics/dress-fabric/,intent_hub,P0,live
+dress fabric,Dress Fabric,Secondary,commercial_investigation,/fabrics/dress-fabric/,intent_hub,P0,live
+fabrics for dresses,Dress Fabric Product Grid,Primary,commercial,/fabrics/best-for/dresses/,best_for,P0,mapped
+wool fabric,Wool Fabric,Primary,commercial_investigation,/fabrics/wool-fabric/,intent_hub,P0,live
+wool fabrics,Wool Fabric,Secondary,commercial_investigation,/fabrics/wool-fabric/,intent_hub,P0,live
+woven wool fabric,Wool Fabric,Secondary,commercial_investigation,/fabrics/wool-fabric/,intent_hub,P1,live
+cotton fabric,Cotton Fabric,Primary,commercial,/collections/cotton/,collection,P0,mapped
+cotton fabrics,Cotton Fabric,Secondary,commercial,/collections/cotton/,collection,P0,mapped
+linen fabric,Linen Fabric,Primary,commercial,/collections/linen-lightweight/,collection,P0,mapped
+silk fabric,Silk Fabric,Primary,commercial,/collections/silk-sheer/,collection,P0,mapped
+denim fabric,Denim Fabric,Primary,commercial,/collections/denim/,collection,P0,mapped
+fabric gsm,Fabric GSM,Primary,informational,/guides/fabric-weight-and-gsm/,guide,P0,mapped
+what is gsm in fabric,Fabric GSM,Secondary,informational,/guides/fabric-weight-and-gsm/,guide,P0,mapped
+lightweight fabric,Lightweight Fabric,Primary,informational,/guides/lightweight-fabric/,guide,P0,live
+woven fabric,Woven Fabric,Primary,informational,/guides/woven-vs-knit-fabrics/,guide,P0,mapped
+what is woven fabric,Woven Fabric,Secondary,informational,/guides/woven-vs-knit-fabrics/,guide,P0,mapped
+buy fabric online,Online Fabric,Primary,transactional,/marketplace/,marketplace,P0,mapped
+online fabric store,Online Fabric,Secondary,transactional,/marketplace/,marketplace,P0,mapped
+fabric supplier,Supplier Intent,Secondary,commercial,/marketplace/,marketplace,P1,routed_no_directory
+bulk fabric,Bulk Fabric,Primary,commercial,/wholesale-fabric/,commercial_landing,P0,mapped

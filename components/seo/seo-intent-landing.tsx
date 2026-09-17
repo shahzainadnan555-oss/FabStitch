@@ -4,8 +4,12 @@ import { PageHeader } from "@/components/marketplace/page-header";
 import { Container } from "@/components/ui/layout";
 import { ButtonLink } from "@/components/ui/button";
 import { IconArrowRight } from "@/components/ui/icon";
-import { CollectionPageJsonLd } from "@/components/seo/structured-data";
+import {
+  CollectionPageJsonLd,
+  FaqJsonLd,
+} from "@/components/seo/structured-data";
 import type { SeoLandingPage } from "@/content/seo-landing-pages";
+import type { MaterialLandingPage } from "@/content/material-landing-pages";
 import {
   COLLECTION_BY_SLUG,
   FABRIC_2027_BY_SLUG,
@@ -13,7 +17,28 @@ import {
   SEO_USE_CASE_BY_SLUG,
 } from "@/catalog";
 
-export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
+type IntentLandingContent = SeoLandingPage | MaterialLandingPage;
+
+function relatedLabel(path: string): string {
+  if (path.includes("wholesale")) return "Wholesale fabric";
+  if (path.includes("fabric-sourcing")) return "Fabric sourcing";
+  if (path.includes("shirt-fabric")) return "Shirt fabric";
+  if (path.includes("dress-fabric")) return "Dress fabric";
+  if (path.includes("wool-fabric")) return "Wool fabric";
+  if (path.includes("clothing")) return "Clothing fabric";
+  if (path.includes("apparel")) return "Apparel fabric";
+  if (path.includes("fashion")) return "Fashion fabrics";
+  if (path.includes("marketplace")) return "Fabric marketplace";
+  if (path.includes("/collections/")) {
+    return (
+      path.replace(/^\/collections\/|\/$/g, "").replace(/-/g, " ") +
+      " collection"
+    );
+  }
+  return path.replace(/^\/|\/$/g, "").replace(/-/g, " ");
+}
+
+export function SeoIntentLanding({ page }: { page: IntentLandingContent }) {
   const fabrics = page.fabricSlugs
     .map(
       (slug) => FABRIC_2027_BY_SLUG[slug as keyof typeof FABRIC_2027_BY_SLUG],
@@ -27,6 +52,7 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
   const collections = page.collectionSlugs
     .map((slug) => COLLECTION_BY_SLUG[slug as keyof typeof COLLECTION_BY_SLUG])
     .filter(Boolean);
+  const faqs = "faqs" in page ? page.faqs : [];
 
   const schemaItems = [
     ...collections.map((collection) => ({
@@ -52,6 +78,7 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
         path={page.path}
         items={schemaItems}
       />
+      {faqs.length ? <FaqJsonLd faqs={[...faqs]} /> : null}
       <PageHeader
         crumbs={[
           { label: "Home", href: "/" },
@@ -162,6 +189,29 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
                     );
                   })}
                 </ul>
+              </section>
+            ) : null}
+
+            {faqs.length ? (
+              <section className="mt-14" aria-labelledby="landing-faq">
+                <h2 id="landing-faq" className="text-h2 font-semibold text-ink">
+                  Frequently asked questions
+                </h2>
+                <dl className="mt-6 grid gap-4">
+                  {faqs.map((faq) => (
+                    <div
+                      key={faq.question}
+                      className="rounded-md border border-rule-2 bg-paper-raised p-5"
+                    >
+                      <dt className="text-h3 font-semibold text-ink">
+                        {faq.question}
+                      </dt>
+                      <dd className="mt-2 text-sm leading-relaxed text-ink-2">
+                        {faq.answer}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
               </section>
             ) : null}
           </div>
@@ -287,21 +337,7 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
                         href={path}
                         className="text-sm font-medium text-indigo hover:underline"
                       >
-                        {path.includes("wholesale")
-                          ? "Wholesale fabric"
-                          : path.includes("fabric-sourcing")
-                            ? "Fabric sourcing"
-                            : path.includes("clothing")
-                              ? "Clothing fabric"
-                              : path.includes("apparel")
-                                ? "Apparel fabric"
-                                : path.includes("fashion")
-                                  ? "Fashion fabrics"
-                                  : path.includes("marketplace")
-                                    ? "Fabric marketplace"
-                                    : path
-                                        .replace(/^\/|\/$/g, "")
-                                        .replace(/-/g, " ")}
+                        {relatedLabel(path)}
                       </Link>
                     </li>
                   ))}

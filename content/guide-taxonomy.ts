@@ -14,6 +14,7 @@ export const GUIDE_CATEGORY_BY_SLUG: Record<string, GuideCategorySlug> = {
   "spring-summer-2027-fabrics": "sourcing-buying",
   "autumn-winter-2027-28-fabrics": "sourcing-buying",
   "fabric-weight-and-gsm": "weight-performance",
+  "lightweight-fabric": "weight-performance",
   "woven-vs-knit-fabrics": "fabric-construction",
   "how-to-choose-fabric-for-shirts": "fabric-applications",
   "chiffon-vs-georgette": "fiber-material",
@@ -42,12 +43,19 @@ export const GUIDE_RELATED_BY_SLUG: Record<string, readonly string[]> = {
   "spring-summer-2027-fabrics": ["fabrics-2027", "linen-fabrics-2027"],
   "autumn-winter-2027-28-fabrics": ["fabrics-2027", "denim-2027"],
   "fabric-weight-and-gsm": [
+    "lightweight-fabric",
     "how-to-choose-the-right-fabric-weight",
     "understanding-fabric-width",
+  ],
+  "lightweight-fabric": [
+    "fabric-weight-and-gsm",
+    "woven-vs-knit-fabrics",
+    "how-to-choose-fabric-for-shirts",
   ],
   "woven-vs-knit-fabrics": [
     "what-is-a-fabric-weave",
     "understanding-stretch-in-fabric",
+    "lightweight-fabric",
   ],
   "how-to-choose-fabric-for-shirts": [
     "what-is-cotton-fabric",

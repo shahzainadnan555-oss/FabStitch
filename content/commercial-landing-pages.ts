@@ -340,6 +340,12 @@ export const COMMERCIAL_LANDING_PAGES: readonly CommercialLandingPage[] = [
       "/fabric-sourcing/",
       "/fabrics/apparel/",
       "/fabrics/clothing/",
+      "/fabrics/shirt-fabric/",
+      "/collections/cotton/",
+      "/collections/denim/",
+      "/collections/linen-lightweight/",
+      "/collections/silk-sheer/",
+      "/fabrics/wool-fabric/",
       "/marketplace/",
     ],
     faqs: [

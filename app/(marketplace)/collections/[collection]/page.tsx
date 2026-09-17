@@ -18,7 +18,11 @@ import {
   isCustomerCatalogSort,
 } from "@/repositories/customer-catalog";
 import { numericParam } from "@/lib/query-params";
-import { CollectionPageJsonLd } from "@/components/seo/structured-data";
+import {
+  CollectionPageJsonLd,
+  FaqJsonLd,
+} from "@/components/seo/structured-data";
+import { COLLECTION_SEO_BY_SLUG } from "@/content/collection-seo";
 
 type Props = {
   params: Promise<{ collection: string }>;
@@ -45,9 +49,14 @@ export async function generateMetadata({
       robots: { index: false, follow: true },
     };
   }
+  const enrichment = COLLECTION_SEO_BY_SLUG[collection.slug];
   return registeredStorefrontMetadata(`/collections/${collection.slug}/`, {
-    title: collection.seoTitle ?? `${collection.name} fabrics`,
+    title:
+      enrichment?.seoTitle ??
+      collection.seoTitle ??
+      `${collection.name} fabrics`,
     description:
+      enrichment?.seoDescription ??
       collection.seoDescription ??
       collection.description ??
       `Explore ${collection.name} fabrics on FabStitch — compare composition, construction, and documented uses before you inquire.`,
@@ -74,9 +83,11 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   if (!collection) notFound();
 
   const description =
+    COLLECTION_SEO_BY_SLUG[collection.slug]?.seoDescription ??
     collection.description ??
     `Explore the published fabrics in the ${collection.name} collection.`;
   const bodyIntro = `Compare the named fabrics in this ${collection.name} edit for composition, construction, and documented Best For uses. Open any fabric for the full specification, then inquire with the quantity you need.`;
+  const enrichment = COLLECTION_SEO_BY_SLUG[collection.slug];
   const bestFor = [
     ...new Map(
       collection.fabrics
@@ -88,8 +99,10 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   return (
     <>
       <CollectionPageJsonLd
-        name={collection.seoTitle ?? collection.name}
-        description={collection.seoDescription ?? description}
+        name={enrichment?.seoTitle ?? collection.seoTitle ?? collection.name}
+        description={
+          enrichment?.seoDescription ?? collection.seoDescription ?? description
+        }
         path={`/collections/${collection.slug}/`}
         items={collection.fabrics.map((fabric) => ({
           name: fabric.name,
@@ -97,6 +110,9 @@ export default async function CollectionPage({ params, searchParams }: Props) {
           image: fabric.media.src,
         }))}
       />
+      {enrichment?.faqs?.length ? (
+        <FaqJsonLd faqs={[...enrichment.faqs]} />
+      ) : null}
       <PageHeader
         crumbs={[
           { label: "Home", href: "/" },
@@ -105,9 +121,10 @@ export default async function CollectionPage({ params, searchParams }: Props) {
         ]}
         eyebrow="Fabric collection"
         title={
-          /\bfabrics?\b/i.test(collection.name)
+          enrichment?.seoTitle ??
+          (/\bfabrics?\b/i.test(collection.name)
             ? collection.name
-            : `${collection.name} fabrics`
+            : `${collection.name} fabrics`)
         }
         intro={description}
         meta={[
@@ -133,6 +150,27 @@ export default async function CollectionPage({ params, searchParams }: Props) {
             {bodyIntro}
           </p>
         </section>
+
+        {enrichment?.sections.length ? (
+          <section
+            className="mt-12 max-w-[70ch]"
+            aria-labelledby="collection-seo"
+          >
+            <h2 id="collection-seo" className="sr-only">
+              About {collection.name} fabrics
+            </h2>
+            {enrichment.sections.map((section) => (
+              <div key={section.heading} className="mb-8">
+                <h3 className="text-h3 font-semibold text-ink">
+                  {section.heading}
+                </h3>
+                <p className="mt-3 text-body leading-relaxed text-ink-2 text-pretty">
+                  {section.body}
+                </p>
+              </div>
+            ))}
+          </section>
+        ) : null}
 
         <section className="mt-12" aria-labelledby="collection-products">
           <div className="flex items-end justify-between gap-5">
@@ -218,6 +256,15 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               Open marketplace
               <IconArrowRight width={14} height={14} aria-hidden />
             </Link>
+            {enrichment?.relatedPaths.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+              >
+                {item.label}
+              </Link>
+            ))}
             <Link
               href="/guides/how-to-buy-fabric-online/"
               className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
@@ -232,6 +279,32 @@ export default async function CollectionPage({ params, searchParams }: Props) {
             </Link>
           </div>
         </section>
+
+        {enrichment?.faqs?.length ? (
+          <section
+            className="mt-14 border-t border-rule pt-10"
+            aria-labelledby="collection-faq"
+          >
+            <h2 id="collection-faq" className="text-h2 font-semibold text-ink">
+              Frequently asked questions
+            </h2>
+            <dl className="mt-6 grid gap-4 max-w-[70ch]">
+              {enrichment.faqs.map((faq) => (
+                <div
+                  key={faq.question}
+                  className="rounded-md border border-rule-2 bg-paper-raised p-5"
+                >
+                  <dt className="text-h3 font-semibold text-ink">
+                    {faq.question}
+                  </dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-ink-2">
+                    {faq.answer}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ) : null}
       </Container>
     </>
   );

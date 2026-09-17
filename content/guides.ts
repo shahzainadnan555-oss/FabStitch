@@ -279,16 +279,16 @@ const CORE_GUIDES: CatalogGuide[] = [
   guide({
     slug: "fabric-weight-and-gsm",
     type: "technical_guide",
-    title: "Fabric weight and GSM explained",
-    heading: "How to read fabric weight and GSM",
+    title: "Fabric GSM and weight explained",
+    heading: "What fabric GSM means for buyers",
     metaDescription:
-      "Understand GSM, weight ranges and why fabric construction and intended use matter alongside the number.",
+      "Learn what GSM means in fabric, how fabric weight relates to apparel use, and how to read FabStitch weight fields without inventing missing numbers.",
     summary:
-      "A practical guide to reading the weight information shown on FabStitch fabric pages.",
+      "GSM (grams per square metre) measures fabric mass over area. Use it with construction and composition — never as a quality score on its own.",
     cluster: "fabric-education",
     sections: [
       {
-        heading: "What GSM tells you",
+        heading: "What is fabric GSM?",
         body: "GSM means grams per square metre. It describes mass over area, which makes it useful for comparing cloth without relying on roll width. A range such as 120–200 gsm means the named product direction covers more than one construction or commercial version; it should not be silently reduced to a single midpoint.\n\nFabStitch preserves stated ranges. When the reference does not provide GSM, the page does not manufacture a number from the fibre name or a photograph.",
         keyPoints: [
           "GSM compares mass per unit area.",
@@ -297,24 +297,32 @@ const CORE_GUIDES: CatalogGuide[] = [
         ],
       },
       {
-        heading: "Why the same weight can behave differently",
-        body: "Weight is not drape, opacity, stretch or warmth. A tightly woven cloth and an open weave can share a similar GSM while transmitting light and moving very differently. Fibre, yarn twist, knit or weave structure, finishing and pile all change the result.\n\nThat is why FabStitch places weight beside composition, construction and characteristics. Use the number to narrow a decision, then read the rest of the specification.",
+        heading: "Light, medium and heavy as practical language",
+        body: "Buyers often sort cloth into light, medium and heavy programmes for shirts, dresses, trousers or coats. Those labels are useful conversation tools, but FabStitch does not invent universal GSM cutoffs for each category.\n\nWhen a fabric page shows GSM, use it to compare candidates inside your brief. When GSM is absent, rely on construction, characteristics and inquiry — do not guess a chart value.",
         keyPoints: [
-          "Construction changes how weight is experienced.",
-          "Pile and finishing can add bulk or surface without answering every performance question.",
+          "Programme language is not a substitute for published specs.",
+          "Shirt, dress and denim briefs need different mass expectations.",
         ],
       },
       {
-        heading: "Other measurements in the catalog",
-        body: "Not every textile category is best described by GSM. Silk entries may use momme, denim uses ounces per square yard, technical ripstop may use denier, knitwear may state gauge or fibre micron, corduroy uses wale, and upholstery may state Martindale abrasion cycles.\n\nThese units are not converted into false equivalents. They measure different properties, so the catalog displays the source unit attached to the product.",
+        heading: "Why the same GSM can behave differently",
+        body: "Weight is not drape, opacity, stretch or warmth. A tightly woven cloth and an open weave can share a similar GSM while transmitting light and moving very differently. Fibre, yarn twist, knit or weave structure, finishing and pile all change the result.\n\nThat is why FabStitch places weight beside composition, construction and characteristics. Use the number to narrow a decision, then read the rest of the specification.",
+        keyPoints: [
+          "Construction changes how weight is experienced.",
+          "Pile and finishing can add bulk without answering every performance question.",
+        ],
+      },
+      {
+        heading: "GSM vs oz and other catalog units",
+        body: "Not every textile category is best described by GSM. Silk entries may use momme, denim uses ounces per square yard, technical ripstop may use denier, knitwear may state gauge or fibre micron, corduroy uses wale, and upholstery may state Martindale abrasion cycles.\n\nThese units are not converted into false equivalents. They measure different properties, so the catalog displays the source unit attached to the product. Approximate oz↔GSM conversion belongs in sampling conversations when both parties agree — not as invented PDP fields.",
         keyPoints: [
           "Momme, oz/yd², denier, gauge, micron, wale and Martindale are retained where stated.",
-          "Different measurements should not be treated as interchangeable.",
+          "Different measurements should not be treated as interchangeable on the page.",
         ],
       },
       {
         heading: "Using weight in fabric discovery",
-        body: "Use the marketplace GSM filter only when the product has a stated GSM range. An upper or lower bound returns fabrics whose documented range overlaps the request. Products with no supported GSM are excluded from a GSM-constrained result rather than guessed into it.\n\nAfter filtering, open the product page to confirm the range, season, construction and applications. Commercial sample testing remains necessary once a sellable fabric record is available.",
+        body: "Use the marketplace GSM filter only when the product has a stated GSM range. An upper or lower bound returns fabrics whose documented range overlaps the request. Products with no supported GSM are excluded from a GSM-constrained result rather than guessed into it.\n\nAfter filtering, open the product page to confirm the range, season, construction and applications. Pair this guide with lightweight fabric guidance and woven vs knit notes when mass and structure are both undecided.",
         keyPoints: [
           "Weight filtering is server-evaluated.",
           "Unknown GSM never passes a numeric GSM filter.",
@@ -323,9 +331,14 @@ const CORE_GUIDES: CatalogGuide[] = [
     ],
     faqs: [
       {
-        question: "Does a higher GSM always mean a warmer fabric?",
+        question: "What does GSM mean in fabric?",
         answer:
-          "No. Higher mass can contribute to warmth, but fibre, density, air permeability, finishing and construction also matter.",
+          "GSM means grams per square metre — a measure of fabric mass over area. It helps compare weight between cloths when the value is published.",
+      },
+      {
+        question: "Does a higher GSM always mean a warmer or better fabric?",
+        answer:
+          "No. Higher mass can contribute to warmth or coverage, but fibre, density, air permeability, finishing and construction also matter. GSM is not a quality score.",
       },
       {
         question: "Why does FabStitch sometimes show no GSM?",
@@ -338,25 +351,33 @@ const CORE_GUIDES: CatalogGuide[] = [
       "melton",
       "lightweight-denim",
       "fine-wale-corduroy",
+      "cotton-voile",
     ],
-    applicationSlugs: ["shirts", "outerwear"],
+    applicationSlugs: ["shirts", "outerwear", "dresses"],
   }),
   guide({
     slug: "woven-vs-knit-fabrics",
     type: "comparison",
-    title: "Woven vs knit fabrics",
-    heading: "Woven and knit fabrics: how construction changes the choice",
+    title: "Woven fabric vs knit fabric",
+    heading: "What woven fabric is — and how it differs from knit",
     metaDescription:
-      "Compare woven and knit fabric construction through real FabStitch 2027 products and intended applications.",
+      "Learn what woven fabric is, how warp and weft construction works, and how woven cotton, linen, wool and denim differ from knits on FabStitch.",
     summary:
-      "Why construction—not just fibre—changes stretch, surface, drape and the way a product is made.",
+      "Woven fabric is cloth formed by interlacing warp and weft yarns. Fibre is separate from construction — cotton, linen, silk and wool can all be woven or knitted.",
     cluster: "fabric-education",
     sections: [
       {
-        heading: "Construction is separate from fibre",
-        body: "Cotton, linen, silk and wool can appear in woven or knitted constructions. Fibre describes the material input; construction describes how yarn becomes cloth. Treating cotton as one fabric therefore hides the difference between poplin, voile, moleskin, corduroy and a cotton bouclé knit.\n\nFabStitch keeps family, composition and construction as separate fields so search and filters can answer different questions.",
+        heading: "What is woven fabric?",
+        body: "Woven fabric is produced by interlacing yarns in a warp-and-weft structure. That construction tends to create stable edges and defined grain compared with many knits, though drape still depends on yarn and finish.\n\nCotton, linen, silk and wool can appear in woven or knitted constructions. Fibre describes the material input; construction describes how yarn becomes cloth.",
         keyPoints: [
+          "Warp and weft describe woven structure.",
           "One fibre can support multiple constructions.",
+        ],
+      },
+      {
+        heading: "Construction is separate from fibre",
+        body: "Treating cotton as one fabric hides the difference between poplin, voile, moleskin, corduroy and a cotton bouclé knit. FabStitch keeps family, composition and construction as separate fields so search and filters can answer different questions.",
+        keyPoints: [
           "A fabric name often carries more useful behavior information than fibre alone.",
         ],
       },
@@ -369,16 +390,8 @@ const CORE_GUIDES: CatalogGuide[] = [
         ],
       },
       {
-        heading: "Knit directions in the 2027 collection",
-        body: "Open-stitch, pointelle and crochet-effect knits emphasize visible holes and resort texture. Fine-gauge semi-sheer knits emphasize layering, while cotton or linen bouclé creates volume without the weight of a heavy winter jumper. Lightweight merino extends through shoulder seasons.\n\nBoiled wool is a useful edge case: the source identifies it as knitted and then shrunk. Its finished role can be jackets or unlined coats even though it begins from a knit construction.",
-        keyPoints: [
-          "Gauge helps distinguish open and fine knit directions.",
-          "Finishing can substantially change a knitted base.",
-        ],
-      },
-      {
-        heading: "Choosing between them",
-        body: "Start with the product and silhouette. Shirts may call for crisp woven cotton, breathable linen, fluid crepe or even fine corduroy depending on season. Resortwear can move between linen-silk woven cloth and open knit structures. Active applications may use a stretch woven, mesh, tricot or rib.\n\nThe useful comparison is therefore product by product: composition, construction, weight, surface and intended use together.",
+        heading: "Knit directions and how to choose",
+        body: "Open-stitch, pointelle and crochet-effect knits emphasize visible holes and resort texture. Fine-gauge semi-sheer knits emphasize layering. Boiled wool is a useful edge case: knitted then shrunk, with jacket or coat roles.\n\nStart with the product and silhouette. Shirts may call for crisp woven cotton or breathable linen. Active applications may use stretch woven or knit structures. Use Best For pages to begin with the product; use construction filters when structure is already known.",
         keyPoints: [
           "Use Best For pages to begin with the product.",
           "Use construction filters when the structural requirement is already known.",
@@ -386,6 +399,11 @@ const CORE_GUIDES: CatalogGuide[] = [
       },
     ],
     faqs: [
+      {
+        question: "What is woven fabric made of?",
+        answer:
+          "Woven describes construction, not fibre. Composition is listed on each fabric page — cotton, linen, wool, silk and blends can all be woven.",
+      },
       {
         question: "Are all knits stretchy?",
         answer:
@@ -397,6 +415,7 @@ const CORE_GUIDES: CatalogGuide[] = [
       "open-stitch-knit",
       "wool-silk-bi-stretch",
       "boiled-wool",
+      "lightweight-denim",
     ],
     applicationSlugs: ["shirts", "knitwear", "activewear"],
   }),

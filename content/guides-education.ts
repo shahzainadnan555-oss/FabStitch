@@ -569,4 +569,68 @@ export const EDUCATION_GUIDES: CatalogGuide[] = [
     ],
     applicationSlugs: ["shirts", "tailoring", "dresses"],
   }),
+  educationGuide({
+    slug: "lightweight-fabric",
+    type: "technical_guide",
+    title: "Lightweight fabric for apparel",
+    heading: "What lightweight fabric means for clothing",
+    metaDescription:
+      "Understand lightweight fabric for shirts, dresses and apparel — how weight relates to GSM, thin vs light, and how to compare FabStitch cloths.",
+    summary:
+      "Lightweight fabric is a buyer shorthand for cloth that feels airy or low-mass for the silhouette. GSM helps, but construction and fibre still decide drape and opacity.",
+    cluster: "fabric-education",
+    sections: [
+      {
+        heading: "What is considered lightweight fabric?",
+        body: "Lightweight fabric usually means cloth chosen for breathability, summer programmes or fluid silhouettes. It is not the same as “thin” in every case: an open weave and a fine dense plain can feel different at similar mass.\n\nFabStitch does not invent a universal GSM cutoff for “lightweight.” Use published measurements when present, then confirm hand and opacity on the product page.",
+        keyPoints: [
+          "Lightweight is a programme judgment, not a single number.",
+          "Missing GSM stays unstated — ask in inquiry if critical.",
+        ],
+      },
+      {
+        heading: "Lightweight vs thin vs low density",
+        body: "Thin often describes thickness; lightweight describes mass per area; open constructions can feel light without being fragile. Compare construction notes beside any weight figure.\n\nLightweight cotton, linen and silk sheers answer different briefs. A lightweight shirt fabric may need more body than a lightweight dress sheer.",
+        keyPoints: [
+          "Do not equate sheer with lightweight automatically.",
+          "Match silhouette before chasing the lightest label.",
+        ],
+      },
+      {
+        heading: "Apparel uses: shirts, dresses and seasonal cloth",
+        body: "Lightweight shirt fabric and lightweight dress fabric programmes often start in cotton, linen-lightweight or silk-sheer collections. Use Best For shirts or dresses when the garment is fixed.\n\nRead the fabric weight and GSM guide for how mass is displayed, and the woven vs knit guide when construction class is undecided.",
+        keyPoints: [
+          "Collections group fibre families; Best For groups end uses.",
+          "Inquire with metres and garment context.",
+        ],
+      },
+      {
+        heading: "Buyer checklist without invented thresholds",
+        body: "Confirm published composition and construction. Note any stated weight unit (GSM, momme, oz/yd²). Check Best For uses. Decide lining if opacity is low. Then inquire.\n\nAvoid ranking “best lightweight fabric” across fibres — the brief decides.",
+        keyPoints: [
+          "Quality is not GSM alone.",
+          "Only use numbers that appear on the fabric record.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "What fabric is lightweight?",
+        answer:
+          "Many cottons, linens and sheers can serve lightweight programmes when their published construction and hand fit the silhouette. Compare named FabStitch fabrics rather than assuming a fibre is always light.",
+      },
+      {
+        question: "Does lightweight mean low GSM?",
+        answer:
+          "Lower mass often correlates with lighter programmes, but construction and finish change the feel. FabStitch does not publish a single GSM definition of lightweight.",
+      },
+    ],
+    fabricSlugs: [
+      "cotton-voile",
+      "european-flax-linen",
+      "silk-chiffon",
+      "linen-cotton",
+    ],
+    applicationSlugs: ["shirts", "dresses", "resortwear"],
+  }),
 ];

@@ -197,6 +197,22 @@ export default async function BestForPage({ params, searchParams }: Props) {
             >
               Browse collections
             </Link>
+            {slug === "shirts" ? (
+              <Link
+                href="/fabrics/shirt-fabric/"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+              >
+                Shirt fabric types guide
+              </Link>
+            ) : null}
+            {slug === "dresses" ? (
+              <Link
+                href="/fabrics/dress-fabric/"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
+              >
+                Dress fabric types guide
+              </Link>
+            ) : null}
             <Link
               href="/guides/"
               className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"

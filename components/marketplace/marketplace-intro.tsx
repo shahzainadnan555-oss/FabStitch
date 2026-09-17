@@ -33,11 +33,11 @@ export function MarketplaceIntro({
         <h1 className="mt-4 max-w-[18ch] text-[clamp(2.4rem,4.6vw,4.5rem)] leading-[0.98] font-semibold tracking-[-0.05em] text-balance">
           Discover fabrics for what comes next.
         </h1>
-        <p className="mt-4 max-w-[38rem] text-lead text-on-navy-2">
-          A B2B textile marketplace for fabric discovery: search the FabStitch
-          catalog by fiber, construction, season, weight, or what you are
-          making. Open a fabric for composition and construction, then inquire
-          when the material fits.
+        <p className="mt-4 max-w-[40rem] text-lead text-on-navy-2">
+          Buy fabric online through a B2B textile marketplace built for clear
+          specs: search FabStitch by fiber, construction, season, weight, or
+          what you are making. Open a fabric for composition and construction,
+          then inquire when the material fits.
         </p>
 
         <form

@@ -17,9 +17,14 @@ import {
   seoLandingWordCount,
 } from "@/content/seo-landing-pages";
 import {
+  MATERIAL_LANDING_PAGES,
+  materialLandingWordCount,
+} from "@/content/material-landing-pages";
+import {
   COMMERCIAL_LANDING_PAGES,
   commercialLandingWordCount,
 } from "@/content/commercial-landing-pages";
+import { COLLECTION_SEO_BY_SLUG } from "@/content/collection-seo";
 import { HELP_ARTICLES } from "@/features/help/content";
 import { STOREFRONT_REDIRECT_FAMILIES } from "@/lib/storefront-redirects";
 import {
@@ -156,7 +161,7 @@ const staticPages: SeoPageDefinition[] = [
     title: "Fabric Marketplace",
     h1: "Discover fabrics for what comes next.",
     description:
-      "Buy fabric online through the FabStitch B2B textile marketplace. Search fabrics by material, construction, season, weight, and Best For use, then inquire on the cloth that fits.",
+      "Buy fabric online through the FabStitch B2B textile marketplace and online fabric shop. Search by material, construction, season, weight, and Best For use, then inquire on the cloth that fits.",
     primaryTopic: "fabric marketplace",
     secondaryTopics: [
       "buy fabric",
@@ -279,6 +284,36 @@ const staticPages: SeoPageDefinition[] = [
     ],
     qualityGatePassed: seoLandingWordCount(page) >= 400,
     wordCount: seoLandingWordCount(page),
+    image: page.image,
+  })),
+  ...MATERIAL_LANDING_PAGES.map((page): SeoPageDefinition => ({
+    path: page.path,
+    type: "intent_hub",
+    title: page.title,
+    h1: page.h1,
+    description: page.metaDescription,
+    primaryTopic: page.primaryKeyword,
+    secondaryTopics: [...page.secondaryKeywords],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch material keyword-cluster landing content",
+    relatedPaths: [
+      "/marketplace/",
+      "/fabrics/",
+      "/collections/",
+      "/fabrics/best-for/",
+      "/fabric-sourcing/",
+      "/wholesale-fabric/",
+      "/guides/",
+      ...page.relatedLandingPaths,
+      ...page.guidePaths,
+      ...page.bestForSlugs.map((slug) => `/fabrics/best-for/${slug}/`),
+      ...page.collectionSlugs.map((slug) => `/collections/${slug}/`),
+      ...page.fabricSlugs.map((slug) => `/fabrics/${slug}/`),
+    ],
+    qualityGatePassed: materialLandingWordCount(page) >= 400,
+    wordCount: materialLandingWordCount(page),
     image: page.image,
   })),
   {
@@ -520,13 +555,16 @@ const collectionPages: SeoPageDefinition[] = CATALOG_COLLECTION_CARDS.map(
       (fabric) => fabric.collection === card.slug,
     );
     const representativeMedia = MEDIA_BY_FABRIC_SLUG[card.representativeFabric];
+    const enrichment = COLLECTION_SEO_BY_SLUG[card.slug];
     return {
       path: `/collections/${card.slug}/`,
       type: "collection",
-      title: `${collection.label} fabrics`,
-      h1: `${collection.label} fabrics`,
-      description: `${card.description} Compare ${products.length} named FabStitch fabrics with source-supported properties and uses.`,
-      primaryTopic: `${collection.label} fabrics`,
+      title: enrichment?.seoTitle ?? `${collection.label} fabrics`,
+      h1: enrichment?.seoTitle ?? `${collection.label} fabrics`,
+      description:
+        enrichment?.seoDescription ??
+        `${card.description} Compare ${products.length} named FabStitch fabrics with source-supported properties and uses.`,
+      primaryTopic: enrichment?.primaryKeyword ?? `${collection.label} fabrics`,
       secondaryTopics: products.slice(0, 5).map((fabric) => fabric.name),
       intent: "commercial_investigation",
       audience: "Fabric customers",
@@ -534,8 +572,12 @@ const collectionPages: SeoPageDefinition[] = CATALOG_COLLECTION_CARDS.map(
       contentSource: "FabStitch 2027 collection registry",
       relatedPaths: [
         "/marketplace/",
+        "/fabrics/",
         "/fabrics/best-for/",
+        "/fabric-sourcing/",
+        "/wholesale-fabric/",
         "/guides/",
+        ...(enrichment?.relatedPaths.map((item) => item.href) ?? []),
         ...products.map((fabric) => `/fabrics/${fabric.slug}/`),
       ],
       productCount: products.length,
@@ -760,6 +802,16 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
       (item) => item.path === page.path,
     );
     if (commercial?.faqs.length) schemas.push("FAQPage");
+  }
+  if (page.type === "intent_hub") {
+    const material = MATERIAL_LANDING_PAGES.find(
+      (item) => item.path === page.path,
+    );
+    if (material?.faqs.length) schemas.push("FAQPage");
+  }
+  if (page.type === "collection") {
+    const enrichment = COLLECTION_SEO_BY_SLUG[page.path.split("/")[2] ?? ""];
+    if (enrichment?.faqs?.length) schemas.push("FAQPage");
   }
 
   const hasBreadcrumbs =

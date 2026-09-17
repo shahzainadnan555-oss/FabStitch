@@ -30,6 +30,16 @@ const HELP_REDIRECTS: Record<string, string> = {
 
 const GUIDE_REDIRECTS: Record<string, string> = {
   "understanding-gsm-in-fabric": "fabric-weight-and-gsm",
+  "fabric-gsm": "fabric-weight-and-gsm",
+  "woven-fabric": "woven-vs-knit-fabrics",
+  "what-is-woven-fabric": "woven-vs-knit-fabrics",
+};
+
+const MATERIAL_LANDING_REDIRECTS: Record<string, string> = {
+  "/fabrics/cotton-fabric/": "/collections/cotton/",
+  "/fabrics/linen-fabric/": "/collections/linen-lightweight/",
+  "/fabrics/silk-fabric/": "/collections/silk-sheer/",
+  "/fabrics/denim-fabric/": "/collections/denim/",
 };
 
 export type StorefrontRedirect = {
@@ -65,9 +75,15 @@ export const STOREFRONT_REDIRECT_FAMILIES: readonly StorefrontRedirect[] = [
     reason: "Obsolete supplier, buyer and certificate architecture",
   },
   {
-    from: "/guide/, /help-center/, /support-center/",
-    to: "/guides/, /help/, /support/",
-    reason: "Canonical Guides, Help and Support routes",
+    from: "/fabrics/cotton-fabric/, /fabrics/linen-fabric/, /fabrics/silk-fabric/, /fabrics/denim-fabric/",
+    to: "/collections/{cotton|linen-lightweight|silk-sheer|denim}/",
+    reason:
+      "Fibre material intent uses collection hubs to avoid cannibalization",
+  },
+  {
+    from: "/guides/fabric-gsm/, /guides/woven-fabric/",
+    to: "/guides/fabric-weight-and-gsm/, /guides/woven-vs-knit-fabrics/",
+    reason: "Preferred research aliases map to existing authoritative guides",
   },
 ];
 
@@ -88,6 +104,10 @@ export function storefrontRedirect(pathname: string): string | null {
   if (marketplaceFabric) return `/fabrics/${marketplaceFabric[1]}/`;
 
   if (canonicalCase === "/fabrics/index/") return "/fabrics/";
+
+  if (MATERIAL_LANDING_REDIRECTS[canonicalCase]) {
+    return MATERIAL_LANDING_REDIRECTS[canonicalCase];
+  }
 
   // Legacy Best For hub lived at /best-for/ before the fabrics hierarchy.
   if (canonicalCase === "/best-for/") return "/fabrics/best-for/";
