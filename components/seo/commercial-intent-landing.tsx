@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PageHeader } from "@/components/marketplace/page-header";
+import { TextileBackdrop } from "@/components/landing/textile-backdrop";
 import { Container } from "@/components/ui/layout";
 import { ButtonLink } from "@/components/ui/button";
 import { IconArrowRight } from "@/components/ui/icon";
-import { CollectionPageJsonLd } from "@/components/seo/structured-data";
-import type { SeoLandingPage } from "@/content/seo-landing-pages";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import {
+  CollectionPageJsonLd,
+  FaqJsonLd,
+} from "@/components/seo/structured-data";
+import type { CommercialLandingPage } from "@/content/commercial-landing-pages";
 import {
   COLLECTION_BY_SLUG,
   FABRIC_2027_BY_SLUG,
@@ -13,7 +17,21 @@ import {
   SEO_USE_CASE_BY_SLUG,
 } from "@/catalog";
 
-export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
+function relatedLabel(path: string): string {
+  if (path.includes("wholesale")) return "Wholesale fabric";
+  if (path.includes("fabric-sourcing")) return "Fabric sourcing";
+  if (path.includes("clothing")) return "Clothing fabric";
+  if (path.includes("apparel")) return "Apparel fabric";
+  if (path.includes("fashion")) return "Fashion fabrics";
+  if (path.includes("marketplace")) return "Fabric marketplace";
+  return path.replace(/^\/|\/$/g, "").replace(/-/g, " ");
+}
+
+export function CommercialIntentLanding({
+  page,
+}: {
+  page: CommercialLandingPage;
+}) {
   const fabrics = page.fabricSlugs
     .map(
       (slug) => FABRIC_2027_BY_SLUG[slug as keyof typeof FABRIC_2027_BY_SLUG],
@@ -52,42 +70,83 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
         path={page.path}
         items={schemaItems}
       />
-      <PageHeader
-        crumbs={[
-          { label: "Home", href: "/" },
-          { label: "Fabrics", href: "/fabrics/" },
-          { label: page.h1 },
-        ]}
-        eyebrow={page.eyebrow}
-        title={page.h1}
-        intro={page.intro}
-        action={
-          <ButtonLink href="/marketplace/" variant="primary" size="lg">
-            Open marketplace
-            <IconArrowRight width={15} height={15} aria-hidden />
-          </ButtonLink>
-        }
-        secondaryAction={
-          <ButtonLink href="/fabrics/best-for/" variant="secondary" size="lg">
-            Fabrics by use
-          </ButtonLink>
-        }
-      />
+      <FaqJsonLd faqs={[...page.faqs]} />
 
-      <Container className="py-10 sm:py-14">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
-          <div className="min-w-0">
-            <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-md border border-rule-2 bg-paper-sunk">
+      <section className="relative overflow-hidden bg-navy-surface text-on-ink">
+        <TextileBackdrop
+          src={page.image}
+          placement="right"
+          opacity={0.18}
+          objectPosition="62% center"
+        />
+        <Container className="relative py-10 sm:py-14 lg:py-20">
+          <Breadcrumbs
+            items={[{ label: "Home", href: "/" }, { label: page.eyebrow }]}
+            className="mb-8 text-on-navy-2 [&_a]:text-on-navy-2 [&_a:hover]:text-on-ink"
+          />
+          <div className="grid items-end gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <p className="font-mono text-label tracking-[0.12em] text-gold-on-navy uppercase">
+                {page.eyebrow}
+              </p>
+              <h1 className="mt-4 max-w-[18ch] text-[clamp(2.4rem,5vw,4.6rem)] leading-[0.95] font-semibold tracking-[-0.05em] text-balance">
+                {page.h1}
+              </h1>
+              <p className="mt-5 max-w-[38rem] text-lead text-on-navy-2">
+                {page.valueProposition}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <ButtonLink href="/marketplace/" variant="primary" size="lg">
+                  {page.heroCtaLabel}
+                  <IconArrowRight width={15} height={15} aria-hidden />
+                </ButtonLink>
+                <ButtonLink
+                  href={page.secondaryCtaHref}
+                  variant="on-ink"
+                  size="lg"
+                >
+                  {page.secondaryCtaLabel}
+                </ButtonLink>
+              </div>
+            </div>
+            <div className="relative hidden min-h-64 overflow-hidden rounded-md border border-white/15 lg:col-span-5 lg:block">
               <Image
                 src={page.image}
                 alt={page.imageAlt}
                 fill
                 priority
-                sizes="(min-width: 1024px) 60vw, 100vw"
+                sizes="36vw"
                 className="object-cover"
               />
             </div>
+          </div>
+        </Container>
+      </section>
 
+      <section className="border-b border-rule-2 bg-paper">
+        <Container className="py-12 sm:py-16">
+          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+            Selection checks
+          </p>
+          <h2 className="mt-2 max-w-[28ch] text-h2 font-semibold text-ink">
+            {page.considerationsHeading}
+          </h2>
+          <ul className="mt-8 grid gap-px overflow-hidden rounded-md border border-rule-2 bg-rule-2 sm:grid-cols-2 lg:grid-cols-3">
+            {page.considerations.map((item) => (
+              <li key={item.title} className="bg-paper-raised p-5 sm:p-6">
+                <h3 className="text-h3 font-semibold text-ink">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-3">
+                  {item.body}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <Container className="py-10 sm:py-14">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <div className="min-w-0">
             {page.sections.map((section) => (
               <section key={section.heading} className="mb-10 max-w-[70ch]">
                 <h2 className="text-h2 font-semibold text-ink">
@@ -114,9 +173,9 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
             ))}
 
             {fabrics.length ? (
-              <section className="mt-4" aria-labelledby="landing-fabrics">
+              <section className="mt-4" aria-labelledby="commercial-fabrics">
                 <h2
-                  id="landing-fabrics"
+                  id="commercial-fabrics"
                   className="text-h2 font-semibold text-ink"
                 >
                   Relevant FabStitch fabrics
@@ -162,6 +221,32 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
                     );
                   })}
                 </ul>
+              </section>
+            ) : null}
+
+            {page.faqs.length ? (
+              <section className="mt-14" aria-labelledby="commercial-faq">
+                <h2
+                  id="commercial-faq"
+                  className="text-h2 font-semibold text-ink"
+                >
+                  Frequently asked questions
+                </h2>
+                <dl className="mt-6 grid gap-4">
+                  {page.faqs.map((faq) => (
+                    <div
+                      key={faq.question}
+                      className="rounded-md border border-rule-2 bg-paper-raised p-5"
+                    >
+                      <dt className="text-h3 font-semibold text-ink">
+                        {faq.question}
+                      </dt>
+                      <dd className="mt-2 text-sm leading-relaxed text-ink-2">
+                        {faq.answer}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
               </section>
             ) : null}
           </div>
@@ -287,21 +372,7 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
                         href={path}
                         className="text-sm font-medium text-indigo hover:underline"
                       >
-                        {path.includes("wholesale")
-                          ? "Wholesale fabric"
-                          : path.includes("fabric-sourcing")
-                            ? "Fabric sourcing"
-                            : path.includes("clothing")
-                              ? "Clothing fabric"
-                              : path.includes("apparel")
-                                ? "Apparel fabric"
-                                : path.includes("fashion")
-                                  ? "Fashion fabrics"
-                                  : path.includes("marketplace")
-                                    ? "Fabric marketplace"
-                                    : path
-                                        .replace(/^\/|\/$/g, "")
-                                        .replace(/-/g, " ")}
+                        {relatedLabel(path)}
                       </Link>
                     </li>
                   ))}
@@ -311,6 +382,26 @@ export function SeoIntentLanding({ page }: { page: SeoLandingPage }) {
           </aside>
         </div>
       </Container>
+
+      <section className="bg-chrome">
+        <Container className="flex flex-col items-start justify-between gap-6 py-12 sm:flex-row sm:items-end sm:py-16">
+          <div>
+            <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+              Next step
+            </p>
+            <h2 className="mt-3 max-w-[18ch] text-h1 font-semibold text-ink text-balance">
+              {page.finalCtaHeading}
+            </h2>
+            <p className="mt-3 max-w-[36rem] text-sm text-ink-3">
+              {page.finalCtaBody}
+            </p>
+          </div>
+          <ButtonLink href="/marketplace/" variant="primary" size="lg">
+            Open marketplace
+            <IconArrowRight width={16} height={16} aria-hidden />
+          </ButtonLink>
+        </Container>
+      </section>
     </>
   );
 }

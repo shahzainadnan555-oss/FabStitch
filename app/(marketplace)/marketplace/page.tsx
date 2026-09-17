@@ -51,7 +51,7 @@ export async function generateMetadata({
     title: filtered ? "Fabric search results" : "Fabric Marketplace",
     description: filtered
       ? "Search and filter the FabStitch 2027 fabric catalog. Filtered result views canonicalize to the main marketplace."
-      : "Buy fabric online through the FabStitch marketplace. Search fabrics by material, construction, season, weight, and Best For use, then inquire on the cloth that fits.",
+      : "Buy fabric online through the FabStitch B2B textile marketplace. Search fabrics by material, construction, season, weight, and Best For use, then inquire on the cloth that fits.",
     index: !filtered,
   });
 }

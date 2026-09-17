@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/fabrics/", {
     title: "Explore Fabrics",
     description:
-      "Browse FabStitch fabrics and fabric materials by collection, Best For use, and searchable marketplace. Compare composition, weight, and construction before you inquire.",
+      "Browse FabStitch fabrics and fabric materials by collection, Best For use, and searchable marketplace. Compare composition, weight, construction, and sources of fabric before you inquire.",
   });
 }
 
@@ -58,7 +58,7 @@ export default async function FabricsHubPage() {
         crumbs={[{ label: "Home", href: "/" }, { label: "Fabrics" }]}
         eyebrow="FabStitch catalog"
         title="Find the fabric, then read the detail."
-        intro="Start with a material collection, a Best For use case, or the full marketplace search. Every fabric page leads with composition, construction, and documented uses — so you can compare cloth material before you inquire."
+        intro="Start with a material collection, a Best For use case, or the full marketplace search. Every fabric page leads with composition, construction, and documented uses — so you can compare cloth material and sources of fabric before you inquire."
         meta={[
           { label: "Fabrics", value: fabricCount },
           { label: "Collections", value: collections.length },
@@ -117,6 +117,59 @@ export default async function FabricsHubPage() {
                     width={14}
                     height={14}
                     className="shrink-0 text-indigo"
+                    aria-hidden
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-14" aria-labelledby="commercial-paths-heading">
+          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+            Commercial paths
+          </p>
+          <h2
+            id="commercial-paths-heading"
+            className="mt-2 text-h2 font-semibold text-ink"
+          >
+            Fabric sourcing and wholesale
+          </h2>
+          <p className="mt-3 max-w-[42rem] text-sm leading-relaxed text-ink-3">
+            Educational sourcing guidance and wholesale quantity language live
+            on dedicated commercial pages — not duplicate marketplace URLs.
+          </p>
+          <ul className="mt-5 grid gap-px border border-rule-2 bg-rule-2 sm:grid-cols-2">
+            {[
+              {
+                href: "/fabric-sourcing/",
+                title: "Fabric sourcing",
+                body: "Briefs, specs, sampling and inquiry for clothing lines and designers.",
+              },
+              {
+                href: "/wholesale-fabric/",
+                title: "Wholesale fabric",
+                body: "Commercial quantity discovery for brands and bulk programmes.",
+              },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  prefetch={false}
+                  className="group flex h-full items-start justify-between gap-4 bg-paper-raised p-5 transition-colors hover:bg-indigo-wash"
+                >
+                  <span>
+                    <span className="block font-semibold text-ink group-hover:text-indigo">
+                      {item.title}
+                    </span>
+                    <span className="mt-1 block text-sm text-ink-3">
+                      {item.body}
+                    </span>
+                  </span>
+                  <IconArrowRight
+                    width={14}
+                    height={14}
+                    className="mt-1 shrink-0 text-indigo"
                     aria-hidden
                   />
                 </Link>

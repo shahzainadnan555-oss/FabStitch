@@ -220,6 +220,41 @@ export async function CatalogFabricPage({
                   </ul>
                 </section>
               ) : null}
+
+              <section
+                className="mt-10"
+                aria-labelledby="sourcing-wholesale-heading"
+              >
+                <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+                  Commercial paths
+                </p>
+                <h2
+                  id="sourcing-wholesale-heading"
+                  className="mt-2 text-h2 font-semibold text-ink"
+                >
+                  Fabric sourcing and wholesale
+                </h2>
+                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                  <li>
+                    <Link
+                      href="/fabric-sourcing/"
+                      prefetch={false}
+                      className="block rounded-sm border border-rule-2 bg-paper-raised px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-indigo hover:text-indigo"
+                    >
+                      Fabric sourcing for clothing lines
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/wholesale-fabric/"
+                      prefetch={false}
+                      className="block rounded-sm border border-rule-2 bg-paper-raised px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-indigo hover:text-indigo"
+                    >
+                      Wholesale fabric for bulk programmes
+                    </Link>
+                  </li>
+                </ul>
+              </section>
             </div>
 
             <aside className="flex flex-col gap-5 lg:sticky lg:top-20 lg:self-start">

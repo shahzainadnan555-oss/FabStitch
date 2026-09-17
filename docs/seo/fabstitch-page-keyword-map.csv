@@ -36,3 +36,104 @@ apparel fabric,Apparel Fabrics,Primary,commercial_investigation,/fabrics/apparel
 fabric apparel,Apparel Fabrics,Secondary,commercial_investigation,/fabrics/apparel/,intent_hub,P0,live
 garment fabric,Apparel Fabrics,Secondary,commercial_investigation,/fabrics/apparel/,intent_hub,P1,live
 fashion fabric,Fashion Fabrics,Primary,commercial_investigation,/fabrics/fashion/,intent_hub,P0,live
+b2b textile marketplace,Fabric Marketplace,Secondary,commercial,/marketplace/,marketplace,P1,mapped
+textile marketplace,Fabric Marketplace,Secondary,commercial,/marketplace/,marketplace,P1,mapped
+marketplace textile,Fabric Marketplace,Secondary,commercial,/marketplace/,marketplace,P2,mapped
+fabric market place,Fabric Marketplace,Secondary,commercial,/marketplace/,marketplace,P2,mapped
+source of fabric,General Fabric Discovery,Secondary,informational,/fabrics/,fabric_hub,P1,mapped
+sources of fabrics,General Fabric Discovery,Secondary,informational,/fabrics/,fabric_hub,P1,mapped
+types of fabric and their sources,General Fabric Discovery,Secondary,informational,/fabrics/,fabric_hub,P2,mapped
+fabric sourcing,Fabric Sourcing,Primary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+sourcing fabrics,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+fabric sourcer,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P2,live
+sourcing materials for clothing,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P1,live
+fabric acquisition,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P2,live
+fabric procurement,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P1,live
+fabric sourcing companies,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P1,live
+fabric sourcing for designers,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+fabric sourcing guide,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+fabric sourcing meaning,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+fabric sourcing tips,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+finding fabric for clothing line,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+how to buy fabric for clothes,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+how to find fabric for clothing line,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+how to source fabric for clothing,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+source fabric for clothing,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+sourcing fabric for clothing line,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+sourcing fabric for small business,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+what is fabric sourcing,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+where do clothing brands get their fabric,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+where do clothing companies get their fabric,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+where do clothing designers buy fabric,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+where do fashion designers get their fabric,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+where to source fabric,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+where to source fabric for clothing line,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P0,live
+fabric sourcing best practices,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+fabric sourcing online,Fabric Sourcing,Secondary,commercial,/fabric-sourcing/,commercial_landing,P0,live
+fabric sourcing platform,Fabric Sourcing,Secondary,commercial,/fabric-sourcing/,commercial_landing,P0,live
+fabric sourcing process,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+fabric sourcing website,Fabric Sourcing,Secondary,commercial,/fabric-sourcing/,commercial_landing,P1,live
+how to source fabric,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+how to source fabrics,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+how to source fabrics for clothing line,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P0,live
+how to source materials for clothing,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P1,live
+materials for clothing line,Fabric Sourcing,Secondary,commercial_investigation,/fabric-sourcing/,commercial_landing,P1,live
+raw materials for clothing business,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P2,live
+raw materials needed for clothing business,Fabric Sourcing,Secondary,informational,/fabric-sourcing/,commercial_landing,P2,live
+wholesale fabric,Wholesale Fabric,Primary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+fabric wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabrics,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+fabrics wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+whole sale fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,live
+wholesale material fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+fabric wholesaler,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale fabric store,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+where can i buy wholesale fabric,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P0,live
+fabric online wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+fabric wholesale online,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabric suppliers,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+where to buy wholesale fabric,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P0,live
+buy fabric wholesale,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabric suppliers usa,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,not_targeted_geo
+fabric wholesale near me,Wholesale Fabric,Secondary,local,/wholesale-fabric/,commercial_landing,P2,not_targeted_local
+wholesale fabric near me,Wholesale Fabric,Secondary,local,/wholesale-fabric/,commercial_landing,P2,not_targeted_local
+wholesale fabrics near me,Wholesale Fabric,Secondary,local,/wholesale-fabric/,commercial_landing,P2,not_targeted_local
+fabric wholesalers,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale material,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,live
+wholesale fabric dealers,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,live
+online fabric wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+bulk fabric wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabric shop,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+fabric wholesale shop,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+fabric suppliers wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+bulk fabrics,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabric suppliers online,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabric supplier,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesalers of fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+fabric wholesale suppliers,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale textile fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale fabric by the yard,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale textile fabric suppliers,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale apparel fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale garment fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+purchase fabric wholesale,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P1,live
+wholesale fabric direct,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale fabric distributors,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+fabric bulk,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabric supply,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+buy fabric bulk,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P0,live
+bulk fabric purchase,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P0,live
+buy bulk fabric,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P0,live
+bulk fabric for sale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale cotton fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+where to buy bulk fabric,Wholesale Fabric,Secondary,transactional,/wholesale-fabric/,commercial_landing,P0,live
+how to order fabric wholesale,Wholesale Fabric,Secondary,informational,/wholesale-fabric/,commercial_landing,P0,live
+wholesale fabric stores,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+garment fabric wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+clothing fabric wholesale,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+fabric wholesale companies,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+fabric wholesale manufacturers,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,live
+wholesale fabric warehouse,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,live
+wholesale fabric shopping,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P2,live
+wholesale fabric online store,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P1,live
+wholesale fashion fabric,Wholesale Fabric,Secondary,commercial,/wholesale-fabric/,commercial_landing,P0,live

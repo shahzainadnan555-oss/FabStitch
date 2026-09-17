@@ -125,7 +125,12 @@ export const SEO_LANDING_PAGES: readonly SeoLandingPage[] = [
       "/guides/how-to-buy-fabric-online/",
       "/guides/fabric-weight-and-gsm/",
     ],
-    relatedLandingPaths: ["/fabrics/apparel/", "/fabrics/fashion/"],
+    relatedLandingPaths: [
+      "/fabric-sourcing/",
+      "/wholesale-fabric/",
+      "/fabrics/apparel/",
+      "/fabrics/fashion/",
+    ],
   },
   {
     slug: "apparel",
@@ -210,7 +215,12 @@ export const SEO_LANDING_PAGES: readonly SeoLandingPage[] = [
       "/guides/choosing-fabric-for-activewear/",
       "/guides/how-fabric-composition-affects-performance/",
     ],
-    relatedLandingPaths: ["/fabrics/clothing/", "/fabrics/fashion/"],
+    relatedLandingPaths: [
+      "/fabric-sourcing/",
+      "/wholesale-fabric/",
+      "/fabrics/clothing/",
+      "/fabrics/fashion/",
+    ],
   },
   {
     slug: "fashion",
@@ -295,7 +305,11 @@ export const SEO_LANDING_PAGES: readonly SeoLandingPage[] = [
       "/guides/how-to-choose-fabric-for-dresses/",
       "/guides/linen-fabrics-2027/",
     ],
-    relatedLandingPaths: ["/fabrics/clothing/", "/fabrics/apparel/"],
+    relatedLandingPaths: [
+      "/fabric-sourcing/",
+      "/fabrics/clothing/",
+      "/fabrics/apparel/",
+    ],
   },
 ] as const;
 

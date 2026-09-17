@@ -16,6 +16,10 @@ import {
   SEO_LANDING_PAGES,
   seoLandingWordCount,
 } from "@/content/seo-landing-pages";
+import {
+  COMMERCIAL_LANDING_PAGES,
+  commercialLandingWordCount,
+} from "@/content/commercial-landing-pages";
 import { HELP_ARTICLES } from "@/features/help/content";
 import { STOREFRONT_REDIRECT_FAMILIES } from "@/lib/storefront-redirects";
 import {
@@ -40,6 +44,7 @@ export type StorefrontPageType =
   | "fabric_hub"
   | "fabric"
   | "intent_hub"
+  | "commercial_landing"
   | "collection_hub"
   | "collection"
   | "seasonal_collection"
@@ -151,7 +156,7 @@ const staticPages: SeoPageDefinition[] = [
     title: "Fabric Marketplace",
     h1: "Discover fabrics for what comes next.",
     description:
-      "Buy fabric online through the FabStitch marketplace. Search fabrics by material, construction, season, weight, and Best For use, then inquire on the cloth that fits.",
+      "Buy fabric online through the FabStitch B2B textile marketplace. Search fabrics by material, construction, season, weight, and Best For use, then inquire on the cloth that fits.",
     primaryTopic: "fabric marketplace",
     secondaryTopics: [
       "buy fabric",
@@ -159,6 +164,8 @@ const staticPages: SeoPageDefinition[] = [
       "where to buy fabric",
       "fabric search",
       "textile sourcing",
+      "b2b textile marketplace",
+      "textile marketplace",
       "2027 fabrics",
     ],
     intent: "commercial",
@@ -169,6 +176,8 @@ const staticPages: SeoPageDefinition[] = [
       "/fabrics/",
       "/collections/",
       "/fabrics/best-for/",
+      "/fabric-sourcing/",
+      "/wholesale-fabric/",
       "/fabrics/clothing/",
       "/fabrics/apparel/",
       "/fabrics/fashion/",
@@ -185,13 +194,15 @@ const staticPages: SeoPageDefinition[] = [
     title: "Explore Fabrics",
     h1: "Find the fabric, then read the detail.",
     description:
-      "Browse FabStitch fabrics and fabric materials by collection, Best For use, and searchable marketplace. Compare composition, weight, and construction before you inquire.",
+      "Browse FabStitch fabrics and fabric materials by collection, Best For use, and searchable marketplace. Compare composition, weight, construction, and sources of fabric before you inquire.",
     primaryTopic: "fabric materials",
     secondaryTopics: [
       "fabrics",
       "fabric textile material",
       "fabric types",
       "cloth material",
+      "source of fabric",
+      "sources of fabrics",
       "fabric products",
     ],
     intent: "commercial_investigation",
@@ -202,6 +213,8 @@ const staticPages: SeoPageDefinition[] = [
       "/marketplace/",
       "/collections/",
       "/fabrics/best-for/",
+      "/fabric-sourcing/",
+      "/wholesale-fabric/",
       "/fabrics/clothing/",
       "/fabrics/apparel/",
       "/fabrics/fashion/",
@@ -210,6 +223,34 @@ const staticPages: SeoPageDefinition[] = [
     qualityGatePassed: true,
     productCount: FABRICS_2027.length,
   },
+  ...COMMERCIAL_LANDING_PAGES.map((page): SeoPageDefinition => ({
+    path: page.path,
+    type: "commercial_landing",
+    title: page.title,
+    h1: page.h1,
+    description: page.metaDescription,
+    primaryTopic: page.primaryKeyword,
+    secondaryTopics: [...page.secondaryKeywords],
+    intent: "commercial",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch commercial keyword-cluster landing content",
+    relatedPaths: [
+      "/marketplace/",
+      "/fabrics/",
+      "/collections/",
+      "/fabrics/best-for/",
+      "/guides/",
+      ...page.relatedLandingPaths,
+      ...page.guidePaths,
+      ...page.bestForSlugs.map((slug) => `/fabrics/best-for/${slug}/`),
+      ...page.collectionSlugs.map((slug) => `/collections/${slug}/`),
+      ...page.fabricSlugs.map((slug) => `/fabrics/${slug}/`),
+    ],
+    qualityGatePassed: commercialLandingWordCount(page) >= 500,
+    wordCount: commercialLandingWordCount(page),
+    image: page.image,
+  })),
   ...SEO_LANDING_PAGES.map((page): SeoPageDefinition => ({
     path: page.path,
     type: "intent_hub",
@@ -227,6 +268,8 @@ const staticPages: SeoPageDefinition[] = [
       "/fabrics/",
       "/collections/",
       "/fabrics/best-for/",
+      "/fabric-sourcing/",
+      "/wholesale-fabric/",
       "/guides/",
       ...page.relatedLandingPaths,
       ...page.guidePaths,
@@ -678,6 +721,7 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
   if (page.type === "best_for_hub") return "/fabrics/";
   if (page.type === "best_for") return "/fabrics/best-for/";
   if (page.type === "intent_hub") return "/fabrics/";
+  if (page.type === "commercial_landing") return "/";
   if (page.type === "guide_hub") return "/guides/";
   if (page.type === "guide") {
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
@@ -695,6 +739,7 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
     page.type === "marketplace" ||
     page.type === "fabric_hub" ||
     page.type === "intent_hub" ||
+    page.type === "commercial_landing" ||
     page.type === "collection_hub" ||
     page.type === "collection" ||
     page.type === "seasonal_collection" ||
@@ -709,6 +754,12 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
     schemas.push("Article");
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
     if (guide?.faqs.length) schemas.push("FAQPage");
+  }
+  if (page.type === "commercial_landing") {
+    const commercial = COMMERCIAL_LANDING_PAGES.find(
+      (item) => item.path === page.path,
+    );
+    if (commercial?.faqs.length) schemas.push("FAQPage");
   }
 
   const hasBreadcrumbs =

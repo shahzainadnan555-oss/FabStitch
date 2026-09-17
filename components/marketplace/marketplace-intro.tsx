@@ -5,6 +5,8 @@ import type { CustomerCollectionCard } from "@/repositories/customer-catalog";
 
 const DISCOVERY_LINKS = [
   { href: "/fabrics/", label: "All fabrics" },
+  { href: "/fabric-sourcing/", label: "Fabric sourcing" },
+  { href: "/wholesale-fabric/", label: "Wholesale fabric" },
   { href: "/fabrics/clothing/", label: "Clothing fabric" },
   { href: "/collections/", label: "Collections" },
   { href: "/fabrics/best-for/", label: "Best For" },
@@ -32,7 +34,7 @@ export function MarketplaceIntro({
           Discover fabrics for what comes next.
         </h1>
         <p className="mt-4 max-w-[38rem] text-lead text-on-navy-2">
-          Where to buy fabric online with clear specs: search the FabStitch
+          A B2B textile marketplace for fabric discovery: search the FabStitch
           catalog by fiber, construction, season, weight, or what you are
           making. Open a fabric for composition and construction, then inquire
           when the material fits.
