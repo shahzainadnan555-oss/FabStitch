@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { IconArrowRight, IconCheck } from "@/components/ui/icon";
 import { postAuthDestination } from "@/features/auth/destination";
 import { useSession } from "@/features/auth/session";
-import { resolveOnboardingFabricImage } from "./fabric-images";
+import { uniqueImagedOnboardingOptions } from "./fabric-images";
 import { api } from "@/lib/api/client";
 import { apiErrorMessage } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
@@ -64,7 +64,7 @@ export function OnboardingExperience({
   next?: string;
 }) {
   const router = useRouter();
-  const { setOnboarding } = useSession();
+  const { setOnboarding, refresh } = useSession();
   const [step, setStep] = useState(0);
   const [customerType, setCustomerType] = useState(() =>
     validInitial(initial.customer_type, options.customer_types),
@@ -160,7 +160,16 @@ export function OnboardingExperience({
         "/account/onboarding",
         { body },
       );
+      if (!response.onboarding_completed && !editing) {
+        setError(
+          "Your preferences were saved, but onboarding is still incomplete. Try again.",
+        );
+        setPending(false);
+        setOnboarding(response);
+        return;
+      }
       setOnboarding(response);
+      await refresh({ persistOnUnauthorized: true }).catch(() => {});
       router.replace(
         editing
           ? "/account/preferences/?saved=1"
@@ -332,15 +341,22 @@ function FabricOptionGrid({
   selected: string[];
   onSelect: (value: string) => void;
 }) {
+  const imagedOptions = useMemo(
+    () =>
+      uniqueImagedOnboardingOptions(
+        options.map((option) => ({
+          code: option.code,
+          display_name: option.display_name,
+          id: option.id,
+        })),
+      ),
+    [options],
+  );
+
   return (
     <ul className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {options.map((option, index) => {
+      {imagedOptions.map((option) => {
         const active = selected.includes(option.code);
-        const image = resolveOnboardingFabricImage(
-          option.code,
-          option.display_name,
-          index,
-        );
         return (
           <li key={option.id}>
             <button
@@ -355,7 +371,7 @@ function FabricOptionGrid({
               )}
             >
               <Image
-                src={image}
+                src={option.image}
                 alt=""
                 fill
                 sizes="(min-width: 640px) 22vw, 46vw"

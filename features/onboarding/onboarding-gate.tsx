@@ -18,13 +18,31 @@ import { onboardingHref } from "./profile";
 type OnboardingState = components["schemas"]["OnboardingStateResponse"];
 type OnboardingOptions = components["schemas"]["OnboardingOptionsResponse"];
 
+/**
+ * Account-backed onboarding gate.
+ *
+ * loading → required | completed is driven by:
+ * 1. Session hydration / authentication
+ * 2. user.onboarding_completed from the account
+ * 3. GET /account/onboarding as the source of truth when the session flag is false
+ */
 export function OnboardingGate({ next }: { next: string }) {
   const router = useRouter();
-  const { hydrated, authenticated, user } = useSession();
+  const { hydrated, authenticated, user, setOnboarding } = useSession();
   const [initial, setInitial] = useState<OnboardingState | null>(null);
   const [options, setOptions] = useState<OnboardingOptions | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const [accountConfirmedComplete, setAccountConfirmedComplete] =
+    useState(false);
+  const [accountLoadDone, setAccountLoadDone] = useState(false);
+
+  const sessionComplete = Boolean(user?.onboarding_completed);
+  const completed = sessionComplete || accountConfirmedComplete;
+  const loading =
+    !hydrated ||
+    (authenticated && !completed && !accountLoadDone && !error) ||
+    (hydrated && !authenticated);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -32,13 +50,13 @@ export function OnboardingGate({ next }: { next: string }) {
       router.replace(loginHref(onboardingHref(next)));
       return;
     }
-    if (user?.onboarding_completed) {
+    if (sessionComplete) {
       router.replace(postAuthDestination(true, next));
     }
-  }, [authenticated, hydrated, next, router, user]);
+  }, [authenticated, hydrated, next, router, sessionComplete]);
 
   useEffect(() => {
-    if (!hydrated || !authenticated || user?.onboarding_completed) return;
+    if (!hydrated || !authenticated || sessionComplete) return;
     let cancelled = false;
     Promise.all([
       api.get<OnboardingState>("/account/onboarding", { cache: "no-store" }),
@@ -49,17 +67,22 @@ export function OnboardingGate({ next }: { next: string }) {
       .then(([state, nextOptions]) => {
         if (cancelled) return;
         if (state.onboarding_completed) {
+          setOnboarding(state);
+          setAccountConfirmedComplete(true);
+          setAccountLoadDone(true);
           router.replace(postAuthDestination(true, next));
           return;
         }
         setInitial(state);
         setOptions(nextOptions);
+        setAccountLoadDone(true);
       })
       .catch((requestError: unknown) => {
         if (cancelled) return;
         setError(
           apiErrorMessage(requestError, "We couldn't load your choices."),
         );
+        setAccountLoadDone(true);
       });
     return () => {
       cancelled = true;
@@ -70,7 +93,8 @@ export function OnboardingGate({ next }: { next: string }) {
     loadAttempt,
     next,
     router,
-    user?.onboarding_completed,
+    sessionComplete,
+    setOnboarding,
   ]);
 
   return (
@@ -84,23 +108,17 @@ export function OnboardingGate({ next }: { next: string }) {
         </Container>
       </div>
       <Container className="py-6 sm:py-9">
-        {!hydrated ? (
+        {loading ? (
           <p
             aria-busy="true"
             aria-live="polite"
             className="text-body text-ink-2"
           >
-            Preparing your setup…
+            {!hydrated || (authenticated && !accountLoadDone)
+              ? "Preparing your setup…"
+              : "Taking you to sign in…"}
           </p>
-        ) : !authenticated ? (
-          <p
-            aria-busy="true"
-            aria-live="polite"
-            className="text-body text-ink-2"
-          >
-            Taking you to sign in…
-          </p>
-        ) : user?.onboarding_completed ? (
+        ) : completed ? (
           <p
             aria-busy="true"
             aria-live="polite"
@@ -119,6 +137,8 @@ export function OnboardingGate({ next }: { next: string }) {
                 setError(null);
                 setInitial(null);
                 setOptions(null);
+                setAccountLoadDone(false);
+                setAccountConfirmedComplete(false);
                 setLoadAttempt((attempt) => attempt + 1);
               }}
               className="inline-flex h-11 w-fit items-center rounded-sm bg-indigo px-5 text-sm font-semibold text-white hover:bg-indigo-hover"

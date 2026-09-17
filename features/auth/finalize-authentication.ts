@@ -1,3 +1,12 @@
+/**
+ * Finalize authentication once, then navigate once.
+ *
+ * Email OTP and password login both call this. Google OAuth converges on the
+ * same destination helper after /auth/me refresh in OAuthCallback.
+ *
+ * Onboarding routing always uses the authenticated account flag from the
+ * backend user payload — never a browser-local first-visit flag.
+ */
 import type { components } from "@/lib/api/schema";
 import { postAuthDestination } from "./destination";
 
@@ -12,10 +21,6 @@ type RouterLike = {
   replace: (href: string) => void;
 };
 
-/**
- * Finalize authentication once, then navigate once.
- * Never navigate before the shared session reflects the backend user.
- */
 export async function finalizeAuthentication(
   user: UserPublic,
   session: SessionActions,
@@ -23,6 +28,8 @@ export async function finalizeAuthentication(
   next?: string | null,
 ): Promise<void> {
   session.adoptUser(user);
+  // Refresh reconciles cookies/session with /auth/me. The login/signup user
+  // payload remains the authoritative onboarding flag for this navigation.
   await session.refresh({ persistOnUnauthorized: true }).catch(() => {});
-  router.replace(postAuthDestination(user.onboarding_completed, next));
+  router.replace(postAuthDestination(Boolean(user.onboarding_completed), next));
 }
