@@ -9,7 +9,14 @@ import { IconArrowRight } from "@/components/ui/icon";
 import { Container } from "@/components/ui/layout";
 import { Heading, Label, Prose } from "@/components/ui/typography";
 import { COLLECTION_BY_SLUG, SEO_USE_CASE_BY_SLUG } from "@/catalog";
-import type { SemanticPage } from "@/domain/seo/semantic";
+import {
+  INDEXABLE_SEMANTIC_PAGES,
+  type SemanticPage,
+} from "@/domain/seo/semantic";
+import {
+  discoverClusterMeta,
+  discoverClusterPath,
+} from "@/lib/discover-directory";
 
 function relatedLabel(path: string): string {
   if (path === "/marketplace/") return "Fabric marketplace";
@@ -18,6 +25,11 @@ function relatedLabel(path: string): string {
   if (path === "/fabric-sourcing/") return "Fabric sourcing";
   if (path === "/wholesale-fabric/") return "Wholesale fabric";
   if (path === "/guides/") return "Fabric guides";
+  if (path === "/discover/") return "All discovery topics";
+  if (path.startsWith("/discover/topics/")) {
+    const slug = path.split("/").filter(Boolean)[2] ?? "";
+    return discoverClusterMeta(slug)?.label ?? "Discovery topics";
+  }
   if (path.startsWith("/collections/")) {
     const slug = path.split("/").filter(Boolean).pop() ?? "";
     return COLLECTION_BY_SLUG[slug as keyof typeof COLLECTION_BY_SLUG]?.label
@@ -44,6 +56,16 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
     )
     .filter(Boolean);
 
+  const clusterMeta = discoverClusterMeta(page.cluster);
+  const clusterPath = clusterMeta
+    ? discoverClusterPath(clusterMeta.cluster)
+    : "/discover/";
+
+  const relatedDiscover = INDEXABLE_SEMANTIC_PAGES.filter(
+    (candidate) =>
+      candidate.cluster === page.cluster && candidate.slug !== page.slug,
+  ).slice(0, 6);
+
   const schemaItems = [
     ...collections.map((collection) => ({
       name: `${collection!.label} fabrics`,
@@ -54,6 +76,10 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
       path: `/fabrics/best-for/${useCase!.slug}/`,
     })),
   ];
+
+  const relatedPaths = [...page.relatedPaths, clusterPath, "/discover/"].filter(
+    (path, index, all) => all.indexOf(path) === index,
+  );
 
   return (
     <>
@@ -70,6 +96,9 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
           items={[
             { label: "Home", href: "/" },
             { label: "Discover", href: "/discover/" },
+            ...(clusterMeta
+              ? [{ label: clusterMeta.label, href: clusterPath }]
+              : []),
             { label: page.h1 },
           ]}
         />
@@ -168,7 +197,7 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
           <section>
             <Heading level={2}>Related pages</Heading>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {page.relatedPaths.map((path) => (
+              {relatedPaths.map((path) => (
                 <li key={path}>
                   <Link
                     href={path}
@@ -180,6 +209,26 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
               ))}
             </ul>
           </section>
+
+          {relatedDiscover.length ? (
+            <section>
+              <Heading level={2}>
+                More {clusterMeta?.label.toLowerCase() ?? "related"} topics
+              </Heading>
+              <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                {relatedDiscover.map((related) => (
+                  <li key={related.slug}>
+                    <Link
+                      href={related.path}
+                      className="text-sm font-medium text-indigo underline-offset-2 hover:underline"
+                    >
+                      {related.h1}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </div>
       </Container>
     </>
