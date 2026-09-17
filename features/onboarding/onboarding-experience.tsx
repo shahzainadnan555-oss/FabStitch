@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
-import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
+import { FabStitchPageLoader } from "@/components/brand/fabstitch-loader";
 import { IconArrowRight, IconCheck } from "@/components/ui/icon";
 import { postAuthDestination } from "@/features/auth/destination";
 import { useSession } from "@/features/auth/session";
@@ -192,12 +192,9 @@ export function OnboardingExperience({
 
   if (isNavigating || (pending && !error && !editing)) {
     return (
-      <div className="flex min-h-[min(22rem,55dvh)] items-center justify-center">
-        <FabStitchLoader
-          variant="content"
-          label={isNavigating ? "Opening FabStitch" : "Saving your preferences"}
-        />
-      </div>
+      <FabStitchPageLoader
+        label={isNavigating ? "Opening FabStitch" : "Saving your preferences"}
+      />
     );
   }
 

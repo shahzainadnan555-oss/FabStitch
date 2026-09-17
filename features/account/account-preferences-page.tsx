@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
+import { FabStitchPageLoader } from "@/components/brand/fabstitch-loader";
 import { Container } from "@/components/ui/layout";
 import { PageHeader } from "@/components/marketplace/page-header";
 import { AccountSummary } from "@/features/account/account-summary";
@@ -62,6 +62,35 @@ export function AccountPreferencesPage() {
     };
   }, [authenticated, hydrated]);
 
+  if (error && !account) {
+    return (
+      <>
+        <PageHeader
+          crumbs={[
+            { label: "Account", href: "/account/" },
+            { label: "Preferences" },
+          ]}
+          eyebrow="Account"
+          title={editing ? "Edit your fabric preferences" : "Your preferences"}
+          intro={
+            editing
+              ? "Update the starting points FabStitch uses for personalised discovery. The full catalogue remains available."
+              : "Review the choices saved to your account and the market settings used across FabStitch."
+          }
+        />
+        <Container className="py-8 sm:py-10">
+          <p role="alert" className="text-body text-ink-2">
+            {error}
+          </p>
+        </Container>
+      </>
+    );
+  }
+
+  if (!account || !initial || !options) {
+    return <FabStitchPageLoader label="Preparing your preferences" />;
+  }
+
   return (
     <>
       <PageHeader
@@ -78,47 +107,32 @@ export function AccountPreferencesPage() {
         }
       />
       <Container className="py-8 sm:py-10">
-        {error && !account ? (
-          <p role="alert" className="text-body text-ink-2">
-            {error}
+        <AccountSummary profile={account} />
+        {saved && !editing ? (
+          <p
+            role="status"
+            className="mb-6 rounded-sm border border-verified/30 bg-verified-wash px-4 py-3 text-sm text-verified"
+          >
+            Preferences saved to your account.
           </p>
-        ) : account && initial && options ? (
-          <>
-            <AccountSummary profile={account} />
-            {saved && !editing ? (
-              <p
-                role="status"
-                className="mb-6 rounded-sm border border-verified/30 bg-verified-wash px-4 py-3 text-sm text-verified"
-              >
-                Preferences saved to your account.
-              </p>
-            ) : null}
-            <div className="grid gap-9">
-              {editing ? (
-                <>
-                  <AccountMarketPreferences />
-                  <OnboardingExperience
-                    initial={initial}
-                    options={options}
-                    editing
-                  />
-                </>
-              ) : (
-                <>
-                  <SavedPreferences preferences={initial} />
-                  <AccountMarketPreferences />
-                </>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="flex min-h-[12rem] items-center justify-center py-10">
-            <FabStitchLoader
-              variant="content"
-              label="Preparing your preferences"
-            />
-          </div>
-        )}
+        ) : null}
+        <div className="grid gap-9">
+          {editing ? (
+            <>
+              <AccountMarketPreferences />
+              <OnboardingExperience
+                initial={initial}
+                options={options}
+                editing
+              />
+            </>
+          ) : (
+            <>
+              <SavedPreferences preferences={initial} />
+              <AccountMarketPreferences />
+            </>
+          )}
+        </div>
       </Container>
     </>
   );

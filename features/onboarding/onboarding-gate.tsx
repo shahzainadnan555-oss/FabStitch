@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
+import { FabStitchPageLoader } from "@/components/brand/fabstitch-loader";
 import { Container } from "@/components/ui/layout";
 import { Wordmark } from "@/components/layout/logo";
 import { AccountMenu } from "@/features/account/account-menu";
@@ -106,6 +106,16 @@ export function OnboardingGate({ next }: { next: string }) {
   ]);
 
   const showBrandedLoader = loading || completed || isNavigating;
+  const loaderLabel =
+    completed || isNavigating
+      ? "Opening FabStitch"
+      : !hydrated || (authenticated && !accountLoadDone)
+        ? "Preparing your setup"
+        : "Taking you to sign in";
+
+  if (showBrandedLoader) {
+    return <FabStitchPageLoader label={loaderLabel} />;
+  }
 
   return (
     <main className="min-h-dvh bg-chrome">
@@ -118,20 +128,7 @@ export function OnboardingGate({ next }: { next: string }) {
         </Container>
       </div>
       <Container className="py-6 sm:py-9">
-        {showBrandedLoader ? (
-          <div className="flex min-h-[min(22rem,55dvh)] items-center justify-center">
-            <FabStitchLoader
-              variant="content"
-              label={
-                completed || isNavigating
-                  ? "Opening FabStitch"
-                  : !hydrated || (authenticated && !accountLoadDone)
-                    ? "Preparing your setup"
-                    : "Taking you to sign in"
-              }
-            />
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="flex flex-col gap-4">
             <p role="alert" className="text-body text-ink-2">
               {error}
@@ -158,9 +155,7 @@ export function OnboardingGate({ next }: { next: string }) {
             next={next}
           />
         ) : (
-          <div className="flex min-h-[min(22rem,55dvh)] items-center justify-center">
-            <FabStitchLoader variant="content" label="Preparing your setup" />
-          </div>
+          <FabStitchPageLoader label="Preparing your setup" />
         )}
       </Container>
     </main>

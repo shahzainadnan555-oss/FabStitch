@@ -610,103 +610,121 @@
 }
 
 /* --------------------------------------------------------------------------
-   FabStitch branded loader
-   Soft pulse + ring. Reduced-motion keeps a static mark.
+   FabStitch full-page loader
+   White viewport overlay + transparent mark + stitch/thread orbit.
    -------------------------------------------------------------------------- */
-.fs-loader {
+.fs-page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+}
+
+.fs-page-loader__stage {
   position: relative;
   display: grid;
   place-items: center;
-  width: fit-content;
-  margin-inline: auto;
+  width: 7.5rem;
+  height: 7.5rem;
 }
 
-.fs-loader__mark {
+.fs-page-loader__orbit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: fs-page-loader-orbit 4.8s linear infinite;
+}
+
+.fs-page-loader__thread {
+  stroke-linecap: round;
+  transform-origin: 60px 60px;
+}
+
+.fs-page-loader__thread--navy {
+  stroke: var(--color-indigo, #1e3563);
+  stroke-dasharray: 52 275;
+  stroke-dashoffset: 0;
+  opacity: 0.55;
+  animation: fs-page-loader-thread 3.6s ease-in-out infinite;
+}
+
+.fs-page-loader__thread--gold {
+  stroke: var(--color-gold-ink, #855c23);
+  stroke-dasharray: 36 255;
+  stroke-dashoffset: 40;
+  opacity: 0.9;
+  animation: fs-page-loader-thread 2.8s ease-in-out infinite reverse;
+}
+
+.fs-page-loader__logo {
   position: relative;
   z-index: 1;
-  display: grid;
-  place-items: center;
-  border-radius: 0.35rem;
-  background: var(--color-paper-raised);
-  box-shadow: 0 0 0 1px var(--color-rule);
-  animation: fs-loader-breathe 1.8s ease-in-out infinite;
-}
-
-.fs-loader--page .fs-loader__mark {
-  width: 4.75rem;
-  height: 4.75rem;
-}
-
-.fs-loader--content .fs-loader__mark {
-  width: 3.5rem;
-  height: 3.5rem;
-}
-
-.fs-loader--inline .fs-loader__mark {
-  width: 2rem;
-  height: 2rem;
-  box-shadow: none;
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: contain;
   background: transparent;
+  animation: fs-page-loader-breathe 2.6s ease-in-out infinite;
 }
 
-.fs-loader__image {
-  opacity: 0.96;
-}
-
-.fs-loader__ring {
-  position: absolute;
-  inset: -0.55rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  border-top-color: var(--color-gold-ink, #a6863b);
-  border-right-color: color-mix(
-    in srgb,
-    var(--color-indigo, #2a3a66) 35%,
-    transparent
-  );
-  animation: fs-loader-spin 1.15s linear infinite;
-}
-
-.fs-loader--inline .fs-loader__ring {
-  inset: -0.3rem;
-}
-
-.fs-loader--overlay {
-  pointer-events: none;
-}
-
-@keyframes fs-loader-breathe {
-  0%,
-  100% {
-    opacity: 0.88;
-    transform: scale(0.98);
+@media (max-width: 640px) {
+  .fs-page-loader__stage {
+    width: 6.5rem;
+    height: 6.5rem;
   }
-  50% {
-    opacity: 1;
-    transform: scale(1);
+
+  .fs-page-loader__logo {
+    width: 3.75rem;
+    height: 3.75rem;
   }
 }
 
-@keyframes fs-loader-spin {
+@keyframes fs-page-loader-orbit {
   to {
     transform: rotate(360deg);
   }
 }
 
+@keyframes fs-page-loader-thread {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dashoffset: -160;
+  }
+  100% {
+    stroke-dashoffset: -320;
+  }
+}
+
+@keyframes fs-page-loader-breathe {
+  0%,
+  100% {
+    opacity: 0.88;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fs-loader__mark,
-  .fs-loader__ring {
+  .fs-page-loader__orbit,
+  .fs-page-loader__thread--navy,
+  .fs-page-loader__thread--gold,
+  .fs-page-loader__logo {
     animation: none;
   }
 
-  .fs-loader__ring {
-    border-color: var(--color-rule-2);
-    opacity: 0.7;
+  .fs-page-loader__thread--navy,
+  .fs-page-loader__thread--gold {
+    stroke-dasharray: 28 300;
+    opacity: 0.45;
   }
 
-  .fs-loader__mark {
+  .fs-page-loader__logo {
     opacity: 1;
-    transform: none;
   }
 }
 

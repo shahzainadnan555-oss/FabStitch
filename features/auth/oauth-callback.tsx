@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
+import { FabStitchPageLoader } from "@/components/brand/fabstitch-loader";
 import { postAuthDestination } from "./destination";
 import { googleAuthErrorMessage } from "./messages";
 import { useSession } from "./session";
@@ -60,9 +60,5 @@ export function OAuthCallback({
     );
   }
 
-  return (
-    <div className="flex min-h-[10rem] items-center justify-center py-6">
-      <FabStitchLoader variant="content" label="Signing you in" />
-    </div>
-  );
+  return <FabStitchPageLoader label="Signing you in" />;
 }

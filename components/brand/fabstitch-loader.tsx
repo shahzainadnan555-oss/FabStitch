@@ -1,63 +1,79 @@
 "use client";
 
-import { FabStitchMark } from "@/components/layout/logo";
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 
-export type FabStitchLoaderVariant = "page" | "content" | "inline";
-
-const SIZE: Record<FabStitchLoaderVariant, number> = {
-  page: 56,
-  content: 40,
-  inline: 22,
-};
-
 /**
- * FabStitch-branded loading indicator.
+ * Full-viewport FabStitch loading overlay.
  *
- * Tied only to real async work (route transitions, Suspense, fetches).
- * Animation is CSS-only and respects prefers-reduced-motion.
+ * One global experience for major route, filter, auth, and onboarding loads.
+ * Uses the real transparent mark (`/media/fabstitch-mark.png`) with no card,
+ * border, or white plaque behind the logo.
  */
-export function FabStitchLoader({
-  variant = "content",
+export function FabStitchPageLoader({
   label = "Loading",
   className,
-  overlay = false,
 }: {
-  variant?: FabStitchLoaderVariant;
   label?: string;
   className?: string;
-  /** Soft cover over existing content without unmounting the shell. */
-  overlay?: boolean;
 }) {
-  const size = SIZE[variant];
-
-  const body = (
+  return (
     <div
       role="status"
       aria-live="polite"
       aria-busy="true"
-      className={cn(
-        "fs-loader",
-        `fs-loader--${variant}`,
-        overlay && "fs-loader--overlay",
-        className,
-      )}
+      className={cn("fs-page-loader", className)}
     >
       <span className="sr-only">{label}</span>
-      <span className="fs-loader__ring" aria-hidden="true" />
-      <span className="fs-loader__mark" aria-hidden="true">
-        <FabStitchMark size={size} className="fs-loader__image" />
-      </span>
+      <div className="fs-page-loader__stage" aria-hidden="true">
+        <svg
+          className="fs-page-loader__orbit"
+          viewBox="0 0 120 120"
+          width="120"
+          height="120"
+          focusable="false"
+        >
+          <circle
+            className="fs-page-loader__thread fs-page-loader__thread--navy"
+            cx="60"
+            cy="60"
+            r="52"
+            fill="none"
+            strokeWidth="1"
+          />
+          <circle
+            className="fs-page-loader__thread fs-page-loader__thread--gold"
+            cx="60"
+            cy="60"
+            r="46"
+            fill="none"
+            strokeWidth="1.35"
+          />
+        </svg>
+        <Image
+          src="/media/fabstitch-mark.png"
+          alt=""
+          width={72}
+          height={72}
+          priority
+          className="fs-page-loader__logo"
+        />
+      </div>
     </div>
   );
+}
 
-  if (variant === "page") {
-    return (
-      <div className="flex min-h-[min(28rem,70dvh)] flex-1 items-center justify-center bg-paper px-6 py-16">
-        {body}
-      </div>
-    );
-  }
-
-  return body;
+/** @deprecated Prefer FabStitchPageLoader — kept as a thin alias for call sites. */
+export function FabStitchLoader({
+  label = "Loading",
+  className,
+}: {
+  label?: string;
+  className?: string;
+  /** Ignored — primary loading is always full-viewport. */
+  variant?: "page" | "content" | "inline";
+  /** Ignored — primary loading is always full-viewport. */
+  overlay?: boolean;
+}) {
+  return <FabStitchPageLoader label={label} className={className} />;
 }
