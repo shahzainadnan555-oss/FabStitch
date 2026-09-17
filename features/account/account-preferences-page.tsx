@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
 import { Container } from "@/components/ui/layout";
 import { PageHeader } from "@/components/marketplace/page-header";
 import { AccountSummary } from "@/features/account/account-summary";
@@ -111,13 +112,12 @@ export function AccountPreferencesPage() {
             </div>
           </>
         ) : (
-          <p
-            aria-busy="true"
-            aria-live="polite"
-            className="text-body text-ink-2"
-          >
-            Preparing your preferences…
-          </p>
+          <div className="flex min-h-[12rem] items-center justify-center py-10">
+            <FabStitchLoader
+              variant="content"
+              label="Preparing your preferences"
+            />
+          </div>
         )}
       </Container>
     </>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Container } from "@/components/ui/layout";
 import { CatalogResultsToolbar } from "@/components/marketplace/catalog-filters";
+import { CatalogPendingBoundary } from "@/components/marketplace/catalog-navigation";
 import { CatalogLoadError } from "@/components/marketplace/catalog-load-error";
 import {
   CatalogCursorPagination,
@@ -82,9 +83,11 @@ export default async function MarketplacePage({
         query={single(query.q)}
         collections={collections.slice(0, 8)}
       />
-      <Suspense fallback={<ResultsSkeleton cards={6} />}>
-        <MarketplaceResults query={query} />
-      </Suspense>
+      <CatalogPendingBoundary label="Updating fabrics">
+        <Suspense fallback={<ResultsSkeleton cards={6} />}>
+          <MarketplaceResults query={query} />
+        </Suspense>
+      </CatalogPendingBoundary>
     </>
   );
 }

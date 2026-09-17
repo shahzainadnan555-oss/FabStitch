@@ -1,5 +1,5 @@
-import { ResultsSkeleton } from "@/components/marketplace/route-states";
+import { PageLoadingState } from "@/components/marketplace/route-states";
 
 export default function LoadingMarketplace() {
-  return <ResultsSkeleton cards={6} />;
+  return <PageLoadingState label="Loading marketplace" />;
 }

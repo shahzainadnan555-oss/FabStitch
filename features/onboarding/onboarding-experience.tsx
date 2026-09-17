@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
 import { IconArrowRight, IconCheck } from "@/components/ui/icon";
 import { postAuthDestination } from "@/features/auth/destination";
 import { useSession } from "@/features/auth/session";
@@ -65,6 +66,7 @@ export function OnboardingExperience({
 }) {
   const router = useRouter();
   const { setOnboarding, refresh } = useSession();
+  const [isNavigating, startTransition] = useTransition();
   const [step, setStep] = useState(0);
   const [customerType, setCustomerType] = useState(() =>
     validInitial(initial.customer_type, options.customer_types),
@@ -170,11 +172,13 @@ export function OnboardingExperience({
       }
       setOnboarding(response);
       await refresh({ persistOnUnauthorized: true }).catch(() => {});
-      router.replace(
-        editing
-          ? "/account/preferences/?saved=1"
-          : postAuthDestination(true, next),
-      );
+      startTransition(() => {
+        router.replace(
+          editing
+            ? "/account/preferences/?saved=1"
+            : postAuthDestination(true, next),
+        );
+      });
     } catch (requestError) {
       setError(
         apiErrorMessage(
@@ -185,6 +189,17 @@ export function OnboardingExperience({
       setPending(false);
     }
   };
+
+  if (isNavigating || (pending && !error && !editing)) {
+    return (
+      <div className="flex min-h-[min(22rem,55dvh)] items-center justify-center">
+        <FabStitchLoader
+          variant="content"
+          label={isNavigating ? "Opening FabStitch" : "Saving your preferences"}
+        />
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={submit} className="mx-auto w-full max-w-[74rem]">

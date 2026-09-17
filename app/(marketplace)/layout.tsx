@@ -1,5 +1,6 @@
 import { PublicHeader } from "@/components/layout/public-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { CatalogNavigationProvider } from "@/components/marketplace/catalog-navigation";
 import { CompareProvider } from "@/components/marketplace/compare";
 import { MarketPreferenceProvider } from "@/features/preferences/market-preferences";
 
@@ -13,13 +14,15 @@ import { MarketPreferenceProvider } from "@/features/preferences/market-preferen
 export default function MarketplaceLayout({ children }: LayoutProps<"/">) {
   return (
     <MarketPreferenceProvider>
-      <CompareProvider>
-        <PublicHeader />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
-      </CompareProvider>
+      <CatalogNavigationProvider>
+        <CompareProvider>
+          <PublicHeader />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <SiteFooter />
+        </CompareProvider>
+      </CatalogNavigationProvider>
     </MarketPreferenceProvider>
   );
 }

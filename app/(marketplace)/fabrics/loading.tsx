@@ -1,5 +1,5 @@
-import { ResultsSkeleton } from "@/components/marketplace/route-states";
+import { PageLoadingState } from "@/components/marketplace/route-states";
 
 export default function LoadingFabrics() {
-  return <ResultsSkeleton cards={8} />;
+  return <PageLoadingState label="Loading fabrics" />;
 }

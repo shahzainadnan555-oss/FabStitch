@@ -609,6 +609,107 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   FabStitch branded loader
+   Soft pulse + ring. Reduced-motion keeps a static mark.
+   -------------------------------------------------------------------------- */
+.fs-loader {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: fit-content;
+  margin-inline: auto;
+}
+
+.fs-loader__mark {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 0.35rem;
+  background: var(--color-paper-raised);
+  box-shadow: 0 0 0 1px var(--color-rule);
+  animation: fs-loader-breathe 1.8s ease-in-out infinite;
+}
+
+.fs-loader--page .fs-loader__mark {
+  width: 4.75rem;
+  height: 4.75rem;
+}
+
+.fs-loader--content .fs-loader__mark {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.fs-loader--inline .fs-loader__mark {
+  width: 2rem;
+  height: 2rem;
+  box-shadow: none;
+  background: transparent;
+}
+
+.fs-loader__image {
+  opacity: 0.96;
+}
+
+.fs-loader__ring {
+  position: absolute;
+  inset: -0.55rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  border-top-color: var(--color-gold-ink, #a6863b);
+  border-right-color: color-mix(
+    in srgb,
+    var(--color-indigo, #2a3a66) 35%,
+    transparent
+  );
+  animation: fs-loader-spin 1.15s linear infinite;
+}
+
+.fs-loader--inline .fs-loader__ring {
+  inset: -0.3rem;
+}
+
+.fs-loader--overlay {
+  pointer-events: none;
+}
+
+@keyframes fs-loader-breathe {
+  0%,
+  100% {
+    opacity: 0.88;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fs-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-loader__mark,
+  .fs-loader__ring {
+    animation: none;
+  }
+
+  .fs-loader__ring {
+    border-color: var(--color-rule-2);
+    opacity: 0.7;
+  }
+
+  .fs-loader__mark {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* The homepage product row.
  *
  * Column count comes from the data, not from a hardcoded number: the section

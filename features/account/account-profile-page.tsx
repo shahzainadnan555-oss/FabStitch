@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
 import { Container } from "@/components/ui/layout";
 import { PageHeader } from "@/components/marketplace/page-header";
 import { useSession } from "@/features/auth/session";
@@ -59,13 +60,9 @@ export function AccountProfilePage() {
         ) : initial ? (
           <ProfileForm key={initial.id} initial={initial} />
         ) : (
-          <p
-            aria-busy="true"
-            aria-live="polite"
-            className="text-body text-ink-2"
-          >
-            Preparing your account…
-          </p>
+          <div className="flex min-h-[12rem] items-center justify-center py-10">
+            <FabStitchLoader variant="content" label="Preparing your account" />
+          </div>
         )}
       </Container>
     </>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import type { Facets } from "@/repositories/fabrics";
 import { CUSTOMER_CATALOG_SORT_OPTIONS } from "@/lib/customer-catalog-presentation";
+import { useCatalogNavigation } from "@/components/marketplace/catalog-navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/typography";
 import { Chip } from "@/components/ui/badge";
@@ -33,7 +34,7 @@ import {
  */
 
 export function useFilterParams() {
-  const router = useRouter();
+  const { push: navigate } = useCatalogNavigation();
   const pathname = usePathname();
   const params = useSearchParams();
 
@@ -50,9 +51,9 @@ export function useFilterParams() {
       // now-shorter result set is a dead end.
       next.delete("page");
       const query = next.toString();
-      router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+      navigate(query ? `${pathname}?${query}` : pathname, { scroll: false });
     },
-    [params, pathname, router],
+    [navigate, params, pathname],
   );
 
   const clearAll = useCallback(() => {
@@ -62,8 +63,8 @@ export function useFilterParams() {
       if (value) next.set(key, value);
     }
     const query = next.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
-  }, [params, pathname, router]);
+    navigate(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }, [navigate, params, pathname]);
 
   return { params, set, clearAll };
 }
@@ -424,7 +425,7 @@ function MarketplaceFilterDrawer({
   total: number;
   noun: string;
 }) {
-  const router = useRouter();
+  const { push: navigate } = useCatalogNavigation();
   const pathname = usePathname();
   const current = useSearchParams();
   const [draft, setDraft] = useState(
@@ -452,7 +453,7 @@ function MarketplaceFilterDrawer({
 
   const apply = () => {
     const query = draft.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    navigate(query ? `${pathname}?${query}` : pathname, { scroll: false });
     onClose();
   };
 

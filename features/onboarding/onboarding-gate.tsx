@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
 import { Container } from "@/components/ui/layout";
 import { Wordmark } from "@/components/layout/logo";
 import { AccountMenu } from "@/features/account/account-menu";
@@ -29,6 +30,7 @@ type OnboardingOptions = components["schemas"]["OnboardingOptionsResponse"];
 export function OnboardingGate({ next }: { next: string }) {
   const router = useRouter();
   const { hydrated, authenticated, user, setOnboarding } = useSession();
+  const [isNavigating, startTransition] = useTransition();
   const [initial, setInitial] = useState<OnboardingState | null>(null);
   const [options, setOptions] = useState<OnboardingOptions | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,11 +49,15 @@ export function OnboardingGate({ next }: { next: string }) {
   useEffect(() => {
     if (!hydrated) return;
     if (!authenticated) {
-      router.replace(loginHref(onboardingHref(next)));
+      startTransition(() => {
+        router.replace(loginHref(onboardingHref(next)));
+      });
       return;
     }
     if (sessionComplete) {
-      router.replace(postAuthDestination(true, next));
+      startTransition(() => {
+        router.replace(postAuthDestination(true, next));
+      });
     }
   }, [authenticated, hydrated, next, router, sessionComplete]);
 
@@ -70,7 +76,9 @@ export function OnboardingGate({ next }: { next: string }) {
           setOnboarding(state);
           setAccountConfirmedComplete(true);
           setAccountLoadDone(true);
-          router.replace(postAuthDestination(true, next));
+          startTransition(() => {
+            router.replace(postAuthDestination(true, next));
+          });
           return;
         }
         setInitial(state);
@@ -97,6 +105,8 @@ export function OnboardingGate({ next }: { next: string }) {
     setOnboarding,
   ]);
 
+  const showBrandedLoader = loading || completed || isNavigating;
+
   return (
     <main className="min-h-dvh bg-chrome">
       <div className="border-b border-rule-2 bg-paper-raised">
@@ -108,24 +118,19 @@ export function OnboardingGate({ next }: { next: string }) {
         </Container>
       </div>
       <Container className="py-6 sm:py-9">
-        {loading ? (
-          <p
-            aria-busy="true"
-            aria-live="polite"
-            className="text-body text-ink-2"
-          >
-            {!hydrated || (authenticated && !accountLoadDone)
-              ? "Preparing your setup…"
-              : "Taking you to sign in…"}
-          </p>
-        ) : completed ? (
-          <p
-            aria-busy="true"
-            aria-live="polite"
-            className="text-body text-ink-2"
-          >
-            Opening FabStitch…
-          </p>
+        {showBrandedLoader ? (
+          <div className="flex min-h-[min(22rem,55dvh)] items-center justify-center">
+            <FabStitchLoader
+              variant="content"
+              label={
+                completed || isNavigating
+                  ? "Opening FabStitch"
+                  : !hydrated || (authenticated && !accountLoadDone)
+                    ? "Preparing your setup"
+                    : "Taking you to sign in"
+              }
+            />
+          </div>
         ) : error ? (
           <div className="flex flex-col gap-4">
             <p role="alert" className="text-body text-ink-2">
@@ -153,13 +158,9 @@ export function OnboardingGate({ next }: { next: string }) {
             next={next}
           />
         ) : (
-          <p
-            aria-busy="true"
-            aria-live="polite"
-            className="text-body text-ink-2"
-          >
-            Preparing your setup…
-          </p>
+          <div className="flex min-h-[min(22rem,55dvh)] items-center justify-center">
+            <FabStitchLoader variant="content" label="Preparing your setup" />
+          </div>
         )}
       </Container>
     </main>

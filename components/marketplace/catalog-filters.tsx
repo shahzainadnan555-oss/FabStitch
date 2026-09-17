@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import type {
   CatalogFacetBucket,
   CustomerCatalogFacets,
   CustomerCatalogSort,
 } from "@/repositories/customer-catalog";
 import { CUSTOMER_CATALOG_SORT_LABELS } from "@/lib/customer-catalog-presentation";
+import { useCatalogNavigation } from "@/components/marketplace/catalog-navigation";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
@@ -150,7 +151,7 @@ export function CatalogResultsToolbar({
   facets: CustomerCatalogFacets;
   defaultSort: CustomerCatalogSort;
 }) {
-  const router = useRouter();
+  const { push: navigate } = useCatalogNavigation();
   const pathname = usePathname();
   const current = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -168,7 +169,7 @@ export function CatalogResultsToolbar({
     params.delete("cursor");
     params.delete("page");
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    navigate(query ? `${pathname}?${query}` : pathname, { scroll: false });
   };
 
   const setCurrent = (key: string, value: string | null) => {

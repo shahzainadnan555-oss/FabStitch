@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
 import { postAuthDestination } from "./destination";
 import { googleAuthErrorMessage } from "./messages";
 import { useSession } from "./session";
@@ -18,6 +19,7 @@ export function OAuthCallback({
 }) {
   const router = useRouter();
   const { hydrated, authenticated, user, refresh } = useSession();
+  const [, startTransition] = useTransition();
   const [checked, setChecked] = useState(Boolean(error));
   const failed =
     error || (checked && hydrated && !authenticated)
@@ -39,7 +41,9 @@ export function OAuthCallback({
 
   useEffect(() => {
     if (error || !checked || !hydrated || !authenticated || !user) return;
-    router.replace(postAuthDestination(user.onboarding_completed, next));
+    startTransition(() => {
+      router.replace(postAuthDestination(user.onboarding_completed, next));
+    });
   }, [authenticated, checked, error, hydrated, next, router, user]);
 
   if (failed) {
@@ -57,12 +61,8 @@ export function OAuthCallback({
   }
 
   return (
-    <p
-      aria-busy="true"
-      aria-live="polite"
-      className="text-[0.975rem] text-ink-2"
-    >
-      Signing you in…
-    </p>
+    <div className="flex min-h-[10rem] items-center justify-center py-6">
+      <FabStitchLoader variant="content" label="Signing you in" />
+    </div>
   );
 }

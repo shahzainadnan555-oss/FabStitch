@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
 import { useSession } from "./session";
 import { loginHref } from "./return-to";
 
@@ -27,9 +28,9 @@ export function RequireCustomer({
 
   if (!hydrated) {
     return (
-      <p aria-busy="true" aria-live="polite" className="text-body text-ink-2">
-        {pendingLabel}
-      </p>
+      <div className="flex min-h-[min(20rem,50dvh)] items-center justify-center py-16">
+        <FabStitchLoader variant="content" label={pendingLabel} />
+      </div>
     );
   }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FabStitchLoader } from "@/components/brand/fabstitch-loader";
 import { Container } from "@/components/ui/layout";
 import { LoadingRegion, Skeleton } from "@/components/ui/state";
 import { Button } from "@/components/ui/button";
@@ -19,17 +20,32 @@ import { IconArrowRight } from "@/components/ui/icon";
  * between a loading state and a flash of the wrong thing.
  */
 
-/** Results grid: header, toolbar, then cards at the real aspect. */
-export function ResultsSkeleton({ cards = 6 }: { cards?: number }) {
+/** Full-route branded loader for loading.tsx boundaries. */
+export function PageLoadingState({
+  label = "Loading FabStitch",
+}: {
+  label?: string;
+}) {
+  return <FabStitchLoader variant="page" label={label} />;
+}
+
+/** Results grid: branded indicator + cards at the real aspect. */
+export function ResultsSkeleton({
+  cards = 6,
+  label = "Loading fabrics",
+}: {
+  cards?: number;
+  label?: string;
+}) {
   return (
-    <LoadingRegion label="Loading listings">
+    <LoadingRegion label={label}>
       <Container className="py-8">
-        <Skeleton className="h-7 w-64" />
-        <Skeleton className="mt-3 h-4 w-96 max-w-full" />
-        <div className="mt-6 flex flex-wrap gap-2">
-          {Array.from({ length: 5 }, (_, i) => (
-            <Skeleton key={i} className="h-9 w-28 rounded-lg" />
-          ))}
+        <div className="mb-8 flex justify-center">
+          <FabStitchLoader variant="content" label={label} />
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-3">
+          <Skeleton className="h-5 w-28" />
+          <Skeleton className="h-9 w-36 rounded-sm" />
         </div>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: cards }, (_, i) => (
@@ -59,7 +75,10 @@ export function ResultsSkeleton({ cards = 6 }: { cards?: number }) {
 /** Detail page: title block beside a commercial rail. */
 export function DetailSkeleton() {
   return (
-    <LoadingRegion label="Loading record">
+    <LoadingRegion label="Loading fabric">
+      <div className="pt-10">
+        <FabStitchLoader variant="content" label="Loading fabric" />
+      </div>
       <Container className="py-8">
         <Skeleton className="h-3 w-72 max-w-full" />
         <Skeleton className="mt-4 h-8 w-2/3" />
@@ -83,11 +102,18 @@ export function DetailSkeleton() {
   );
 }
 
-/** Workspace surface: header, then panels. */
-export function WorkspaceSkeleton() {
+/** Workspace / account surface. */
+export function WorkspaceSkeleton({
+  label = "Loading account",
+}: {
+  label?: string;
+}) {
   return (
-    <LoadingRegion label="Loading workspace">
+    <LoadingRegion label={label}>
       <div className="px-4 py-7 sm:px-8">
+        <div className="mb-8 flex justify-center">
+          <FabStitchLoader variant="content" label={label} />
+        </div>
         <Skeleton className="h-7 w-52" />
         <Skeleton className="mt-3 h-4 w-80 max-w-full" />
         <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
