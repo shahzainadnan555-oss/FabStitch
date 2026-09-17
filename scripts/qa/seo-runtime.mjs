@@ -92,9 +92,9 @@ if (!sitemapResponse.ok) {
   throw new Error(`sitemap.xml returned ${sitemapResponse.status}`);
 }
 const sitemapXml = await sitemapResponse.text();
-const rootLocations = [
-  ...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g),
-].map((match_) => decode(match_[1]));
+const rootLocations = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+  (match_) => decode(match_[1]),
+);
 const sitemapDocuments = [];
 const urls = [];
 if (/<sitemapindex[\s>]/i.test(sitemapXml)) {
@@ -395,12 +395,35 @@ for (const [name, required] of [
 
 const robotsResponse = await fetch(`${SITE}/robots.txt`);
 const robotsText = await robotsResponse.text();
-for (const path of ["/admin/", "/account/", "/inquiries/", "/buyer/", "/supplier/", "/rfq/"]) {
+for (const path of [
+  "/admin/",
+  "/account/",
+  "/inquiries/",
+  "/buyer/",
+  "/supplier/",
+  "/rfq/",
+  "/auth/",
+]) {
   if (!robotsText.includes(`Disallow: ${path}`))
     failures.push(`robots.txt does not disallow ${path}`);
 }
+for (const path of [
+  "/",
+  "/marketplace/",
+  "/fabrics/",
+  "/collections/",
+  "/discover/",
+  "/guides/",
+]) {
+  if (!robotsText.includes(`Allow: ${path}`))
+    failures.push(`robots.txt does not allow ${path}`);
+}
+if (/^Disallow:\s*\/\s*$/m.test(robotsText))
+  failures.push("robots.txt contains global Disallow: /");
 if (!robotsText.includes("Sitemap:") || !robotsText.includes("/sitemap.xml"))
   failures.push("robots.txt does not advertise the sitemap index");
+if (!/User-Agent:\s*Googlebot/i.test(robotsText))
+  failures.push("robots.txt missing explicit Googlebot group");
 
 const report = {
   site: SITE,

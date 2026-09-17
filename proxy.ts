@@ -70,9 +70,15 @@ function hasPrivatePrefix(pathname: string): boolean {
   );
 }
 
+/** Paths that must never inherit fail-closed noindex from SEO API gaps. */
 function isCleanPublicMoneyPath(pathname: string): boolean {
   const path = normalizePathname(pathname);
   if (ALWAYS_INDEXABLE_CLEAN_PATHS.has(path)) return true;
+  if (path.startsWith("/discover/")) return true;
+  if (path.startsWith("/collections/")) return true;
+  if (path.startsWith("/fabrics/best-for/")) return true;
+  if (path.startsWith("/guides/")) return true;
+  if (path.startsWith("/sitemaps/")) return true;
   if (isIndexableSeoPath(path)) return true;
   return false;
 }
