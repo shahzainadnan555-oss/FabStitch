@@ -85,6 +85,8 @@ export function isReservedSemanticSlug(slug: string): boolean {
       "fabrics",
       "collections",
       "best-for",
+      "topics",
+      "discover",
     ].includes(normalized)
   ) {
     return true;

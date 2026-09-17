@@ -7,6 +7,11 @@ import {
   INDEXABLE_SEMANTIC_PAGES,
   SEMANTIC_BUILD_REPORT,
 } from "@/domain/seo/semantic";
+import {
+  DISCOVER_CLUSTER_META,
+  discoverClusterPath,
+  pagesForDiscoverCluster,
+} from "@/lib/discover-directory";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,12 +23,18 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function DiscoverHubPage() {
-  const byCluster = Object.entries(SEMANTIC_BUILD_REPORT.byCluster).sort(
-    (a, b) => b[1] - a[1],
-  );
+const FEATURED_PER_CLUSTER = 8;
 
-  const samples = INDEXABLE_SEMANTIC_PAGES.slice(0, 48);
+export default function DiscoverHubPage() {
+  const clusters = DISCOVER_CLUSTER_META.map((meta) => {
+    const pages = pagesForDiscoverCluster(meta.cluster);
+    return {
+      ...meta,
+      count: pages.length,
+      samples: pages.slice(0, FEATURED_PER_CLUSTER),
+      path: discoverClusterPath(meta.cluster),
+    };
+  }).filter((cluster) => cluster.count > 0);
 
   return (
     <>
@@ -44,41 +55,80 @@ export default function DiscoverHubPage() {
           duplicating existing canonical hubs.
         </Prose>
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {byCluster.map(([cluster, count]) => (
-            <div
-              key={cluster}
-              className="rounded-md border border-rule-2 bg-paper-raised px-4 py-3"
+        <Heading level={2} className="mt-12">
+          Browse by topic group
+        </Heading>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {clusters.map((cluster) => (
+            <Link
+              key={cluster.cluster}
+              href={cluster.path}
+              className="rounded-md border border-rule-2 bg-paper-raised px-4 py-3 transition hover:border-indigo/40"
             >
               <p className="font-mono text-label uppercase text-ink-3">
-                {cluster.replace(/_/g, " ")}
+                {cluster.label}
               </p>
               <p className="mt-1 text-h3 font-semibold tabular-nums text-ink">
-                {count}
+                {cluster.count}
               </p>
-            </div>
+              <p className="mt-2 text-sm text-ink-2">{cluster.description}</p>
+            </Link>
           ))}
         </div>
 
-        <Heading level={2} className="mt-12">
-          Featured topics
-        </Heading>
-        <ul className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {samples.map((page) => (
-            <li key={page.slug}>
+        {clusters.map((cluster) => (
+          <section key={cluster.cluster} className="mt-12">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <Heading level={2}>{cluster.label}</Heading>
               <Link
-                href={page.path}
+                href={cluster.path}
                 className="text-sm font-medium text-indigo underline-offset-2 hover:underline"
               >
-                {page.h1}
+                View all {cluster.count} topics
               </Link>
-            </li>
-          ))}
-        </ul>
+            </div>
+            <ul className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {cluster.samples.map((page) => (
+                <li key={page.slug}>
+                  <Link
+                    href={page.path}
+                    className="text-sm font-medium text-indigo underline-offset-2 hover:underline"
+                  >
+                    {page.h1}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+
+        <section className="mt-14 rounded-md border border-rule-2 bg-chrome px-5 py-6">
+          <Heading level={2}>Continue into FabStitch</Heading>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { href: "/marketplace/", label: "Fabric marketplace" },
+              { href: "/fabrics/", label: "Explore fabrics" },
+              { href: "/collections/", label: "Collections" },
+              { href: "/fabrics/best-for/", label: "Best For" },
+              { href: "/guides/", label: "Fabric guides" },
+              { href: "/fabric-sourcing/", label: "Fabric sourcing" },
+              { href: "/wholesale-fabric/", label: "Wholesale fabric" },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="text-sm font-medium text-indigo underline-offset-2 hover:underline"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <p className="mt-8 text-sm text-ink-3">
-          {INDEXABLE_SEMANTIC_PAGES.length} indexable discovery topics currently
-          published.
+          {INDEXABLE_SEMANTIC_PAGES.length} indexable discovery topics across{" "}
+          {Object.keys(SEMANTIC_BUILD_REPORT.byCluster).length} topic groups.
         </p>
       </Container>
     </>

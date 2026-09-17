@@ -1,10 +1,14 @@
 import type { SeoSitemapIndex, SeoSitemapPage } from "@/lib/api/types";
 import { absolute, SITE_URL } from "@/lib/seo";
+import type {
+  SitemapChildFile,
+  SitemapUrlEntry,
+} from "@/lib/sitemap-inventory";
 
 const PRODUCTION_SITEMAP_ORIGIN = "https://fabstitch.net";
 
 /**
- * Absolute public website URL for sitemap entries.
+ * Absolute public website URL for sitemap page entries.
  * Always uses the production storefront host — never API / preview hosts.
  */
 export function absoluteSitemapUrl(pathOrUrl: string): string {
@@ -28,6 +32,20 @@ export function absoluteSitemapUrl(pathOrUrl: string): string {
   return `${PRODUCTION_SITEMAP_ORIGIN}${normalized}`;
 }
 
+/** Absolute HTTPS asset URL without a trailing slash. */
+export function absoluteAssetUrl(assetPath: string): string {
+  if (/^https?:\/\//i.test(assetPath)) {
+    try {
+      const parsed = new URL(assetPath);
+      return `${PRODUCTION_SITEMAP_ORIGIN}${parsed.pathname}`;
+    } catch {
+      // Fall through.
+    }
+  }
+  const path = assetPath.startsWith("/") ? assetPath : `/${assetPath}`;
+  return `${PRODUCTION_SITEMAP_ORIGIN}${path}`;
+}
+
 export function sitemapPageNumbers(index: SeoSitemapIndex): number[] {
   return Array.from({ length: index.page_count }, (_, offset) => offset + 1);
 }
@@ -41,6 +59,39 @@ function xml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
+function isValidLastmod(value: string): boolean {
+  // W3C Datetime subset commonly accepted by Google: YYYY-MM-DD or full ISO.
+  return (
+    /^\d{4}-\d{2}-\d{2}$/.test(value) ||
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
+      value,
+    )
+  );
+}
+
+/**
+ * Sitemap index listing every non-empty child sitemap.
+ * Child locs use trailing-slash paths compatible with Next trailingSlash.
+ */
+export function renderSitemapIndexFromFiles(
+  files: readonly SitemapChildFile[],
+): string {
+  const locations = files
+    .map(
+      (file) =>
+        `  <sitemap>\n    <loc>${xml(absoluteSitemapUrl(file.path))}</loc>\n  </sitemap>`,
+    )
+    .join("\n");
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    locations,
+    "</sitemapindex>",
+    "",
+  ].join("\n");
+}
+
+/** @deprecated Prefer renderSitemapIndexFromFiles with named partitions. */
 export function renderSitemapIndex(pages: readonly number[]): string {
   const locations = pages
     .map(
@@ -57,35 +108,66 @@ export function renderSitemapIndex(pages: readonly number[]): string {
   ].join("\n");
 }
 
-export function renderUrlSet(entries: SeoSitemapPage["urls"]): string {
+function renderImageNodes(images: readonly string[]): string {
+  return images
+    .map(
+      (image) =>
+        `\n    <image:image>\n      <image:loc>${xml(image)}</image:loc>\n    </image:image>`,
+    )
+    .join("");
+}
+
+/**
+ * Render a urlset. Uses Google image sitemap namespace when any URL has images.
+ * Does not emit priority or changefreq — Google ignores them.
+ */
+export function renderInventoryUrlSet(
+  entries: readonly SitemapUrlEntry[],
+): string {
+  const includeImages = entries.some((entry) => entry.images.length > 0);
   const urls = entries
     .map((entry) => {
-      const loc = absoluteSitemapUrl(entry.path || entry.loc);
-      const lastmod = entry.lastmod
-        ? `\n    <lastmod>${xml(entry.lastmod)}</lastmod>`
-        : "";
-      const numericPriority = Number(entry.priority_hint);
-      const priority =
-        entry.priority_hint &&
-        Number.isFinite(numericPriority) &&
-        numericPriority >= 0 &&
-        numericPriority <= 1
-          ? `\n    <priority>${xml(entry.priority_hint)}</priority>`
+      const lastmod =
+        entry.lastmod && isValidLastmod(entry.lastmod)
+          ? `\n    <lastmod>${xml(entry.lastmod)}</lastmod>`
           : "";
+      const images = includeImages ? renderImageNodes(entry.images) : "";
       return [
         "  <url>",
-        `    <loc>${xml(loc)}</loc>${lastmod}${priority}`,
+        `    <loc>${xml(entry.loc)}</loc>${lastmod}${images}`,
         "  </url>",
       ].join("\n");
     })
     .join("\n");
+
+  const root = includeImages
+    ? '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'
+    : '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    root,
     urls,
     "</urlset>",
     "",
   ].join("\n");
+}
+
+/**
+ * Legacy API urlset renderer kept for sanitize/fallback callers.
+ * Priority and changefreq are intentionally omitted.
+ */
+export function renderUrlSet(entries: SeoSitemapPage["urls"]): string {
+  const mapped: SitemapUrlEntry[] = entries.map((entry) => ({
+    path: entry.path || "/",
+    loc: absoluteSitemapUrl(entry.path || entry.loc),
+    lastmod:
+      entry.lastmod && isValidLastmod(entry.lastmod) ? entry.lastmod : null,
+    images: [],
+    partition: "core",
+    pageType: "unknown",
+  }));
+  return renderInventoryUrlSet(mapped);
 }
 
 export function xmlResponse(body: string): Response {
@@ -93,7 +175,6 @@ export function xmlResponse(body: string): Response {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
       "Cache-Control": "public, max-age=300, stale-while-revalidate=3600",
-      // Ensure intermediary caches do not keep an empty index forever.
       "CDN-Cache-Control": "public, max-age=300",
     },
   });

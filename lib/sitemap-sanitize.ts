@@ -91,6 +91,13 @@ function isPublicSitemapCandidate(pathname: string): boolean {
   if (/^\/fabrics\/best-for\/[^/]+\/$/.test(pathname)) return true;
   if (/^\/guides\/[^/]+\/$/.test(pathname)) return true;
   if (/^\/help\/[^/]+\/$/.test(pathname)) return true;
+  if (pathname === "/discover/") return true;
+  if (/^\/discover\/topics\/[a-z0-9-]+\/$/.test(pathname)) return true;
+  if (/^\/discover\/topics\/[a-z0-9-]+\/page\/\d+\/$/.test(pathname)) {
+    return true;
+  }
+  // Individual discover topics must be registry-backed (quality gated).
+  if (/^\/discover\/[^/]+\/$/.test(pathname)) return false;
 
   return false;
 }

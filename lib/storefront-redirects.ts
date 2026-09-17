@@ -81,6 +81,11 @@ export const STOREFRONT_REDIRECT_FAMILIES: readonly StorefrontRedirect[] = [
       "Fibre material intent uses collection hubs to avoid cannibalization",
   },
   {
+    from: "/fabrics/marketplace/",
+    to: "/marketplace/",
+    reason: "Marketplace is not a fabric PDP; catch-all soft-404 must redirect",
+  },
+  {
     from: "/guides/fabric-gsm/, /guides/woven-fabric/",
     to: "/guides/fabric-weight-and-gsm/, /guides/woven-vs-knit-fabrics/",
     reason: "Preferred research aliases map to existing authoritative guides",
@@ -104,6 +109,9 @@ export function storefrontRedirect(pathname: string): string | null {
   if (marketplaceFabric) return `/fabrics/${marketplaceFabric[1]}/`;
 
   if (canonicalCase === "/fabrics/index/") return "/fabrics/";
+
+  // Soft-404 fabric catch-all: /fabrics/marketplace/ is not a fabric PDP.
+  if (canonicalCase === "/fabrics/marketplace/") return "/marketplace/";
 
   if (MATERIAL_LANDING_REDIRECTS[canonicalCase]) {
     return MATERIAL_LANDING_REDIRECTS[canonicalCase];

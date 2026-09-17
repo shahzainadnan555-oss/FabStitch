@@ -32,6 +32,12 @@ import {
   SEMANTIC_PAGES,
 } from "@/domain/seo/semantic";
 import {
+  DISCOVER_CLUSTER_META,
+  discoverClusterPageCount,
+  discoverClusterPath,
+  pagesForDiscoverCluster,
+} from "@/lib/discover-directory";
+import {
   SEO_PUBLICATION_OVERRIDES,
   launchBatchForPage,
   launchPhaseForPageType,
@@ -769,7 +775,14 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
   if (page.type === "best_for") return "/fabrics/best-for/";
   if (page.type === "intent_hub") return "/fabrics/";
   if (page.type === "commercial_landing") return "/";
-  if (page.type === "semantic_landing") return "/discover/";
+  if (page.type === "semantic_landing") {
+    if (page.path === "/discover/") return "/";
+    if (/^\/discover\/topics\/[^/]+\/page\/\d+\/$/.test(page.path)) {
+      return page.path.replace(/page\/\d+\/$/, "");
+    }
+    if (/^\/discover\/topics\/[^/]+\/$/.test(page.path)) return "/discover/";
+    return "/discover/";
+  }
   if (page.type === "guide_hub") return "/guides/";
   if (page.type === "guide") {
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
@@ -867,6 +880,48 @@ function resolvePage(page: SeoPageDefinition): SeoPageRecord {
   };
 }
 
+const discoverDirectoryPages: SeoPageDefinition[] =
+  DISCOVER_CLUSTER_META.flatMap((meta) => {
+    const totalItems = pagesForDiscoverCluster(meta.cluster).length;
+    const totalPages = discoverClusterPageCount(meta.cluster);
+    const pages: SeoPageDefinition[] = [];
+    for (let pageNum = 1; pageNum <= totalPages; pageNum += 1) {
+      const path = discoverClusterPath(meta.cluster, pageNum);
+      const isFirst = pageNum === 1;
+      pages.push({
+        path,
+        type: "semantic_landing",
+        title: isFirst
+          ? `${meta.label} | Fabric Discovery`
+          : `${meta.label} | Fabric Discovery (page ${pageNum})`,
+        h1: isFirst ? meta.hubTitle : `${meta.hubTitle} — page ${pageNum}`,
+        description: isFirst
+          ? `${meta.description} Browse ${totalItems} FabStitch discovery topics with links into collections, Best For pages and the marketplace.`
+          : `Continued ${meta.label.toLowerCase()} fabric discovery topics (page ${pageNum} of ${totalPages}) on FabStitch.`,
+        primaryTopic: meta.label.toLowerCase(),
+        secondaryTopics: [
+          "fabric discovery",
+          meta.label.toLowerCase(),
+          "fabric topics",
+        ],
+        intent: "commercial_investigation",
+        audience: "Fabric customers",
+        contentOwner: "FabStitch",
+        contentSource: "Semantic discovery directory",
+        relatedPaths: [
+          "/discover/",
+          "/marketplace/",
+          "/fabrics/",
+          "/collections/",
+          "/guides/",
+        ],
+        qualityGatePassed: true,
+        wordCount: 160 + Math.min(totalItems, 80),
+      });
+    }
+    return pages;
+  });
+
 const semanticPages: SeoPageDefinition[] = [
   {
     path: "/discover/",
@@ -891,10 +946,14 @@ const semanticPages: SeoPageDefinition[] = [
       "/collections/",
       "/guides/",
       "/fabric-sourcing/",
+      ...DISCOVER_CLUSTER_META.slice(0, 6).map((meta) =>
+        discoverClusterPath(meta.cluster),
+      ),
     ],
     qualityGatePassed: true,
     wordCount: 220,
   },
+  ...discoverDirectoryPages,
   ...INDEXABLE_SEMANTIC_PAGES.map((page): SeoPageDefinition => ({
     path: page.path,
     type: "semantic_landing",
