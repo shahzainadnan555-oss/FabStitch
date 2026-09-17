@@ -25,7 +25,10 @@ import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/", {
     title: "FabStitch",
+    description:
+      "Discover FabStitch fabrics by material, construction, and use. Browse the 2027 collection, compare properties, and inquire about the cloth that fits your next make.",
     image: LANDING_MEDIA.heroPoster,
+    index: true,
   });
 }
 

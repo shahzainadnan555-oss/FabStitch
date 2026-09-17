@@ -9,11 +9,60 @@ import { seoPage as localSeoPage } from "@/domain/seo/storefront-registry";
 
 const DEFAULT_SOCIAL_IMAGE = "/media/hero-navy-jersey.jpg";
 
+/**
+ * Public money/discovery paths that must remain snippet-eligible.
+ *
+ * Google shows “No information is available for this page.” when `nosnippet`
+ * (or equivalent) is present. Backend SEO rows must never be allowed to attach
+ * those directives to these URLs.
+ */
+const SNIPPET_ELIGIBLE_PUBLIC_PATHS = new Set([
+  "/",
+  "/marketplace/",
+  "/fabrics/",
+  "/collections/",
+  "/fabrics/best-for/",
+  "/guides/",
+  "/about/",
+  "/how-it-works/",
+  "/contact/",
+  "/support/",
+  "/help/",
+  "/discover/",
+  "/fabric-sourcing/",
+  "/wholesale-fabric/",
+]);
+
+const HOMEPAGE_DESCRIPTION =
+  "Discover FabStitch fabrics by material, construction, and use. Browse the 2027 collection, compare properties, and inquire about the cloth that fits your next make.";
+
 function canonicalPath(path: string): string {
   const pathname = path.split(/[?#]/, 1)[0] || "/";
   const withLeadingSlash = pathname.startsWith("/") ? pathname : `/${pathname}`;
   const collapsed = withLeadingSlash.replace(/\/{2,}/g, "/").toLowerCase();
   return collapsed === "/" ? "/" : `${collapsed.replace(/\/+$/, "")}/`;
+}
+
+function isSnippetEligiblePublicPath(path: string): boolean {
+  const canonical = canonicalPath(path);
+  if (SNIPPET_ELIGIBLE_PUBLIC_PATHS.has(canonical)) return true;
+  return Boolean(localSeoPage(canonical)?.indexable);
+}
+
+/** Strip directives that suppress Google snippets on public money pages. */
+function sanitizePublicRobotsDirectives(
+  directives: string | null | undefined,
+): string[] {
+  return (directives ?? "")
+    .split(",")
+    .map((directive) => directive.trim())
+    .filter(Boolean)
+    .filter(
+      (directive) =>
+        !/^(?:nosnippet|noarchive|noimageindex|nofollow|noindex|none|unavailable_after:.*)$/i.test(
+          directive,
+        ),
+    );
 }
 
 export function storefrontMetadata({
@@ -40,11 +89,18 @@ export function storefrontMetadata({
     typeof documentTitle === "string"
       ? `${documentTitle} | ${BRAND_NAME}`
       : BRAND_NAME;
+  const forcePublicIndex = isSnippetEligiblePublicPath(canonical);
   return {
     title: documentTitle,
     description,
     alternates: { canonical },
-    robots: { index, follow: true },
+    robots: {
+      index: forcePublicIndex ? true : index,
+      follow: true,
+      nosnippet: false,
+      noarchive: false,
+      noimageindex: false,
+    },
     openGraph: {
       type,
       siteName: BRAND_NAME,
@@ -101,18 +157,27 @@ function backendMetadata(
   page: SeoPage,
   overrides: {
     title?: string;
+    description?: string;
     image?: string;
     index?: boolean;
     type?: "website" | "article";
   },
 ): Metadata {
-  const isHome = page.canonical_path === "/";
+  const canonical = canonicalPath(
+    page.canonical_url?.trim() || page.canonical_path || "/",
+  );
+  const isHome = canonical === "/";
+  const snippetEligible = isSnippetEligiblePublicPath(canonical);
   const preferred =
     overrides.title?.trim() || page.seo_title?.trim() || page.title;
   const cleaned = cleanPageTitle(preferred, BRAND_NAME);
   const documentTitle = metadataTitle(cleaned, { absolute: isHome });
-  const description = page.meta_description?.trim() || undefined;
-  const canonical = page.canonical_url?.trim() || page.canonical_path;
+  const description =
+    overrides.description?.trim() ||
+    page.meta_description?.trim() ||
+    (isHome ? HOMEPAGE_DESCRIPTION : undefined) ||
+    localSeoPage(canonical)?.description ||
+    "FabStitch fabric sourcing marketplace.";
   const socialTitle = cleanPageTitle(
     page.og_title?.trim() || cleaned,
     BRAND_NAME,
@@ -122,24 +187,57 @@ function backendMetadata(
   const socialDescription = page.og_description?.trim() || description;
   const socialImage =
     page.og_image_path?.trim() || overrides.image?.trim() || undefined;
-  const indexable = page.is_indexable && overrides.index !== false;
-  const configuredRobots = page.robots_directives?.trim();
-  const robots = configuredRobots
+
+  // Public money pages stay indexable/snippet-eligible even if the SEO API row
+  // is stale, missing is_indexable, or carries nosnippet/noarchive.
+  const indexable = snippetEligible
+    ? overrides.index !== false
+    : page.is_indexable && overrides.index !== false;
+
+  if (snippetEligible) {
+    return {
+      title: documentTitle,
+      description,
+      alternates: { canonical },
+      robots: {
+        index: true,
+        follow: true,
+        nosnippet: false,
+        noarchive: false,
+        noimageindex: false,
+      },
+      openGraph: {
+        type: overrides.type ?? "website",
+        siteName: BRAND_NAME,
+        title: socialDisplay,
+        description: socialDescription,
+        url: canonical,
+        ...(socialImage
+          ? { images: [{ url: socialImage, alt: socialDisplay }] }
+          : {}),
+      },
+      twitter: {
+        card: socialImage ? "summary_large_image" : "summary",
+        title: socialDisplay,
+        description: socialDescription,
+        ...(socialImage ? { images: [socialImage] } : {}),
+      },
+    };
+  }
+
+  const configuredRobots = sanitizePublicRobotsDirectives(
+    page.robots_directives,
+  );
+  const robots = configuredRobots.length
     ? [
-        indexable ? null : "noindex",
-        page.is_public ? null : "nofollow",
-        ...configuredRobots
-          .split(",")
-          .map((directive) => directive.trim())
-          .filter(
-            (directive) =>
-              directive &&
-              !(!indexable && /^(?:no)?index$/i.test(directive)) &&
-              !(!page.is_public && /^(?:no)?follow$/i.test(directive)),
-          ),
-      ]
-        .filter(Boolean)
-        .join(", ")
+        indexable ? "index" : "noindex",
+        page.is_public ? "follow" : "nofollow",
+        ...configuredRobots.filter(
+          (directive) =>
+            !/^(?:no)?index$/i.test(directive) &&
+            !/^(?:no)?follow$/i.test(directive),
+        ),
+      ].join(", ")
     : { index: indexable, follow: page.is_public };
 
   return {
@@ -176,6 +274,7 @@ export async function loadStorefrontSeo(
     type?: "website" | "article";
   } = {},
 ): Promise<StorefrontSeoResult> {
+  const canonical = canonicalPath(path);
   let page: SeoPage | null = null;
   try {
     page = await getSeoPageByPath(path);
@@ -186,10 +285,31 @@ export async function loadStorefrontSeo(
     });
   }
 
+  // Homepage / money pages: if the SEO API row would suppress indexing or
+  // snippets, prefer the curated frontend registry instead of fail-closed.
+  if (page && isSnippetEligiblePublicPath(canonical)) {
+    const directives = (page.robots_directives ?? "").toLowerCase();
+    const blocksSnippet =
+      /\bnosnippet\b/.test(directives) ||
+      /\bnoarchive\b/.test(directives) ||
+      /\bnoimageindex\b/.test(directives) ||
+      /\bnone\b/.test(directives);
+    const blocksIndex =
+      page.is_indexable === false || /\bnoindex\b/.test(directives);
+    if (blocksSnippet || blocksIndex) {
+      page = null;
+    }
+  }
+
   if (page) {
     return {
       page,
-      metadata: backendMetadata(page, overrides),
+      metadata: backendMetadata(page, {
+        ...overrides,
+        description:
+          overrides.description ??
+          (canonical === "/" ? HOMEPAGE_DESCRIPTION : undefined),
+      }),
       breadcrumbs: seoBreadcrumbs(page),
     };
   }
@@ -197,18 +317,23 @@ export async function loadStorefrontSeo(
   // Registry fallback keeps curated money pages indexable when the SEO API
   // has no row yet or is temporarily unavailable.
   const local = localSeoPage(path);
-  if (local?.indexable) {
+  if (local?.indexable || isSnippetEligiblePublicPath(canonical)) {
     return {
       page: null,
       metadata: storefrontMetadata({
-        title: overrides.title ?? local.title,
-        description: overrides.description ?? local.description,
-        path: local.canonicalPath,
-        image: overrides.image ?? local.image,
-        index: overrides.index !== false,
+        title: overrides.title ?? local?.title ?? BRAND_NAME,
+        description:
+          overrides.description ??
+          local?.description ??
+          (canonical === "/"
+            ? HOMEPAGE_DESCRIPTION
+            : "FabStitch fabric sourcing marketplace."),
+        path: local?.canonicalPath ?? canonical,
+        image: overrides.image ?? local?.image,
+        index: true,
         type:
           overrides.type ??
-          (local.type === "guide" || local.type === "help"
+          (local?.type === "guide" || local?.type === "help"
             ? "article"
             : "website"),
       }),
@@ -225,7 +350,7 @@ export async function loadStorefrontSeo(
       title: overrides.title ?? BRAND_NAME,
       description:
         overrides.description ?? "FabStitch fabric sourcing marketplace.",
-      path: canonicalPath(path),
+      path: canonical,
       image: overrides.image,
       index: explicitIndex,
       type: overrides.type,

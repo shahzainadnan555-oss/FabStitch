@@ -49,6 +49,9 @@ const ALWAYS_INDEXABLE_CLEAN_PATHS = new Set([
   "/contact/",
   "/support/",
   "/help/",
+  "/discover/",
+  "/fabric-sourcing/",
+  "/wholesale-fabric/",
 ]);
 
 function normalizePathname(pathname: string): string {
