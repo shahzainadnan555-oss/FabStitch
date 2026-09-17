@@ -1,0 +1,38 @@
+Keyword,Cluster,Primary/Secondary,Search Intent,Target URL,Page Type,Priority,Status
+fabric,Fabric Marketplace,Primary,commercial,/marketplace/,marketplace,P0,mapped
+fabrics,Fabric Marketplace,Secondary,commercial,/marketplace/,marketplace,P0,mapped
+fabric website,Fabric Marketplace,Secondary,commercial,/marketplace/,marketplace,P0,mapped
+fabric marketplace,Fabric Marketplace,Primary,commercial,/marketplace/,marketplace,P0,mapped
+buy fabric,Fabric Marketplace,Primary,transactional,/marketplace/,marketplace,P0,mapped
+where can i buy fabric,Fabric Marketplace,Secondary,transactional,/marketplace/,marketplace,P0,mapped
+where to get fabric,Fabric Marketplace,Secondary,transactional,/marketplace/,marketplace,P0,mapped
+where to find fabric,Fabric Marketplace,Secondary,commercial,/marketplace/,marketplace,P0,mapped
+fabrics,General Fabric Discovery,Primary,commercial_investigation,/fabrics/,fabric_hub,P0,mapped
+fabric,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P1,mapped
+fabric material,General Fabric Discovery,Primary,commercial_investigation,/fabrics/,fabric_hub,P0,mapped
+fabrics material,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P1,mapped
+fabric textile material,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P1,mapped
+fabric cloth material,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P2,mapped
+cloth material,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P2,mapped
+cloth fabric,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P2,mapped
+material fabric,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P2,mapped
+material and fabric,General Fabric Discovery,Secondary,informational,/fabrics/,fabric_hub,P2,mapped
+material cloth fabric,General Fabric Discovery,Secondary,commercial_investigation,/fabrics/,fabric_hub,P2,mapped
+clothing fabric,Clothing Fabrics,Primary,commercial_investigation,/fabrics/clothing/,intent_hub,P0,live
+fabric for clothes,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P0,live
+fabric for clothing,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P0,live
+clothing material fabric,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P1,live
+clothing fabric material,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P1,live
+fabric to make clothes,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P1,live
+fabric to make clothing,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P1,live
+fabric for clothing making,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P1,live
+fabrics and clothes,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P2,live
+fabrics and cloth,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P2,live
+clothes fabric,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P1,live
+clothes fabric material,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P2,live
+fabric and clothes,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P2,live
+material fabric clothes,Clothing Fabrics,Secondary,commercial_investigation,/fabrics/clothing/,intent_hub,P2,live
+apparel fabric,Apparel Fabrics,Primary,commercial_investigation,/fabrics/apparel/,intent_hub,P0,live
+fabric apparel,Apparel Fabrics,Secondary,commercial_investigation,/fabrics/apparel/,intent_hub,P0,live
+garment fabric,Apparel Fabrics,Secondary,commercial_investigation,/fabrics/apparel/,intent_hub,P1,live
+fashion fabric,Fashion Fabrics,Primary,commercial_investigation,/fabrics/fashion/,intent_hub,P0,live

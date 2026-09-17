@@ -15,6 +15,8 @@ import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/fabrics/", {
     title: "Explore Fabrics",
+    description:
+      "Browse FabStitch fabrics and fabric materials by collection, Best For use, and searchable marketplace. Compare composition, weight, and construction before you inquire.",
   });
 }
 
@@ -37,7 +39,7 @@ export default async function FabricsHubPage() {
     <>
       <CollectionPageJsonLd
         name="Explore Fabrics | FabStitch"
-        description="Explore FabStitch fabrics through material collections, Best For uses, and the searchable marketplace."
+        description="Browse FabStitch fabrics and fabric materials by collection, Best For use, and searchable marketplace."
         path="/fabrics/"
         items={[
           ...collections.slice(0, 8).map((collection) => ({
@@ -56,7 +58,7 @@ export default async function FabricsHubPage() {
         crumbs={[{ label: "Home", href: "/" }, { label: "Fabrics" }]}
         eyebrow="FabStitch catalog"
         title="Find the fabric, then read the detail."
-        intro="Start with a material collection, a Best For use case, or the full marketplace search. Every fabric page leads with composition, construction, and documented uses — so you can compare cloth before you inquire."
+        intro="Start with a material collection, a Best For use case, or the full marketplace search. Every fabric page leads with composition, construction, and documented uses — so you can compare cloth material before you inquire."
         meta={[
           { label: "Fabrics", value: fabricCount },
           { label: "Collections", value: collections.length },
@@ -65,7 +67,65 @@ export default async function FabricsHubPage() {
       />
 
       <Container className="py-10 sm:py-14">
-        <section aria-labelledby="fabric-collections-heading">
+        <section aria-labelledby="intent-landings-heading">
+          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+            By programme
+          </p>
+          <h2
+            id="intent-landings-heading"
+            className="mt-2 text-h2 font-semibold text-ink"
+          >
+            Clothing, apparel and fashion paths
+          </h2>
+          <p className="mt-3 max-w-[42rem] text-sm leading-relaxed text-ink-3">
+            Three intent pages keep garment selection, production sourcing and
+            fashion aesthetics from competing for the same keywords.
+          </p>
+          <ul className="mt-5 grid gap-px border border-rule-2 bg-rule-2 sm:grid-cols-3">
+            {[
+              {
+                href: "/fabrics/clothing/",
+                title: "Clothing fabric",
+                body: "Choose cloth for shirts, dresses, trousers, jackets and coats.",
+              },
+              {
+                href: "/fabrics/apparel/",
+                title: "Apparel fabric",
+                body: "Source for brands and manufacturers with a production brief.",
+              },
+              {
+                href: "/fabrics/fashion/",
+                title: "Fashion fabrics",
+                body: "Explore drape, texture and seasonal story for designers.",
+              },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  prefetch={false}
+                  className="group flex h-full flex-col justify-between gap-4 bg-paper-raised p-5 transition-colors hover:bg-indigo-wash"
+                >
+                  <span>
+                    <span className="block font-semibold text-ink group-hover:text-indigo">
+                      {item.title}
+                    </span>
+                    <span className="mt-1 block text-sm text-ink-3">
+                      {item.body}
+                    </span>
+                  </span>
+                  <IconArrowRight
+                    width={14}
+                    height={14}
+                    className="shrink-0 text-indigo"
+                    aria-hidden
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-14" aria-labelledby="fabric-collections-heading">
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">

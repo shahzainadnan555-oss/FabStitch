@@ -5,6 +5,7 @@ import type { CustomerCollectionCard } from "@/repositories/customer-catalog";
 
 const DISCOVERY_LINKS = [
   { href: "/fabrics/", label: "All fabrics" },
+  { href: "/fabrics/clothing/", label: "Clothing fabric" },
   { href: "/collections/", label: "Collections" },
   { href: "/fabrics/best-for/", label: "Best For" },
   { href: "/guides/", label: "Guides" },
@@ -27,12 +28,13 @@ export function MarketplaceIntro({
         <p className="font-mono text-label tracking-[0.12em] text-gold-on-navy uppercase">
           Fabric marketplace
         </p>
-        <h1 className="mt-4 max-w-[16ch] text-[clamp(2.4rem,4.6vw,4.5rem)] leading-[0.98] font-semibold tracking-[-0.05em] text-balance">
+        <h1 className="mt-4 max-w-[18ch] text-[clamp(2.4rem,4.6vw,4.5rem)] leading-[0.98] font-semibold tracking-[-0.05em] text-balance">
           Discover fabrics for what comes next.
         </h1>
-        <p className="mt-4 max-w-[36rem] text-lead text-on-navy-2">
-          Search the FabStitch 2027 catalog by fiber, construction, season,
-          weight, or what you are making. Open a fabric for specs, then inquire
+        <p className="mt-4 max-w-[38rem] text-lead text-on-navy-2">
+          Where to buy fabric online with clear specs: search the FabStitch
+          catalog by fiber, construction, season, weight, or what you are
+          making. Open a fabric for composition and construction, then inquire
           when the material fits.
         </p>
 

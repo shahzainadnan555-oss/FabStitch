@@ -12,6 +12,10 @@ import {
   fabricsForUseCase,
 } from "@/catalog";
 import { CATALOG_GUIDES } from "@/content/guides";
+import {
+  SEO_LANDING_PAGES,
+  seoLandingWordCount,
+} from "@/content/seo-landing-pages";
 import { HELP_ARTICLES } from "@/features/help/content";
 import { STOREFRONT_REDIRECT_FAMILIES } from "@/lib/storefront-redirects";
 import {
@@ -35,6 +39,7 @@ export type StorefrontPageType =
   | "marketplace"
   | "fabric_hub"
   | "fabric"
+  | "intent_hub"
   | "collection_hub"
   | "collection"
   | "seasonal_collection"
@@ -146,13 +151,15 @@ const staticPages: SeoPageDefinition[] = [
     title: "Fabric Marketplace",
     h1: "Discover fabrics for what comes next.",
     description:
-      "Search and filter FabStitch fabrics by material, construction, season, weight, and Best For use. Open any fabric for specs, then inquire when you are ready.",
+      "Buy fabric online through the FabStitch marketplace. Search fabrics by material, construction, season, weight, and Best For use, then inquire on the cloth that fits.",
     primaryTopic: "fabric marketplace",
     secondaryTopics: [
+      "buy fabric",
+      "fabric website",
+      "where to buy fabric",
       "fabric search",
-      "fabric filter",
-      "2027 fabrics",
       "textile sourcing",
+      "2027 fabrics",
     ],
     intent: "commercial",
     audience: "Fabric customers",
@@ -162,6 +169,9 @@ const staticPages: SeoPageDefinition[] = [
       "/fabrics/",
       "/collections/",
       "/fabrics/best-for/",
+      "/fabrics/clothing/",
+      "/fabrics/apparel/",
+      "/fabrics/fashion/",
       "/guides/",
       "/guides/how-to-buy-fabric-online/",
       "/guides/how-to-source-fabric-for-clothing-brands/",
@@ -175,9 +185,15 @@ const staticPages: SeoPageDefinition[] = [
     title: "Explore Fabrics",
     h1: "Find the fabric, then read the detail.",
     description:
-      "Explore FabStitch fabrics through material collections, Best For uses, and the full searchable marketplace. Compare composition, weight, and construction before you inquire.",
-    primaryTopic: "fabric types",
-    secondaryTopics: ["fabric materials", "fabric products", "textile catalog"],
+      "Browse FabStitch fabrics and fabric materials by collection, Best For use, and searchable marketplace. Compare composition, weight, and construction before you inquire.",
+    primaryTopic: "fabric materials",
+    secondaryTopics: [
+      "fabrics",
+      "fabric textile material",
+      "fabric types",
+      "cloth material",
+      "fabric products",
+    ],
     intent: "commercial_investigation",
     audience: "Fabric customers",
     contentOwner: "FabStitch",
@@ -186,11 +202,42 @@ const staticPages: SeoPageDefinition[] = [
       "/marketplace/",
       "/collections/",
       "/fabrics/best-for/",
+      "/fabrics/clothing/",
+      "/fabrics/apparel/",
+      "/fabrics/fashion/",
       "/guides/",
     ],
     qualityGatePassed: true,
     productCount: FABRICS_2027.length,
   },
+  ...SEO_LANDING_PAGES.map((page): SeoPageDefinition => ({
+    path: page.path,
+    type: "intent_hub",
+    title: page.title,
+    h1: page.h1,
+    description: page.metaDescription,
+    primaryTopic: page.primaryKeyword,
+    secondaryTopics: [...page.secondaryKeywords],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "FabStitch keyword-cluster landing content",
+    relatedPaths: [
+      "/marketplace/",
+      "/fabrics/",
+      "/collections/",
+      "/fabrics/best-for/",
+      "/guides/",
+      ...page.relatedLandingPaths,
+      ...page.guidePaths,
+      ...page.bestForSlugs.map((slug) => `/fabrics/best-for/${slug}/`),
+      ...page.collectionSlugs.map((slug) => `/collections/${slug}/`),
+      ...page.fabricSlugs.map((slug) => `/fabrics/${slug}/`),
+    ],
+    qualityGatePassed: seoLandingWordCount(page) >= 400,
+    wordCount: seoLandingWordCount(page),
+    image: page.image,
+  })),
   {
     path: "/collections/",
     type: "collection_hub",
@@ -630,6 +677,7 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
   }
   if (page.type === "best_for_hub") return "/fabrics/";
   if (page.type === "best_for") return "/fabrics/best-for/";
+  if (page.type === "intent_hub") return "/fabrics/";
   if (page.type === "guide_hub") return "/guides/";
   if (page.type === "guide") {
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
@@ -646,6 +694,7 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
   if (
     page.type === "marketplace" ||
     page.type === "fabric_hub" ||
+    page.type === "intent_hub" ||
     page.type === "collection_hub" ||
     page.type === "collection" ||
     page.type === "seasonal_collection" ||
