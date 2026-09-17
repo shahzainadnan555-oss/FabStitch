@@ -63,15 +63,14 @@ export function launchPhaseForPageType(type: string): SeoLaunchPhase {
     case "guide":
     case "guide_hub":
       return "phase_6_guides";
+    case "semantic_landing":
+      return "phase_1_core";
     default:
       return "phase_1_core";
   }
 }
 
-export function launchBatchForPage(
-  type: string,
-  path: string,
-): string {
+export function launchBatchForPage(type: string, path: string): string {
   if (type === "fabric") {
     return INDEXABLE_FABRIC_PATHS.has(canonicalSeoPath(path))
       ? "curated-fabric-foundation"
@@ -80,9 +79,7 @@ export function launchBatchForPage(
   return launchPhaseForPageType(type).replace(/_/g, "-");
 }
 
-function localPublicationForPage(
-  input: SeoPublicationRequest,
-): SeoPublication {
+function localPublicationForPage(input: SeoPublicationRequest): SeoPublication {
   const path = canonicalSeoPath(input.path);
   const override = SEO_PUBLICATION_OVERRIDES[path];
   if (override) return override;

@@ -12,6 +12,7 @@ const PRIORITY_BY_TYPE: Partial<Record<StorefrontPageType, string>> = {
   collection_hub: "0.8",
   best_for_hub: "0.8",
   fabric: "0.8",
+  semantic_landing: "0.6",
   collection: "0.7",
   seasonal_collection: "0.7",
   best_for: "0.7",

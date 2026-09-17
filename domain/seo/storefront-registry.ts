@@ -28,6 +28,10 @@ import { COLLECTION_SEO_BY_SLUG } from "@/content/collection-seo";
 import { HELP_ARTICLES } from "@/features/help/content";
 import { STOREFRONT_REDIRECT_FAMILIES } from "@/lib/storefront-redirects";
 import {
+  INDEXABLE_SEMANTIC_PAGES,
+  SEMANTIC_PAGES,
+} from "@/domain/seo/semantic";
+import {
   SEO_PUBLICATION_OVERRIDES,
   launchBatchForPage,
   launchPhaseForPageType,
@@ -50,6 +54,7 @@ export type StorefrontPageType =
   | "fabric"
   | "intent_hub"
   | "commercial_landing"
+  | "semantic_landing"
   | "collection_hub"
   | "collection"
   | "seasonal_collection"
@@ -764,6 +769,7 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
   if (page.type === "best_for") return "/fabrics/best-for/";
   if (page.type === "intent_hub") return "/fabrics/";
   if (page.type === "commercial_landing") return "/";
+  if (page.type === "semantic_landing") return "/discover/";
   if (page.type === "guide_hub") return "/guides/";
   if (page.type === "guide") {
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
@@ -782,6 +788,7 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
     page.type === "fabric_hub" ||
     page.type === "intent_hub" ||
     page.type === "commercial_landing" ||
+    page.type === "semantic_landing" ||
     page.type === "collection_hub" ||
     page.type === "collection" ||
     page.type === "seasonal_collection" ||
@@ -808,6 +815,10 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
       (item) => item.path === page.path,
     );
     if (material?.faqs.length) schemas.push("FAQPage");
+  }
+  if (page.type === "semantic_landing") {
+    const semantic = SEMANTIC_PAGES.find((item) => item.path === page.path);
+    if (semantic?.faqs.length) schemas.push("FAQPage");
   }
   if (page.type === "collection") {
     const enrichment = COLLECTION_SEO_BY_SLUG[page.path.split("/")[2] ?? ""];
@@ -856,6 +867,53 @@ function resolvePage(page: SeoPageDefinition): SeoPageRecord {
   };
 }
 
+const semanticPages: SeoPageDefinition[] = [
+  {
+    path: "/discover/",
+    type: "semantic_landing",
+    title: "Fabric Discovery Topics",
+    h1: "Fabric discovery topics",
+    description:
+      "Explore FabStitch fabric discovery topics spanning materials, garment uses, attributes, guides and commercial pathways into the marketplace.",
+    primaryTopic: "fabric discovery topics",
+    secondaryTopics: [
+      "fabric topics",
+      "fabric materials guide",
+      "fabric use cases",
+    ],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Semantic discovery registry",
+    relatedPaths: [
+      "/marketplace/",
+      "/fabrics/",
+      "/collections/",
+      "/guides/",
+      "/fabric-sourcing/",
+    ],
+    qualityGatePassed: true,
+    wordCount: 220,
+  },
+  ...INDEXABLE_SEMANTIC_PAGES.map((page): SeoPageDefinition => ({
+    path: page.path,
+    type: "semantic_landing",
+    title: page.title,
+    h1: page.h1,
+    description: page.metaDescription,
+    primaryTopic: page.primaryKeyword,
+    secondaryTopics: page.secondaryKeywords,
+    intent: page.intent,
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Semantic discovery registry",
+    relatedPaths: page.relatedPaths,
+    qualityGatePassed: page.qualityGatePassed,
+    wordCount: page.wordCount,
+    image: page.material?.imageHint,
+  })),
+];
+
 export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
   ...staticPages,
   ...fabricPages,
@@ -865,6 +923,7 @@ export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
   ...guidePages,
   ...helpPages,
   ...privatePages,
+  ...semanticPages,
 ].map(resolvePage);
 
 export const INDEXABLE_SEO_PAGES = SEO_PAGE_REGISTRY.filter(
