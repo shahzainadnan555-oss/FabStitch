@@ -6,6 +6,7 @@ import { hasIndexAffectingSearchParams } from "@/lib/seo-query";
 import { getSeoPageByPath } from "@/repositories/seo";
 import type { CustomerCatalogFabric } from "@/repositories/customer-catalog";
 import { seoPage as localSeoPage } from "@/domain/seo/storefront-registry";
+import { absolute } from "@/lib/seo";
 
 const DEFAULT_SOCIAL_IMAGE = "/media/hero-navy-jersey.jpg";
 
@@ -33,8 +34,12 @@ const SNIPPET_ELIGIBLE_PUBLIC_PATHS = new Set([
   "/wholesale-fabric/",
 ]);
 
-const HOMEPAGE_DESCRIPTION =
-  "Discover FabStitch fabrics by material, construction, and use. Browse the 2027 collection, compare properties, and inquire about the cloth that fits your next make.";
+/** Exact homepage document title. Do not apply this to other routes. */
+export const HOMEPAGE_TITLE =
+  "FabStitch | B2B Fabric Marketplace & Fabric Sourcing";
+
+export const HOMEPAGE_DESCRIPTION =
+  "Discover fabrics for apparel, fashion, and manufacturing with FabStitch, a B2B fabric marketplace for discovering materials and sourcing fabric for your next project.";
 
 function canonicalPath(path: string): string {
   const pathname = path.split(/[?#]/, 1)[0] || "/";
@@ -81,19 +86,21 @@ export function storefrontMetadata({
   type?: "website" | "article";
 }): Metadata {
   const canonical = canonicalPath(path);
+  const isHome = canonical === "/";
   const socialImage = image ?? DEFAULT_SOCIAL_IMAGE;
-  const documentTitle = metadataTitle(title, {
-    absolute: canonical === "/",
+  const documentTitle = metadataTitle(isHome ? HOMEPAGE_TITLE : title, {
+    absolute: isHome,
   });
   const socialTitle =
     typeof documentTitle === "string"
       ? `${documentTitle} | ${BRAND_NAME}`
-      : BRAND_NAME;
+      : documentTitle.absolute;
   const forcePublicIndex = isSnippetEligiblePublicPath(canonical);
+  const resolvedDescription = isHome ? HOMEPAGE_DESCRIPTION : description;
   return {
     title: documentTitle,
-    description,
-    alternates: { canonical },
+    description: resolvedDescription,
+    alternates: { canonical: isHome ? absolute("/") : canonical },
     robots: {
       index: forcePublicIndex ? true : index,
       follow: true,
@@ -105,8 +112,8 @@ export function storefrontMetadata({
       type,
       siteName: BRAND_NAME,
       title: socialTitle,
-      description,
-      url: canonical,
+      description: resolvedDescription,
+      url: isHome ? absolute("/") : canonical,
       locale: "en_US",
       images: [
         { url: socialImage, alt: socialTitle, width: 1200, height: 630 },
@@ -115,7 +122,7 @@ export function storefrontMetadata({
     twitter: {
       card: "summary_large_image",
       title: socialTitle,
-      description,
+      description: resolvedDescription,
       images: [socialImage],
     },
   };
@@ -275,6 +282,23 @@ export async function loadStorefrontSeo(
   } = {},
 ): Promise<StorefrontSeoResult> {
   const canonical = canonicalPath(path);
+
+  // Homepage metadata is frontend-owned. The SEO API must not rewrite the
+  // title, description, or canonical onto another route.
+  if (canonical === "/") {
+    return {
+      page: null,
+      metadata: storefrontMetadata({
+        title: HOMEPAGE_TITLE,
+        description: HOMEPAGE_DESCRIPTION,
+        path: "/",
+        image: overrides.image,
+        index: true,
+      }),
+      breadcrumbs: [],
+    };
+  }
+
   let page: SeoPage | null = null;
   try {
     page = await getSeoPageByPath(path);

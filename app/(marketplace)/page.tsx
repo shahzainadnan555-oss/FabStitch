@@ -20,13 +20,16 @@ import {
 import { WebSiteJsonLd } from "@/components/seo/structured-data";
 import { LANDING_MEDIA } from "@/components/landing/media";
 import { TextileBackdrop } from "@/components/landing/textile-backdrop";
-import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import {
+  registeredStorefrontMetadata,
+  HOMEPAGE_DESCRIPTION,
+  HOMEPAGE_TITLE,
+} from "@/lib/storefront-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/", {
-    title: "FabStitch",
-    description:
-      "Discover FabStitch fabrics by material, construction, and use. Browse the 2027 collection, compare properties, and inquire about the cloth that fits your next make.",
+    title: HOMEPAGE_TITLE,
+    description: HOMEPAGE_DESCRIPTION,
     image: LANDING_MEDIA.heroPoster,
     index: true,
   });
@@ -41,6 +44,7 @@ export default function LandingPage() {
     <>
       <WebSiteJsonLd />
       <Hero />
+      <MarketplaceContext />
       <MaterialManifesto />
       <Suspense fallback={<Collections items={[]} loading />}>
         <LandingCollections />
@@ -165,6 +169,51 @@ function Hero() {
             </p>
           </div>
         </PointerFabric>
+      </Container>
+    </section>
+  );
+}
+
+function MarketplaceContext() {
+  const links = [
+    { href: "/marketplace/", label: "Fabric marketplace" },
+    { href: "/fabrics/", label: "Explore fabrics" },
+    { href: "/collections/", label: "Fabric collections" },
+    { href: "/fabrics/best-for/shirts/", label: "Shirt fabrics" },
+    { href: "/fabrics/best-for/dresses/", label: "Dress fabrics" },
+    { href: "/guides/", label: "Fabric guides" },
+    { href: "/wholesale-fabric/", label: "Wholesale fabric" },
+    { href: "/discover/", label: "Fabric discovery topics" },
+  ] as const;
+
+  return (
+    <section className="border-b border-rule-2 bg-paper">
+      <Container className="py-10 sm:py-12">
+        <h2 className="max-w-[18ch] text-[clamp(1.55rem,2.2vw,2.05rem)] leading-[1.08] font-semibold tracking-[-0.03em] text-balance text-ink">
+          Sourcing fabric for commercial work
+        </h2>
+        <p className="mt-4 max-w-[46rem] text-body text-ink-2">
+          FabStitch is a B2B fabric marketplace for discovering fabrics and
+          sourcing materials for apparel, fashion, manufacturing, and other
+          commercial projects.
+        </p>
+        <p className="mt-3 max-w-[46rem] text-body text-ink-2">
+          Explore fabrics by material, use case, weight, construction, and other
+          specifications, then find the right fabric for your next sourcing
+          requirement.
+        </p>
+        <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
+          {links.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="text-sm font-medium text-indigo underline-offset-2 hover:underline"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </Container>
     </section>
   );

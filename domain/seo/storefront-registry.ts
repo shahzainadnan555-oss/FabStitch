@@ -141,10 +141,10 @@ const staticPages: SeoPageDefinition[] = [
   {
     path: "/",
     type: "home",
-    title: "FabStitch",
+    title: "FabStitch | B2B Fabric Marketplace & Fabric Sourcing",
     h1: "Find fabric that fits your vision.",
     description:
-      "Discover FabStitch fabrics by material, construction, and use. Browse the 2027 collection, compare properties, and inquire about the cloth that fits your next make.",
+      "Discover fabrics for apparel, fashion, and manufacturing with FabStitch, a B2B fabric marketplace for discovering materials and sourcing fabric for your next project.",
     primaryTopic: "FabStitch fabric marketplace",
     secondaryTopics: [
       "fabric discovery",
@@ -160,8 +160,11 @@ const staticPages: SeoPageDefinition[] = [
       "/marketplace/",
       "/fabrics/",
       "/collections/",
-      "/fabrics/best-for/",
-      "/guides/fabrics-2027/",
+      "/fabrics/best-for/shirts/",
+      "/fabrics/best-for/dresses/",
+      "/guides/",
+      "/wholesale-fabric/",
+      "/discover/",
     ],
     qualityGatePassed: true,
     image: "/media/hero-navy-jersey.jpg",

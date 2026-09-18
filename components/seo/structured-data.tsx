@@ -39,10 +39,10 @@ export function OrganizationJsonLd() {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "FabStitch",
-        url: SITE_URL,
+        url: absolute("/"),
         logo: absolute("/media/fabstitch-mark.png"),
         description:
-          "A fabric storefront for discovering materials by properties and intended use — then inquiring with confidence.",
+          "FabStitch is a B2B fabric marketplace for discovering fabrics and sourcing materials for apparel, fashion, and manufacturing.",
       }}
     />
   );
@@ -61,9 +61,9 @@ export function WebSiteJsonLd() {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: "FabStitch",
-        url: SITE_URL,
+        url: absolute("/"),
         description:
-          "Discover FabStitch fabrics by material, construction, and intended use.",
+          "FabStitch is a B2B fabric marketplace for discovering fabrics and sourcing materials for apparel, fashion, and manufacturing.",
         potentialAction: {
           "@type": "SearchAction",
           target: {

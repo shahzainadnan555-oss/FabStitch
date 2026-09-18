@@ -2,7 +2,8 @@
  * Customer-facing browser tab titles.
  *
  * Global template (see `app/layout.tsx`): `%s | FabStitch`
- * Homepage (and brand-only titles): absolute `FabStitch`
+ * Homepage: absolute title supplied by the caller (no extra `| FabStitch`).
+ * Brand-only titles: absolute `FabStitch`.
  */
 
 export const BRAND_NAME = "FabStitch";
@@ -53,7 +54,8 @@ export function cleanPageTitle(
 
 /**
  * Next.js metadata title value.
- * Homepage / brand-only → absolute `FabStitch` (no `| FabStitch` suffix).
+ * Homepage → absolute title as supplied (do not append `| FabStitch`).
+ * Brand-only titles → absolute `FabStitch`.
  * Otherwise → segment for the global `%s | FabStitch` template.
  */
 export function metadataTitle(
@@ -62,7 +64,10 @@ export function metadataTitle(
 ): string | { absolute: string } {
   const fallback = options.fallback ?? BRAND_NAME;
   const cleaned = cleanPageTitle(raw, fallback);
-  if (options.absolute || cleaned === BRAND_NAME) {
+  if (options.absolute) {
+    return { absolute: cleaned || fallback };
+  }
+  if (cleaned === BRAND_NAME) {
     return { absolute: BRAND_NAME };
   }
   return cleaned;
