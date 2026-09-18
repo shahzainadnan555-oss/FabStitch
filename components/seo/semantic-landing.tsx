@@ -14,6 +14,7 @@ import {
   INDEXABLE_SEMANTIC_PAGES,
   type SemanticPage,
 } from "@/domain/seo/semantic";
+import { isIndexableSeoPath } from "@/domain/seo/storefront-registry";
 import {
   discoverClusterMeta,
   discoverClusterPath,
@@ -84,9 +85,9 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
     })),
   ];
 
-  const relatedPaths = [...page.relatedPaths, clusterPath, "/discover/"].filter(
-    (path, index, all) => all.indexOf(path) === index,
-  );
+  const relatedPaths = [...page.relatedPaths, clusterPath, "/discover/"]
+    .filter((path, index, all) => all.indexOf(path) === index)
+    .filter((path) => isIndexableSeoPath(path));
 
   return (
     <>
@@ -179,6 +180,42 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
               ) : null}
             </section>
           ))}
+
+          {page.comparisonTable ? (
+            <div className="overflow-x-auto rounded-md border border-rule">
+              <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
+                <caption className="sr-only">
+                  {page.comparisonTable.caption}
+                </caption>
+                <thead className="bg-paper-raised text-ink">
+                  <tr>
+                    {page.comparisonTable.headers.map((header) => (
+                      <th
+                        key={header || "aspect"}
+                        className="px-4 py-3 font-semibold"
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {page.comparisonTable.rows.map((row) => (
+                    <tr key={row[0]} className="border-t border-rule">
+                      {row.map((cell, index) => (
+                        <td
+                          key={`${row[0]}-${index}`}
+                          className="px-4 py-3 align-top text-ink-2"
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
 
           {page.faqs.length ? (
             <section>

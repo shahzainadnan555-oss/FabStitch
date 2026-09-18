@@ -19,6 +19,12 @@ export type SemanticSection = {
   keyPoints?: string[];
 };
 
+export type SemanticTable = {
+  caption: string;
+  headers: readonly string[];
+  rows: readonly (readonly string[])[];
+};
+
 export type SemanticTopic = {
   slug: string;
   path: string;
@@ -43,6 +49,7 @@ export type SemanticPage = SemanticTopic & {
   eyebrow: string;
   intro: string;
   sections: readonly SemanticSection[];
+  comparisonTable?: SemanticTable;
   faqs: readonly SemanticFaq[];
   relatedPaths: readonly string[];
   collectionSlugs: readonly string[];

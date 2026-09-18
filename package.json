@@ -21,6 +21,7 @@
     "seo:sitemap:audit": "node --import=./scripts/register-loader.mjs scripts/seo/sitemap-validate.mts",
     "seo:robots": "node --import=./scripts/register-loader.mjs scripts/seo/robots-validate.mts",
     "seo:keywords": "node --import=./scripts/register-loader.mjs scripts/seo/generate-keyword-map.mts",
+    "seo:keywords:audit": "node --import=./scripts/register-loader.mjs scripts/seo/keyword-coverage-audit.mts",
     "seo:semantic": "node --import=./scripts/register-loader.mjs scripts/seo/semantic-audit.mts",
     "seo:marketplace": "node --import=./scripts/register-loader.mjs scripts/seo/marketplace-audit.mts",
     "seo:marketplace:audit": "node --import=./scripts/register-loader.mjs scripts/seo/marketplace-audit.mts",

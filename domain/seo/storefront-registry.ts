@@ -1015,7 +1015,7 @@ const marketplaceTopicPages: SeoPageDefinition[] = MARKETPLACE_TOPIC_PAGES.map(
     h1: page.h1,
     description: page.description,
     primaryTopic: page.primaryKeyword,
-    secondaryTopics: ["fabric marketplace", page.family],
+    secondaryTopics: page.secondaryKeywords,
     intent: "commercial_investigation",
     audience: "Fabric customers",
     contentOwner: "FabStitch",

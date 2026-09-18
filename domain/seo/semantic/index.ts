@@ -11,6 +11,7 @@ export type {
   SemanticTopic,
   SemanticSection,
   SemanticFaq,
+  SemanticTable,
 } from "./types";
 export type { SemanticBuildReport } from "./build";
 export { MATERIALS, USES, ATTRIBUTES, CONSTRUCTIONS } from "./ontology";

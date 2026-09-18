@@ -2,6 +2,7 @@ import type {
   SemanticFaq,
   SemanticPage,
   SemanticSection,
+  SemanticTable,
   SemanticTopic,
 } from "./types";
 
@@ -40,6 +41,15 @@ function relatedPathsFor(topic: SemanticTopic): string[] {
 
   if (topic.material?.collectionSlug) {
     paths.add(`/collections/${topic.material.collectionSlug}/`);
+  }
+  if (topic.comparisonPeer?.collectionSlug) {
+    paths.add(`/collections/${topic.comparisonPeer.collectionSlug}/`);
+  }
+  if (topic.material) {
+    paths.add(`/discover/${topic.material.id}-fabric-guide/`);
+  }
+  if (topic.comparisonPeer) {
+    paths.add(`/discover/${topic.comparisonPeer.id}-fabric-guide/`);
   }
   if (topic.use?.bestForSlug) {
     paths.add(`/fabrics/best-for/${topic.use.bestForSlug}/`);
@@ -97,43 +107,51 @@ function composeSections(
   if (topic.pageType === "comparison" && material && peer) {
     sections.push(
       {
-        heading: `What ${material.label.toLowerCase()} and ${peer.label.toLowerCase()} each bring`,
+        heading: `What ${material.label.toLowerCase()} contributes`,
+        body: [material.fiberNotes, material.constructionNotes],
+        keyPoints: [...material.strengths.slice(0, 2)],
+      },
+      {
+        heading: `What ${peer.label.toLowerCase()} contributes`,
+        body: [peer.fiberNotes, peer.constructionNotes],
+        keyPoints: [...peer.strengths.slice(0, 2)],
+      },
+      {
+        heading: "Hand, drape and texture",
         body: [
-          `${material.label} and ${peer.label} are often compared because buyers shortlist both for overlapping apparel programmes — yet they answer different constraints once composition, construction and weight are on the table.`,
-          material.fiberNotes,
-          peer.fiberNotes,
-        ],
-        keyPoints: [
-          `${material.label}: ${material.strengths[0]}`,
-          `${peer.label}: ${peer.strengths[0]}`,
+          material.handFeel,
+          `By contrast, ${peer.handFeel.charAt(0).toLowerCase()}${peer.handFeel.slice(1)}`,
         ],
       },
       {
-        heading: "Where the practical differences show up",
+        heading: "Weight and published GSM",
         body: [
-          `Hand and construction diverge quickly. ${material.handFeel} By contrast, ${peer.handFeel}`,
-          `${material.constructionNotes} ${peer.constructionNotes}`,
-          `${material.weightNotes} ${peer.weightNotes}`,
+          material.weightNotes,
+          peer.weightNotes,
+          "Compare GSM only when both fabric pages publish it. A missing number is not evidence that one cloth is lighter.",
         ],
       },
       {
-        heading: "Choosing for a garment brief",
+        heading: `When to start with ${material.label.toLowerCase()}`,
         body: [
-          `If your brief prioritises ${material.typicalUses.slice(0, 2).join(" and ")}, ${material.label.toLowerCase()} is often the cleaner starting family — provided the published construction matches the silhouette.`,
-          `If the programme leans toward ${peer.typicalUses.slice(0, 2).join(" and ")}, ${peer.label.toLowerCase()} may fit more naturally. Neither fibre “wins” universally.`,
-          `Use FabStitch fabric pages to compare documented composition, construction and Best For uses, then inquire with the garment constraint written clearly.`,
-        ],
-        keyPoints: [
-          "Compare construction and weight, not fibre labels alone",
-          "Sample against the real silhouette and climate",
+          `Start here when the brief needs ${material.strengths[0]!.toLowerCase()} and the garment sits near ${material.typicalUses.slice(0, 3).join(", ")}.`,
+          material.buyerNotes,
+          `Still check ${material.watchouts[0]!.toLowerCase()}.`,
         ],
       },
       {
-        heading: "Buyer watchouts",
+        heading: `When to start with ${peer.label.toLowerCase()}`,
         body: [
-          `${material.label} watchouts: ${material.watchouts.join("; ")}.`,
-          `${peer.label} watchouts: ${peer.watchouts.join("; ")}.`,
-          "Avoid declaring a universal winner. Document the garment, climate and opacity needs, then shortlist with evidence.",
+          `Start here when ${peer.strengths[0]!.toLowerCase()} is the constraint you cannot drop, especially for ${peer.typicalUses.slice(0, 3).join(", ")}.`,
+          peer.buyerNotes,
+          `Still check ${peer.watchouts[0]!.toLowerCase()}.`,
+        ],
+      },
+      {
+        heading: "How a business should source the shortlist",
+        body: [
+          `Open both families on the FabStitch marketplace, then keep one construction before you compare weight. ${material.label} watchouts include ${material.watchouts.slice(0, 2).join("; ").toLowerCase()}. ${peer.label} watchouts include ${peer.watchouts.slice(0, 2).join("; ").toLowerCase()}.`,
+          "Neither fibre is universally better. Inquire with the garment, climate and quantity, and leave unpublished specs blank.",
         ],
       },
     );
@@ -344,6 +362,30 @@ function composeSections(
   return sections;
 }
 
+function comparisonTable(topic: SemanticTopic): SemanticTable | undefined {
+  const material = topic.material;
+  const peer = topic.comparisonPeer;
+  if (topic.pageType !== "comparison" || !material || !peer) return undefined;
+  return {
+    caption: `${material.label} and ${peer.label} on a sourcing shortlist`,
+    headers: ["", material.label, peer.label],
+    rows: [
+      ["Family", material.family, peer.family],
+      [
+        "A strength to test",
+        material.strengths[0] ?? "",
+        peer.strengths[0] ?? "",
+      ],
+      ["A watchout", material.watchouts[0] ?? "", peer.watchouts[0] ?? ""],
+      [
+        "Often considered for",
+        material.typicalUses.slice(0, 3).join(", "),
+        peer.typicalUses.slice(0, 3).join(", "),
+      ],
+    ],
+  };
+}
+
 function composeFaqs(topic: SemanticTopic, seed: number): SemanticFaq[] {
   const faqs: SemanticFaq[] = [];
   const material = topic.material;
@@ -538,12 +580,14 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
   const intro = composeIntro(topic, seed);
   const sections = composeSections(topic, seed);
   const faqs = composeFaqs(topic, seed);
+  const table = comparisonTable(topic);
   const metaDescription = composeMeta(topic, intro);
   const relatedPaths = relatedPathsFor(topic);
 
-  const collectionSlugs = topic.material?.collectionSlug
-    ? [topic.material.collectionSlug]
-    : [];
+  const collectionSlugs = [
+    topic.material?.collectionSlug,
+    topic.comparisonPeer?.collectionSlug,
+  ].filter((slug): slug is string => Boolean(slug));
   const bestForSlugs = topic.use?.bestForSlug ? [topic.use.bestForSlug] : [];
   const fabricQueryHints = [
     topic.material?.label.toLowerCase(),
@@ -588,6 +632,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
             : "Fabric topic",
     intro,
     sections,
+    comparisonTable: table,
     faqs,
     relatedPaths,
     collectionSlugs,
@@ -600,5 +645,12 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
     indexable: qualityGatePassed,
     qualityGatePassed,
     qualityNotes,
+    imagePath: topic.material?.imageHint,
+    imageAlt:
+      topic.pageType === "comparison" && topic.material && topic.comparisonPeer
+        ? `${topic.material.label} and ${topic.comparisonPeer.label} fabrics compared for apparel selection`
+        : topic.material
+          ? `${topic.material.label} fabric shown for this selection brief`
+          : undefined,
   };
 }

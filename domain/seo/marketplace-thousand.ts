@@ -11,6 +11,7 @@ import {
   type UseEntity,
 } from "@/domain/seo/semantic/ontology";
 import { MARKETPLACE_SUPPORT_PAGES } from "@/domain/seo/marketplace-cluster";
+import { getSemanticPage } from "@/domain/seo/semantic";
 
 /**
  * Exactly 1,000 marketplace topic pages.
@@ -54,6 +55,7 @@ export type MarketplaceTopicRecord = {
   h1: string;
   description: string;
   primaryKeyword: string;
+  secondaryKeywords: readonly string[];
   imagePath: string;
   imageAlt: string;
   relatedPaths: readonly string[];
@@ -273,12 +275,45 @@ function bestForPath(useId?: string): string | undefined {
   return `/fabrics/best-for/${useId}/`;
 }
 
+function imageAltFor(partial: {
+  material?: MaterialEntity;
+  other?: MaterialEntity;
+  use?: UseEntity;
+  attribute?: AttributeEntity;
+  construction?: ConstructionEntity;
+  gsm?: GsmBand;
+}): string {
+  if (partial.material && partial.other) {
+    return `${partial.material.label} and ${partial.other.label} fabrics compared for a shortlist`;
+  }
+  if (partial.material && partial.use) {
+    return `${partial.material.label} fabric considered for ${partial.use.label}`;
+  }
+  if (partial.material && partial.attribute) {
+    return `${partial.material.label} fabric reviewed for a ${partial.attribute.label} brief`;
+  }
+  if (partial.material && partial.construction) {
+    return `${partial.construction.label} ${partial.material.label.toLowerCase()} fabric surface`;
+  }
+  if (partial.use && partial.gsm) {
+    return `Fabric sample used when planning ${partial.use.label} weight`;
+  }
+  if (partial.use && partial.construction) {
+    return `${partial.construction.label} fabric considered for ${partial.use.label}`;
+  }
+  if (partial.use) {
+    return `Fabric sample reviewed for ${partial.use.label}`;
+  }
+  if (partial.material) {
+    return `${partial.material.label} fabric used as a marketplace example`;
+  }
+  return "Cotton fabric used to illustrate marketplace topic guides";
+}
+
 function imageFor(material?: MaterialEntity): { path: string; alt: string } {
   return {
     path: material?.imageHint || COTTON,
-    alt: material
-      ? `${material.label} fabric used as a marketplace example`
-      : "FabStitch fabric used as a marketplace example",
+    alt: imageAltFor({ material }),
   };
 }
 
@@ -311,7 +346,7 @@ function draftBase(
   return {
     ...partial,
     imagePath: partial.imagePath ?? image.path,
-    imageAlt: partial.imageAlt ?? image.alt,
+    imageAlt: partial.imageAlt ?? imageAltFor(partial),
   };
 }
 
@@ -537,6 +572,22 @@ function composeDraft(draft: Draft): {
           body: [
             `Keep ${material.label.toLowerCase()} when ${pick(material.strengths, seed, 5).toLowerCase()} is the constraint you cannot drop.`,
             `Keep ${other.label.toLowerCase()} when ${pick(other.strengths, `${seed}:b`, 5).toLowerCase()} matters more. Leave GSM blank if the fabric page does not publish it.`,
+          ],
+        },
+        {
+          heading: "Hand and weight",
+          body: [
+            material.handFeel,
+            other.handFeel,
+            `${material.weightNotes} ${other.weightNotes}`,
+          ],
+        },
+        {
+          heading: "Sourcing the shortlist",
+          body: [
+            material.buyerNotes,
+            other.buyerNotes,
+            "Open both families in the marketplace, then inquire with the garment and quantity. Do not treat either fibre as cheaper, larger, or universally better.",
           ],
         },
       ],
@@ -799,6 +850,33 @@ function hubPath(family: TopicFamily): string {
   return pathFor(HUB_BY_FAMILY.get(family)!.slug);
 }
 
+function discoverPath(draft: Draft): string | undefined {
+  if (draft.kind === "comparison" && draft.material && draft.other) {
+    const [left, right] = [draft.material.id, draft.other.id].sort();
+    const page = getSemanticPage(`${left}-vs-${right}`);
+    return page?.indexable ? page.path : undefined;
+  }
+  if (draft.material) {
+    const page = getSemanticPage(`${draft.material.id}-fabric-guide`);
+    return page?.indexable ? page.path : undefined;
+  }
+  return undefined;
+}
+
+function secondaryKeywords(draft: Draft): string[] {
+  const terms = [
+    draft.material ? `${draft.material.label.toLowerCase()} fabric` : "",
+    draft.other ? `${draft.other.label.toLowerCase()} fabric` : "",
+    draft.use ? `fabric for ${draft.use.label}` : "",
+    draft.attribute ? `${draft.attribute.label} fabric` : "",
+    draft.construction ? `${draft.construction.label} fabric` : "",
+    draft.buyer ? `${draft.buyer.label} fabric sourcing` : "",
+    draft.gsm ? "fabric gsm" : "",
+    draft.kind === "comparison" ? "fabric comparison" : "fabric sourcing",
+  ].filter((term) => term && term !== draft.keyword);
+  return [...new Set(terms)].slice(0, 5);
+}
+
 function relatedFor(draft: Draft, sibling?: string): string[] {
   const paths = [
     "/marketplace/",
@@ -806,7 +884,9 @@ function relatedFor(draft: Draft, sibling?: string): string[] {
     "/fabrics/",
     "/guides/",
     collectionPath(draft.material?.collectionSlug),
+    collectionPath(draft.other?.collectionSlug),
     bestForPath(draft.use?.id),
+    discoverPath(draft),
     draft.kind === "use-gsm" ? "/guides/fabric-weight-and-gsm/" : undefined,
     draft.kind === "material-construction" || draft.kind === "use-construction"
       ? "/guides/woven-vs-knit-fabrics/"
@@ -927,6 +1007,7 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
       h1: draft.h1,
       description: draft.description,
       primaryKeyword: draft.keyword,
+      secondaryKeywords: secondaryKeywords(draft),
       imagePath: draft.imagePath,
       imageAlt: draft.imageAlt,
       relatedPaths: relatedFor(draft, siblingPath),
@@ -947,6 +1028,7 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
       h1: hub.label,
       description: hub.intro,
       primaryKeyword: `${hub.label.toLowerCase()} marketplace topics`,
+      secondaryKeywords: [hub.label.toLowerCase(), "fabric sourcing"],
       imagePath: COTTON,
       imageAlt: "Cotton fabric used to illustrate marketplace topic guides",
       relatedPaths: [
