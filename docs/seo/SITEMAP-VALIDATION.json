@@ -1,6 +1,6 @@
 {
-  "eligible": 1263,
-  "sitemap": 1263,
+  "eligible": 2263,
+  "sitemap": 2263,
   "childSitemaps": [
     {
       "id": "sitemap-core",
@@ -55,10 +55,70 @@
       "path": "/sitemaps/sitemap-discover-003/",
       "urls": 154,
       "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-001",
+      "path": "/sitemaps/sitemap-marketplace-001/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-002",
+      "path": "/sitemaps/sitemap-marketplace-002/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-003",
+      "path": "/sitemaps/sitemap-marketplace-003/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-004",
+      "path": "/sitemaps/sitemap-marketplace-004/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-005",
+      "path": "/sitemaps/sitemap-marketplace-005/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-006",
+      "path": "/sitemaps/sitemap-marketplace-006/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-007",
+      "path": "/sitemaps/sitemap-marketplace-007/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-008",
+      "path": "/sitemaps/sitemap-marketplace-008/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-009",
+      "path": "/sitemaps/sitemap-marketplace-009/",
+      "urls": 100,
+      "status": 200
+    },
+    {
+      "id": "sitemap-marketplace-010",
+      "path": "/sitemaps/sitemap-marketplace-010/",
+      "urls": 100,
+      "status": 200
     }
   ],
   "summary": {
-    "total": 1263,
+    "total": 2263,
     "byPartition": {
       "core": 46,
       "collections": 16,
@@ -66,14 +126,15 @@
       "fabrics": 7,
       "best-for": 14,
       "products": 12,
-      "guides": 14
+      "guides": 14,
+      "marketplace": 1000
     },
-    "withImages": 915,
+    "withImages": 1915,
     "withLastmod": 0
   },
   "counts": {
-    "eligible": 1263,
-    "sitemap": 1263,
+    "eligible": 2263,
+    "sitemap": 2263,
     "missing": 0,
     "unexpected": 0,
     "duplicates": 0,

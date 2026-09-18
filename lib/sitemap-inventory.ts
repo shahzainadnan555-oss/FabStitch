@@ -25,7 +25,8 @@ export type SitemapPartitionId =
   | "best-for"
   | "guides"
   | "products"
-  | "discover";
+  | "discover"
+  | "marketplace";
 
 export type SitemapUrlEntry = {
   path: string;
@@ -46,6 +47,7 @@ export type SitemapChildFile = {
 /** Stay under Google's 50,000 URL limit with room to spare. */
 const SITEMAP_URL_LIMIT = 45_000;
 const DISCOVER_CHUNK_SIZE = 500;
+const MARKETPLACE_CHUNK_SIZE = 100;
 const PRODUCTION_ORIGIN = "https://fabstitch.net";
 
 const PRIVATE_PREFIXES = [
@@ -77,6 +79,7 @@ const IMAGE_ELIGIBLE_TYPES = new Set<StorefrontPageType>([
   "commercial_landing",
   "intent_hub",
   "semantic_landing",
+  "marketplace_topic",
   "best_for",
   "fabric_hub",
   "collection_hub",
@@ -104,6 +107,8 @@ function partitionFor(pageType: StorefrontPageType): SitemapPartitionId {
       return "guides";
     case "semantic_landing":
       return "discover";
+    case "marketplace_topic":
+      return "marketplace";
     default:
       return "core";
   }
@@ -270,6 +275,7 @@ const PARTITION_ORDER: SitemapPartitionId[] = [
   "guides",
   "products",
   "discover",
+  "marketplace",
 ];
 
 /**
@@ -295,6 +301,12 @@ export function partitionSitemapInventory(
     if (urls.length === 0) continue;
     if (partition === "discover") {
       files.push(...chunkEntries(partition, urls, DISCOVER_CHUNK_SIZE, true));
+      continue;
+    }
+    if (partition === "marketplace") {
+      files.push(
+        ...chunkEntries(partition, urls, MARKETPLACE_CHUNK_SIZE, true),
+      );
       continue;
     }
     files.push(

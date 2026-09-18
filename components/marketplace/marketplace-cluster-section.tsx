@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { FaqJsonLd } from "@/components/seo/structured-data";
 import { Container } from "@/components/ui/layout";
-import { Heading, Label, Prose } from "@/components/ui/typography";
+import { Heading, Label } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
 import {
   MARKETPLACE_SUPPORT_PAGES,
   type MarketplaceFamily,
   type MarketplaceSupportPage,
 } from "@/domain/seo/marketplace-cluster";
+import { MARKETPLACE_TOPIC_HUBS } from "@/domain/seo/marketplace-thousand";
 
 const FAMILY_ORDER: MarketplaceFamily[] = [
   "education",
@@ -154,26 +155,35 @@ export function MarketplaceClusterSection() {
     >
       <FaqJsonLd faqs={FAQS} />
       <Container className="py-14 sm:py-16">
-        <div className="grid gap-8 border-b border-rule pb-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end lg:gap-16">
-          <div>
-            <Label>For businesses</Label>
-            <Heading
-              id="marketplace-guides-heading"
-              level={2}
-              className="mt-3 max-w-[18ch]"
-            >
-              How businesses use this marketplace
-            </Heading>
-          </div>
-          <Prose className="max-w-[46rem] text-ink-2">
-            This page is the place to search documented cloth. A fabric
-            marketplace, in the FabStitch sense, is that search: fibre,
-            construction, season, weight, or end use, then a fabric page you can
-            inquire on. The notes below explain the steps. They do not replace
-            this catalog, and they do not claim FabStitch is the largest or
-            cheapest source of cloth.
-          </Prose>
+        <div className="border-b border-rule pb-8">
+          <Label>For businesses</Label>
+          <Heading
+            id="marketplace-guides-heading"
+            level={2}
+            className="mt-3 max-w-[18ch]"
+          >
+            How businesses use this marketplace
+          </Heading>
         </div>
+
+        <nav
+          aria-label="Marketplace topic directories"
+          className="mt-8 rounded-md border border-rule bg-paper-raised p-5 sm:p-6"
+        >
+          <Label tone="ink">Topic directories</Label>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+            {MARKETPLACE_TOPIC_HUBS.map((hub) => (
+              <li key={hub.path}>
+                <Link
+                  href={hub.path}
+                  className="text-sm text-ink-2 hover:text-indigo"
+                >
+                  {hub.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {STEPS.map((step) => (

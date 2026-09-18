@@ -10,15 +10,16 @@
 
 Generated only when non-empty:
 
-| Child                               | Contents                                                  |
-| ----------------------------------- | --------------------------------------------------------- |
-| `/sitemaps/sitemap-core/`           | Home, marketplace, brand, help, commercial landings       |
-| `/sitemaps/sitemap-fabrics/`        | Fabric hubs and intent hubs                               |
-| `/sitemaps/sitemap-collections/`    | Collection hub + collections                              |
-| `/sitemaps/sitemap-best-for/`       | Best For hub + use cases                                  |
-| `/sitemaps/sitemap-guides/`         | Guide hub + guides                                        |
-| `/sitemaps/sitemap-products/`       | Curated fabric PDPs                                       |
-| `/sitemaps/sitemap-discover-001/` … | Discover hub, topic directories, semantic pages (chunked) |
+| Child                                  | Contents                                                  |
+| -------------------------------------- | --------------------------------------------------------- |
+| `/sitemaps/sitemap-core/`              | Home, marketplace, brand, help, commercial landings       |
+| `/sitemaps/sitemap-fabrics/`           | Fabric hubs and intent hubs                               |
+| `/sitemaps/sitemap-collections/`       | Collection hub + collections                              |
+| `/sitemaps/sitemap-best-for/`          | Best For hub + use cases                                  |
+| `/sitemaps/sitemap-guides/`            | Guide hub + guides                                        |
+| `/sitemaps/sitemap-products/`          | Curated fabric PDPs                                       |
+| `/sitemaps/sitemap-discover-001/` …    | Discover hub, topic directories, semantic pages (chunked) |
+| `/sitemaps/sitemap-marketplace-001/` … | Marketplace topic cluster, 100 URLs per shard             |
 
 ## Eligibility gate
 

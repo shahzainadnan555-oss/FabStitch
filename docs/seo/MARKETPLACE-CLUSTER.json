@@ -2,6 +2,7 @@
   "moneyPage": "https://fabstitch.net/marketplace/",
   "candidates": 57,
   "published": 22,
+  "newMarketplacePages": 1000,
   "rejected": 35,
   "rejectionReasons": {
     "existing_canonical": 35

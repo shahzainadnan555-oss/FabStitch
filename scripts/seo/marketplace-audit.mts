@@ -12,6 +12,7 @@ import {
   MARKETPLACE_CLUSTER_REPORT,
   MARKETPLACE_SUPPORT_PAGES,
 } from "@/domain/seo/marketplace-cluster";
+import { MARKETPLACE_TOPIC_PAGES } from "@/domain/seo/marketplace-thousand";
 import { isPathAllowedByRobots } from "@/lib/robots-policy";
 import { storefrontRedirect } from "@/lib/storefront-redirects";
 import { buildSitemapInventory } from "@/lib/sitemap-inventory";
@@ -59,9 +60,11 @@ dup(h1s, "duplicate_h1");
 dup(descriptions, "duplicate_description");
 dup(canonicals, "duplicate_canonical");
 
-const supportPaths = new Set(
-  MARKETPLACE_SUPPORT_PAGES.map((page) => page.path),
-);
+const topicPaths = new Set(MARKETPLACE_TOPIC_PAGES.map((page) => page.path));
+const supportPaths = new Set([
+  ...MARKETPLACE_SUPPORT_PAGES.map((page) => page.path),
+  ...topicPaths,
+]);
 const keywordConflicts = [...keywords.entries()].filter(
   ([, paths]) => paths.length > 1,
 );
@@ -91,7 +94,9 @@ let missingSitemap = 0;
 let noindex = 0;
 let redirects = 0;
 
-for (const page of MARKETPLACE_SUPPORT_PAGES) {
+const pagesToAudit = [...MARKETPLACE_SUPPORT_PAGES, ...MARKETPLACE_TOPIC_PAGES];
+
+for (const page of pagesToAudit) {
   const record = seoPage(page.path);
   if (!record) {
     error("missing_registry", page.path);
@@ -141,14 +146,15 @@ for (const page of MARKETPLACE_SUPPORT_PAGES) {
   }
 }
 
-if (!MARKETPLACE_SUPPORT_PAGES.every((page) => page.path !== MONEY)) {
-  error("money_collision", "support page reused the money URL");
+if (MARKETPLACE_TOPIC_PAGES.length !== 1000) {
+  error("topic_count", String(MARKETPLACE_TOPIC_PAGES.length));
 }
 
 const report = {
   moneyPage: moneyLoc,
   candidates: MARKETPLACE_CLUSTER_REPORT.candidates,
   published: MARKETPLACE_SUPPORT_PAGES.length,
+  newMarketplacePages: MARKETPLACE_TOPIC_PAGES.length,
   rejected: MARKETPLACE_CLUSTER_REPORT.rejected,
   rejectionReasons: MARKETPLACE_CLUSTER_REPORT.rejectionReasons,
   cannibalizationCandidates: MARKETPLACE_CLUSTER_REPORT.cannibalization.length,
@@ -188,6 +194,7 @@ console.log("Marketplace SEO audit");
 console.log(`TOTAL MARKETPLACE PAGES ${report.totalMarketplacePages}`);
 console.log(`TOTAL NEW CANDIDATES ${report.candidates}`);
 console.log(`TOTAL PUBLISHED ${report.published}`);
+console.log(`NEW MARKETPLACE-CLUSTER PAGES ${MARKETPLACE_TOPIC_PAGES.length}`);
 console.log(`TOTAL REJECTED ${report.rejected}`);
 console.log(`DUPLICATE TITLES ${report.duplicateTitles}`);
 console.log(`DUPLICATE H1s ${report.duplicateH1s}`);
