@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Container } from "@/components/ui/layout";
 import { CatalogResultsToolbar } from "@/components/marketplace/catalog-filters";
-import { CatalogPendingBoundary } from "@/components/marketplace/catalog-navigation";
+import {
+  CatalogPendingBoundary,
+  CatalogDatasetCommit,
+} from "@/components/marketplace/catalog-navigation";
 import { CatalogLoadError } from "@/components/marketplace/catalog-load-error";
 import {
   CatalogCursorPagination,
@@ -95,6 +98,18 @@ export default async function MarketplacePage({
 
 type MarketplaceQuery = Awaited<PageProps<"/marketplace">["searchParams"]>;
 
+function marketplaceDatasetKey(query: MarketplaceQuery): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (typeof value === "string") params.append(key, value);
+    else if (Array.isArray(value)) {
+      for (const item of value) params.append(key, item);
+    }
+  }
+  params.sort();
+  return params.toString();
+}
+
 async function MarketplaceResults({ query }: { query: MarketplaceQuery }) {
   const q = single(query.q);
   const defaultSort = q?.trim() ? "relevance" : "featured";
@@ -146,7 +161,12 @@ async function MarketplaceResults({ query }: { query: MarketplaceQuery }) {
   }
 
   if (catalogFailed || !results) {
-    return <CatalogLoadError title="Unable to load fabrics right now." />;
+    return (
+      <>
+        <CatalogDatasetCommit datasetKey={marketplaceDatasetKey(query)} />
+        <CatalogLoadError title="Unable to load fabrics right now." />
+      </>
+    );
   }
 
   const filtered = Object.keys(query).some(
@@ -156,6 +176,7 @@ async function MarketplaceResults({ query }: { query: MarketplaceQuery }) {
 
   return (
     <>
+      <CatalogDatasetCommit datasetKey={marketplaceDatasetKey(query)} />
       <CollectionPageJsonLd
         name="Fabric Marketplace | FabStitch"
         description="Search and filter FabStitch fabrics by material, construction, season, weight, and Best For use."

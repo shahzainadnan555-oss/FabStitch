@@ -10,6 +10,7 @@ import { FabricMedia } from "./fabric-media";
 import { formatGsm, formatLeadTime, formatPriceBand } from "@/lib/units";
 
 import { CompareToggle } from "./compare";
+import { CatalogTransitionLink } from "./catalog-navigation";
 import { EmptyState } from "@/components/ui/state";
 import { ButtonLink } from "@/components/ui/button";
 import { Label } from "@/components/ui/typography";
@@ -452,14 +453,14 @@ export function CatalogCursorPagination({
           className="flex items-center justify-center gap-7 sm:justify-start"
         >
           {currentCursor ? (
-            <Link
+            <CatalogTransitionLink
               href={href({ cursor: null })}
               rel="prev"
               className={cn(pageLink, "text-ink-2 hover:text-ink")}
             >
               <span aria-hidden="true">‹</span>
               Previous
-            </Link>
+            </CatalogTransitionLink>
           ) : (
             <span className={cn(pageLink, "cursor-default text-ink-4")}>
               <span aria-hidden="true">‹</span>
@@ -467,14 +468,14 @@ export function CatalogCursorPagination({
             </span>
           )}
           {hasMore && nextCursor ? (
-            <Link
+            <CatalogTransitionLink
               href={href({ cursor: nextCursor })}
               rel="next"
               className={cn(pageLink, "text-ink hover:text-indigo")}
             >
               Next
               <span aria-hidden="true">›</span>
-            </Link>
+            </CatalogTransitionLink>
           ) : (
             <span className={cn(pageLink, "cursor-default text-ink-4")}>
               Next
@@ -499,14 +500,14 @@ export function CatalogCursorPagination({
           {pageSizes
             .filter((size) => size <= 48)
             .map((size) => (
-              <Link
+              <CatalogTransitionLink
                 key={size}
                 href={href({
                   cursor: null,
                   page_size: size === omittedPageSize ? null : String(size),
                 })}
-                aria-current={size === pageSize ? "true" : undefined}
-                aria-label={`Show ${size} results`}
+                ariaCurrent={size === pageSize ? "true" : undefined}
+                ariaLabel={`Show ${size} results`}
                 className={cn(
                   sizeLink,
                   size === pageSize
@@ -515,7 +516,7 @@ export function CatalogCursorPagination({
                 )}
               >
                 {size}
-              </Link>
+              </CatalogTransitionLink>
             ))}
         </div>
       </div>
