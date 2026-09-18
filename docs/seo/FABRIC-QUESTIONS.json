@@ -1,0 +1,1094 @@
+{
+  "counts": {
+    "raw": 108,
+    "unique": 76,
+    "duplicate": 13,
+    "published": 62,
+    "merged": 27,
+    "rejected": 6,
+    "pages": 62
+  },
+  "findings": [],
+  "questions": [
+    {
+      "sourceQuestion": "What is fabric, and how is it defined?",
+      "normalizedQuestion": "what is fabric",
+      "pageUrl": "/guides/fabric-questions/what-is-fabric/",
+      "primaryKeyword": "what is fabric",
+      "category": "definitions",
+      "status": "PUBLISHED",
+      "reason": "Distinct definition intent.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is fabric?",
+      "normalizedQuestion": "what is fabric",
+      "pageUrl": "/guides/fabric-questions/what-is-fabric/",
+      "primaryKeyword": "what is fabric",
+      "category": "definitions",
+      "status": "DUPLICATE",
+      "reason": "Same wording and intent as r1-01.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How is \"fabric\" different from \"textile\" or \"cloth\"?",
+      "normalizedQuestion": "fabric vs textile vs cloth",
+      "pageUrl": "/guides/fabric-questions/fabric-vs-textile-vs-cloth/",
+      "primaryKeyword": "fabric vs textile vs cloth",
+      "category": "definitions",
+      "status": "PUBLISHED",
+      "reason": "Terminology comparison, not a definition of fabric alone.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Fabric vs. textile?",
+      "normalizedQuestion": "fabric vs textile vs cloth",
+      "pageUrl": "/guides/fabric-questions/fabric-vs-textile-vs-cloth/",
+      "primaryKeyword": "fabric vs textile vs cloth",
+      "category": "definitions",
+      "status": "DUPLICATE",
+      "reason": "Same comparison intent as r1-02.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are warp and weft in weaving, and how do they differ?",
+      "normalizedQuestion": "what are warp and weft",
+      "pageUrl": "/guides/fabric-questions/warp-and-weft/",
+      "primaryKeyword": "what are warp and weft",
+      "category": "definitions",
+      "status": "PUBLISHED",
+      "reason": "Distinct weaving terminology.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is a fiber vs. yarn vs. fabric?",
+      "normalizedQuestion": "fiber vs yarn vs fabric",
+      "pageUrl": "/guides/fabric-questions/fiber-yarn-and-fabric/",
+      "primaryKeyword": "fiber vs yarn vs fabric",
+      "category": "definitions",
+      "status": "PUBLISHED",
+      "reason": "Distinct material-structure question.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How can I identify cotton versus linen or other natural fibers?",
+      "normalizedQuestion": "cotton vs linen",
+      "pageUrl": "/guides/cotton-vs-linen/",
+      "primaryKeyword": "cotton vs linen",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "The comparison already has a canonical guide. Identification notes live there rather than on a second URL.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How do I tell the difference between cotton and linen?",
+      "normalizedQuestion": "cotton vs linen",
+      "pageUrl": "/guides/cotton-vs-linen/",
+      "primaryKeyword": "cotton vs linen",
+      "category": "existing",
+      "status": "DUPLICATE",
+      "reason": "Same cotton-versus-linen intent as r1-05.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is polyester fabric, and how does it differ from cotton or nylon?",
+      "normalizedQuestion": "polyester vs cotton and nylon",
+      "pageUrl": "/guides/fabric-questions/polyester-cotton-and-nylon/",
+      "primaryKeyword": "polyester vs cotton and nylon",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Polyester comparison is not covered by the cotton-linen guide.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How to distinguish cotton vs. polyester?",
+      "normalizedQuestion": "polyester vs cotton and nylon",
+      "pageUrl": "/guides/fabric-questions/polyester-cotton-and-nylon/",
+      "primaryKeyword": "polyester vs cotton and nylon",
+      "category": "comparisons",
+      "status": "MERGED",
+      "reason": "Cotton-versus-polyester is the core of the polyester page.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Which fabrics are best for hot weather (breathable, light weight)?",
+      "normalizedQuestion": "fabrics for hot weather",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-hot-weather/",
+      "primaryKeyword": "fabrics for hot weather",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Seasonal use question. No fabric is declared universally best.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are the best fabrics for summer (lightweight, breathable)?",
+      "normalizedQuestion": "fabrics for hot weather",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-hot-weather/",
+      "primaryKeyword": "fabrics for hot weather",
+      "category": "use-cases",
+      "status": "DUPLICATE",
+      "reason": "Same hot-weather intent as r1-07.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What fabric is best for summer dresses?",
+      "normalizedQuestion": "fabric for summer dresses",
+      "pageUrl": "/guides/how-to-choose-fabric-for-dresses/",
+      "primaryKeyword": "fabric for summer dresses",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Dress selection already has a guide. Summer constraints are covered on the hot-weather page.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Which fabrics are best for winter clothing (insulating, high GSM)?",
+      "normalizedQuestion": "fabrics for winter",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-winter/",
+      "primaryKeyword": "fabrics for winter",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Distinct from hot-weather selection.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What fabrics keep you warm in winter?",
+      "normalizedQuestion": "fabrics for winter",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-winter/",
+      "primaryKeyword": "fabrics for winter",
+      "category": "use-cases",
+      "status": "DUPLICATE",
+      "reason": "Same winter intent as r1-08.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is Tencel/lyocell, and is it natural or synthetic?",
+      "normalizedQuestion": "what is tencel lyocell",
+      "pageUrl": "/guides/fabric-questions/what-is-tencel-lyocell/",
+      "primaryKeyword": "what is tencel lyocell",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Material definition, including natural-versus-processed status.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Is Tencel natural or synthetic?",
+      "normalizedQuestion": "what is tencel lyocell",
+      "pageUrl": "/guides/fabric-questions/what-is-tencel-lyocell/",
+      "primaryKeyword": "what is tencel lyocell",
+      "category": "materials",
+      "status": "MERGED",
+      "reason": "Answered inside the Tencel definition, not as a second page.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What does Tencel really mean?",
+      "normalizedQuestion": "what is tencel lyocell",
+      "pageUrl": "/guides/fabric-questions/what-is-tencel-lyocell/",
+      "primaryKeyword": "what is tencel lyocell",
+      "category": "materials",
+      "status": "DUPLICATE",
+      "reason": "Same Tencel definition intent.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are common weaves (plain, twill, satin) and knit types?",
+      "normalizedQuestion": "plain twill satin weaves and knits",
+      "pageUrl": "/guides/woven-vs-knit-fabrics/",
+      "primaryKeyword": "plain twill satin weaves and knits",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Weave and knit explanations already have canonical guides.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are chiffon, organza, or georgette used for?",
+      "normalizedQuestion": "chiffon organza georgette uses",
+      "pageUrl": "/guides/fabric-questions/chiffon-organza-georgette-uses/",
+      "primaryKeyword": "chiffon organza georgette uses",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Use question. The existing chiffon-versus-georgette guide stays the comparison canonical.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is chiffon/organza used for?",
+      "normalizedQuestion": "chiffon organza georgette uses",
+      "pageUrl": "/guides/fabric-questions/chiffon-organza-georgette-uses/",
+      "primaryKeyword": "chiffon organza georgette uses",
+      "category": "materials",
+      "status": "DUPLICATE",
+      "reason": "Subset of the chiffon, organza, and georgette use question.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is thread count and how is it calculated?",
+      "normalizedQuestion": "what is thread count",
+      "pageUrl": "/guides/fabric-questions/what-is-thread-count/",
+      "primaryKeyword": "what is thread count",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Distinct quality metric from GSM.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Does a higher thread count always mean better fabric?",
+      "normalizedQuestion": "does thread count mean better fabric",
+      "pageUrl": "/guides/fabric-questions/thread-count-and-quality/",
+      "primaryKeyword": "does thread count mean better fabric",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Different intent from the definition: it challenges a quality claim.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is GSM (grams per square meter) in fabric?",
+      "normalizedQuestion": "what is fabric gsm",
+      "pageUrl": "/guides/fabric-weight-and-gsm/",
+      "primaryKeyword": "what is fabric gsm",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "The GSM guide is already the canonical explanation.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How does GSM relate to fabric use?",
+      "normalizedQuestion": "what is fabric gsm",
+      "pageUrl": "/guides/fabric-weight-and-gsm/",
+      "primaryKeyword": "what is fabric gsm",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Use of GSM is part of the existing weight guide.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is fabric thickness (GSM) and how to measure it?",
+      "normalizedQuestion": "what is fabric gsm",
+      "pageUrl": "/guides/fabric-weight-and-gsm/",
+      "primaryKeyword": "what is fabric gsm",
+      "category": "existing",
+      "status": "DUPLICATE",
+      "reason": "Same GSM intent. GSM is mass per area, not a thickness score.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What GSM is suitable for summer vs. winter clothes?",
+      "normalizedQuestion": "gsm for summer and winter",
+      "pageUrl": "/guides/how-to-choose-the-right-fabric-weight/",
+      "primaryKeyword": "gsm for summer and winter",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Weight selection already has a canonical guide.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How can I tell fabric type (cotton, polyester, linen, etc.) by touch or appearance?",
+      "normalizedQuestion": "how to identify fabric",
+      "pageUrl": "/guides/fabric-questions/how-to-identify-fabric/",
+      "primaryKeyword": "how to identify fabric",
+      "category": "identification",
+      "status": "PUBLISHED",
+      "reason": "General identification intent.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is this fabric? (sought identification)",
+      "normalizedQuestion": "how to identify fabric",
+      "pageUrl": "/guides/fabric-questions/how-to-identify-fabric/",
+      "primaryKeyword": "how to identify fabric",
+      "category": "identification",
+      "status": "MERGED",
+      "reason": "A photo-identification request has the same intent as the identification guide.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is a burn test for fabric, and how to use it?",
+      "normalizedQuestion": "what is a fabric burn test",
+      "pageUrl": "/guides/fabric-questions/what-is-a-fabric-burn-test/",
+      "primaryKeyword": "what is a fabric burn test",
+      "category": "identification",
+      "status": "PUBLISHED",
+      "reason": "Safety-limited explanation. No burn procedure is published.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What resources help identify fabrics?",
+      "normalizedQuestion": "fabric identification resources",
+      "pageUrl": "/guides/fabric-questions/fabric-identification-resources/",
+      "primaryKeyword": "fabric identification resources",
+      "category": "identification",
+      "status": "PUBLISHED",
+      "reason": "Points to records and labs, not a second how-to-identify article.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Why does linen wrinkle more than cotton?",
+      "normalizedQuestion": "why linen wrinkles more than cotton",
+      "pageUrl": "/guides/fabric-questions/why-linen-wrinkles/",
+      "primaryKeyword": "why linen wrinkles more than cotton",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Specific behavior question, not the full cotton-linen guide.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Is linen more absorbent than cotton?",
+      "normalizedQuestion": "is linen more absorbent than cotton",
+      "pageUrl": "/guides/fabric-questions/linen-and-cotton-absorbency/",
+      "primaryKeyword": "is linen more absorbent than cotton",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Moisture question, distinct from wrinkling.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What makes Tencel/lyocell sustainable?",
+      "normalizedQuestion": "tencel lyocell sustainability",
+      "pageUrl": "/guides/fabric-questions/tencel-lyocell-sustainability/",
+      "primaryKeyword": "tencel lyocell sustainability",
+      "category": "sustainability",
+      "status": "PUBLISHED",
+      "reason": "Process question, separate from the definition page.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Why are fabrics like hemp or Tencel more sustainable?",
+      "normalizedQuestion": "eco friendly fabrics",
+      "pageUrl": "/guides/fabric-questions/eco-friendly-fabrics/",
+      "primaryKeyword": "eco friendly fabrics",
+      "category": "sustainability",
+      "status": "MERGED",
+      "reason": "Covered by the eco-friendly fabrics page without a ranking.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is organic cotton, and how is it certified (GOTS etc.)?",
+      "normalizedQuestion": "what is organic cotton",
+      "pageUrl": "/guides/fabric-questions/what-is-organic-cotton/",
+      "primaryKeyword": "what is organic cotton",
+      "category": "sustainability",
+      "status": "PUBLISHED",
+      "reason": "Certification explanation. No FabStitch product is labeled certified here.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is organic cotton vs. conventional cotton?",
+      "normalizedQuestion": "what is organic cotton",
+      "pageUrl": "/guides/fabric-questions/what-is-organic-cotton/",
+      "primaryKeyword": "what is organic cotton",
+      "category": "sustainability",
+      "status": "DUPLICATE",
+      "reason": "Same organic-cotton intent.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is the difference between regular cotton and organic cotton?",
+      "normalizedQuestion": "what is organic cotton",
+      "pageUrl": "/guides/fabric-questions/what-is-organic-cotton/",
+      "primaryKeyword": "what is organic cotton",
+      "category": "sustainability",
+      "status": "DUPLICATE",
+      "reason": "Same organic-cotton comparison.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What does Oeko-Tex Standard 100 certification mean?",
+      "normalizedQuestion": "what does oeko tex standard 100 mean",
+      "pageUrl": "/guides/fabric-questions/oeko-tex-standard-100/",
+      "primaryKeyword": "what does oeko tex standard 100 mean",
+      "category": "sustainability",
+      "status": "PUBLISHED",
+      "reason": "Specific label, not a general eco-fabric list.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are the benefits of chemical-free printed fabrics?",
+      "normalizedQuestion": "what does oeko tex standard 100 mean",
+      "pageUrl": "/guides/fabric-questions/oeko-tex-standard-100/",
+      "primaryKeyword": "what does oeko tex standard 100 mean",
+      "category": "sustainability",
+      "status": "MERGED",
+      "reason": "Chemical-free is not a verified standard. Substance testing belongs on the OEKO-TEX page.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fabrics are biodegradable or eco-friendly?",
+      "normalizedQuestion": "eco friendly fabrics",
+      "pageUrl": "/guides/fabric-questions/eco-friendly-fabrics/",
+      "primaryKeyword": "eco friendly fabrics",
+      "category": "sustainability",
+      "status": "PUBLISHED",
+      "reason": "Explains tradeoffs. Does not rank a winner.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are some sustainable (eco-friendly) fabrics?",
+      "normalizedQuestion": "eco friendly fabrics",
+      "pageUrl": "/guides/fabric-questions/eco-friendly-fabrics/",
+      "primaryKeyword": "eco friendly fabrics",
+      "category": "sustainability",
+      "status": "DUPLICATE",
+      "reason": "Same eco-fabric intent.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What eco-labels exist for fabrics?",
+      "normalizedQuestion": "fabric eco labels",
+      "pageUrl": "/guides/fabric-questions/fabric-eco-labels/",
+      "primaryKeyword": "fabric eco labels",
+      "category": "sustainability",
+      "status": "PUBLISHED",
+      "reason": "Label map, linking to the specific certification pages.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is satin?",
+      "normalizedQuestion": "what is satin",
+      "pageUrl": "/guides/fabric-questions/what-is-satin/",
+      "primaryKeyword": "what is satin",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Satin is a weave. Silk-versus-satin remains a separate existing guide.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Silk vs. satin – what’s the difference?",
+      "normalizedQuestion": "silk vs satin",
+      "pageUrl": "/guides/silk-vs-satin/",
+      "primaryKeyword": "silk vs satin",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Canonical comparison already exists.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What fabric is best for activewear?",
+      "normalizedQuestion": "fabric for activewear",
+      "pageUrl": "/guides/choosing-fabric-for-activewear/",
+      "primaryKeyword": "fabric for activewear",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Activewear selection already has a guide.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Which fabric works well on surfaces like yoga mats?",
+      "normalizedQuestion": "fabric for activewear",
+      "pageUrl": "/guides/choosing-fabric-for-activewear/",
+      "primaryKeyword": "fabric for activewear",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Yoga apparel is an activewear brief, not a mat-material question.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fabrics are better for outdoor sportswear?",
+      "normalizedQuestion": "fabric for activewear",
+      "pageUrl": "/guides/choosing-fabric-for-activewear/",
+      "primaryKeyword": "fabric for activewear",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "Same performance-apparel intent as the activewear guide.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How do I care for delicate fabrics (silk, wool, synthetics)?",
+      "normalizedQuestion": "delicate fabric care",
+      "pageUrl": "/guides/fabric-questions/delicate-fabric-care/",
+      "primaryKeyword": "delicate fabric care",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Care principles without one instruction for every fiber.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How to wash or care for silk/wool?",
+      "normalizedQuestion": "delicate fabric care",
+      "pageUrl": "/guides/fabric-questions/delicate-fabric-care/",
+      "primaryKeyword": "delicate fabric care",
+      "category": "care",
+      "status": "MERGED",
+      "reason": "Silk and wool care sit on the delicate-fabric page.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are essential garment care tips?",
+      "normalizedQuestion": "everyday fabric laundry",
+      "pageUrl": "/guides/fabric-questions/everyday-laundry-mistakes/",
+      "primaryKeyword": "everyday fabric laundry",
+      "category": "care",
+      "status": "MERGED",
+      "reason": "General care is the laundry-mistakes page, not a third overview.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to handle/iron velvet (wool/organza)?",
+      "normalizedQuestion": "delicate fabric care",
+      "pageUrl": "/guides/fabric-questions/delicate-fabric-care/",
+      "primaryKeyword": "delicate fabric care",
+      "category": "care",
+      "status": "MERGED",
+      "reason": "Pile and sheer ironing belong with delicate care, not a new URL.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to safely iron patterned fabrics?",
+      "normalizedQuestion": "delicate fabric care",
+      "pageUrl": "/guides/fabric-questions/delicate-fabric-care/",
+      "primaryKeyword": "delicate fabric care",
+      "category": "care",
+      "status": "MERGED",
+      "reason": "Ironing prints is a care-label question covered with delicate care.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Is there a dedicated fabric marketplace for personal stash trading?",
+      "normalizedQuestion": "personal fabric marketplace",
+      "pageUrl": "/guides/fabric-questions/personal-fabric-stash-marketplaces/",
+      "primaryKeyword": "personal fabric marketplace",
+      "category": "marketplace",
+      "status": "PUBLISHED",
+      "reason": "Clarifies that FabStitch is B2B discovery, not a peer stash exchange.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Where can I buy wholesale fabric online?",
+      "normalizedQuestion": "wholesale fabric",
+      "pageUrl": "/wholesale-fabric/",
+      "primaryKeyword": "wholesale fabric",
+      "category": "existing",
+      "status": "MERGED",
+      "reason": "The wholesale page is the commercial canonical.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is MOQ (Minimum Order Quantity) for fabrics and how to negotiate it?",
+      "normalizedQuestion": "what is fabric moq",
+      "pageUrl": "/guides/fabric-questions/what-is-fabric-moq/",
+      "primaryKeyword": "what is fabric moq",
+      "category": "marketplace",
+      "status": "PUBLISHED",
+      "reason": "B2B term. No site-wide minimum is invented.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How to order fabric samples from overseas suppliers?",
+      "normalizedQuestion": "how to request fabric samples",
+      "pageUrl": "/guides/fabric-questions/requesting-fabric-samples/",
+      "primaryKeyword": "how to request fabric samples",
+      "category": "marketplace",
+      "status": "PUBLISHED",
+      "reason": "Inquiry workflow, without inventing a sample checkout.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "How to verify quality from a new fabric supplier?",
+      "normalizedQuestion": "verify fabric supplier quality",
+      "pageUrl": "/guides/fabric-questions/verify-fabric-quality/",
+      "primaryKeyword": "verify fabric supplier quality",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Sourcing quality question.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What are ways to test fabric quality (e.g., in a catalog or pamphlet)?",
+      "normalizedQuestion": "verify fabric supplier quality",
+      "pageUrl": "/guides/fabric-questions/verify-fabric-quality/",
+      "primaryKeyword": "verify fabric supplier quality",
+      "category": "quality",
+      "status": "MERGED",
+      "reason": "Remote checking is part of supplier verification.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which marketplaces specialize in sustainable or technical fabrics?",
+      "normalizedQuestion": "sourcing sustainable technical fabrics",
+      "pageUrl": "/guides/fabric-questions/sourcing-sustainable-technical-fabrics/",
+      "primaryKeyword": "sourcing sustainable technical fabrics",
+      "category": "marketplace",
+      "status": "PUBLISHED",
+      "reason": "Explains how to read a listing. Does not invent a specialist portal.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "Which fabric for upholstery or bedding?",
+      "normalizedQuestion": "upholstery and bedding fabrics",
+      "pageUrl": "/guides/fabric-questions/upholstery-and-bedding-fabrics/",
+      "primaryKeyword": "upholstery and bedding fabrics",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Home-textile use. No automotive certification is claimed.",
+      "sourceReport": "deep-research-report.md"
+    },
+    {
+      "sourceQuestion": "What is the best fabric for car seats/sofa upholstery?",
+      "normalizedQuestion": "upholstery and bedding fabrics",
+      "pageUrl": "/guides/fabric-questions/upholstery-and-bedding-fabrics/",
+      "primaryKeyword": "upholstery and bedding fabrics",
+      "category": "use-cases",
+      "status": "MERGED",
+      "reason": "Sofa upholstery shares the upholstery page. Car seating is noted as a different spec.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How do I fix a cigarette burn on my car’s fabric front seat?",
+      "normalizedQuestion": "car seat burn repair",
+      "pageUrl": "",
+      "primaryKeyword": "car seat burn repair",
+      "category": "",
+      "status": "REJECTED-OFF-TOPIC",
+      "reason": "Auto-interior repair, not textile selection or fabric sourcing.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Why do two sweaters of the same 100% merino wool material have different ironing instructions?",
+      "normalizedQuestion": "why wool care labels differ",
+      "pageUrl": "/guides/fabric-questions/why-wool-care-labels-differ/",
+      "primaryKeyword": "why wool care labels differ",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Care-label question, not a how-to-iron procedure.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Are there any sure-fire ways to soften cotton?",
+      "normalizedQuestion": "how to soften cotton",
+      "pageUrl": "/guides/fabric-questions/softening-cotton/",
+      "primaryKeyword": "how to soften cotton",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Hand and finish, without a universal home recipe.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What causes faded lines in jeans after washing?",
+      "normalizedQuestion": "faded lines on jeans",
+      "pageUrl": "/guides/fabric-questions/faded-lines-on-jeans/",
+      "primaryKeyword": "faded lines on jeans",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Denim wear question.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How do I get soot out of my clothes, blankets and pillows?",
+      "normalizedQuestion": "remove soot from clothes",
+      "pageUrl": "",
+      "primaryKeyword": "remove soot from clothes",
+      "category": "",
+      "status": "REJECTED-OFF-TOPIC",
+      "reason": "Household disaster cleaning, not a fabric-sourcing question.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to repair/reinforce a rip near a load-bearing fabric grommet?",
+      "normalizedQuestion": "repair load bearing grommet",
+      "pageUrl": "",
+      "primaryKeyword": "repair load bearing grommet",
+      "category": "",
+      "status": "REJECTED-OFF-TOPIC",
+      "reason": "Equipment repair, not apparel fabric education.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How can I know the quality of thread in stitched garments?",
+      "normalizedQuestion": "thread quality in garments",
+      "pageUrl": "/guides/fabric-questions/thread-quality-in-garments/",
+      "primaryKeyword": "thread quality in garments",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Production quality, distinct from fabric thread count.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What can I sew with cork fabric, and how to handle it?",
+      "normalizedQuestion": "what is cork fabric",
+      "pageUrl": "/guides/fabric-questions/what-is-cork-fabric/",
+      "primaryKeyword": "what is cork fabric",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Specialty material. FabStitch does not claim a cork catalog.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Is it safe to use outdoor upholstery fabric for apparel?",
+      "normalizedQuestion": "outdoor upholstery fabric for apparel",
+      "pageUrl": "/guides/fabric-questions/outdoor-upholstery-for-apparel/",
+      "primaryKeyword": "outdoor upholstery fabric for apparel",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Use mismatch. No safety certification is invented.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Any tips to feel confident picking fabric?",
+      "normalizedQuestion": "how to choose fabric",
+      "pageUrl": "/guides/fabric-questions/how-to-choose-fabric/",
+      "primaryKeyword": "how to choose fabric",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Selection method. Quilting color advice is not the page.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "[Chat] Removing Aida cloth?",
+      "normalizedQuestion": "what is aida cloth",
+      "pageUrl": "/guides/fabric-questions/what-is-aida-cloth/",
+      "primaryKeyword": "what is aida cloth",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Counted-thread cloth. Not sold as an apparel fabric here.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Is Microsoft Fabric the right shortcut for a data analyst moving to data engineer?",
+      "normalizedQuestion": "microsoft fabric",
+      "pageUrl": "",
+      "primaryKeyword": "microsoft fabric",
+      "category": "",
+      "status": "REJECTED-OFF-TOPIC",
+      "reason": "Microsoft Fabric is a data platform, not a textile.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fabrics are most comfortable for summer season?",
+      "normalizedQuestion": "fabrics for hot weather",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-hot-weather/",
+      "primaryKeyword": "fabrics for hot weather",
+      "category": "use-cases",
+      "status": "DUPLICATE",
+      "reason": "Same summer intent as the hot-weather page.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What are common mistakes in everyday laundry for fabrics?",
+      "normalizedQuestion": "everyday fabric laundry",
+      "pageUrl": "/guides/fabric-questions/everyday-laundry-mistakes/",
+      "primaryKeyword": "everyday fabric laundry",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Laundry errors, distinct from delicate-fiber care.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the main difference between cotton and polyester fabrics?",
+      "normalizedQuestion": "polyester vs cotton and nylon",
+      "pageUrl": "/guides/fabric-questions/polyester-cotton-and-nylon/",
+      "primaryKeyword": "polyester vs cotton and nylon",
+      "category": "comparisons",
+      "status": "DUPLICATE",
+      "reason": "Same polyester-versus-cotton intent.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the difference between chiffon, georgette and satin?",
+      "normalizedQuestion": "chiffon georgette and satin",
+      "pageUrl": "/guides/fabric-questions/chiffon-georgette-and-satin/",
+      "primaryKeyword": "chiffon georgette and satin",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Three-way comparison. Existing chiffon-versus-georgette guide stays linked, not replaced.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the difference between voile and cotton fabrics?",
+      "normalizedQuestion": "voile and cotton",
+      "pageUrl": "/guides/fabric-questions/voile-and-cotton/",
+      "primaryKeyword": "voile and cotton",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Construction versus fiber, not a fiber-versus-fiber page.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What are home remedies to remove fabric stains (oil/wine)?",
+      "normalizedQuestion": "fabric stain care",
+      "pageUrl": "/guides/fabric-questions/fabric-stain-care/",
+      "primaryKeyword": "fabric stain care",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Stain principles. No universal home recipe.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fabric is easier to remove cosmetic stains from?",
+      "normalizedQuestion": "fabric stain care",
+      "pageUrl": "/guides/fabric-questions/fabric-stain-care/",
+      "primaryKeyword": "fabric stain care",
+      "category": "care",
+      "status": "MERGED",
+      "reason": "Cosmetic stains are part of stain care, not a fabric ranking.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to remove lipstick or makeup stains from fabric?",
+      "normalizedQuestion": "fabric stain care",
+      "pageUrl": "/guides/fabric-questions/fabric-stain-care/",
+      "primaryKeyword": "fabric stain care",
+      "category": "care",
+      "status": "MERGED",
+      "reason": "Same stain-care intent.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fabric does not trap sweat?",
+      "normalizedQuestion": "fabrics that do not trap sweat",
+      "pageUrl": "/guides/fabric-questions/fabrics-and-sweat/",
+      "primaryKeyword": "fabrics that do not trap sweat",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Moisture behavior, not only the activewear guide.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to identify if a fabric is georgette/satin?",
+      "normalizedQuestion": "identify georgette and satin",
+      "pageUrl": "/guides/fabric-questions/identifying-georgette-and-satin/",
+      "primaryKeyword": "identify georgette and satin",
+      "category": "identification",
+      "status": "PUBLISHED",
+      "reason": "Narrower than general identification.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to buy fabric based on measurements (meters/yards)?",
+      "normalizedQuestion": "buying fabric by length",
+      "pageUrl": "/guides/fabric-questions/buying-fabric-by-length/",
+      "primaryKeyword": "buying fabric by length",
+      "category": "marketplace",
+      "status": "PUBLISHED",
+      "reason": "Length and width, distinct from the width guide.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to choose woven fabrics (wool/cotton)?",
+      "normalizedQuestion": "choosing woven wool and cotton",
+      "pageUrl": "/guides/fabric-questions/choosing-woven-wool-and-cotton/",
+      "primaryKeyword": "choosing woven wool and cotton",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Selection brief. Weave definitions stay on the existing weave guide.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What are the trendy fabric prints or patterns?",
+      "normalizedQuestion": "reading fabric prints",
+      "pageUrl": "/guides/fabric-questions/reading-fabric-prints/",
+      "primaryKeyword": "reading fabric prints",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "No unverified 2026 trend ranking is published.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What are the trending fabrics in mainstream fashion for 2026?",
+      "normalizedQuestion": "reading fabric prints",
+      "pageUrl": "/guides/fabric-questions/reading-fabric-prints/",
+      "primaryKeyword": "reading fabric prints",
+      "category": "quality",
+      "status": "MERGED",
+      "reason": "Trend scores in the source are estimates. The print page refuses a fake ranking.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is ripstop fabric used for (shoes/bags/jackets)?",
+      "normalizedQuestion": "what is ripstop fabric",
+      "pageUrl": "/guides/fabric-questions/what-is-ripstop/",
+      "primaryKeyword": "what is ripstop fabric",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Construction definition.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the difference between microfiber and rayon fabrics?",
+      "normalizedQuestion": "microfiber and rayon",
+      "pageUrl": "/guides/fabric-questions/microfiber-and-rayon/",
+      "primaryKeyword": "microfiber and rayon",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Synthetic filament versus regenerated cellulose.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What special fabrics are used in handicrafts (borders/Nehru jackets, etc.)?",
+      "normalizedQuestion": "fabrics for structured jackets",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-structured-jackets/",
+      "primaryKeyword": "fabrics for structured jackets",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Construction brief. No handicraft SKU is invented.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to print sewing patterns at home?",
+      "normalizedQuestion": "print sewing patterns",
+      "pageUrl": "",
+      "primaryKeyword": "print sewing patterns",
+      "category": "",
+      "status": "REJECTED-OFF-TOPIC",
+      "reason": "Printer setup, not a fabric question.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fabrics are suitable for fasteners (zippers/buttons)?",
+      "normalizedQuestion": "fabrics for zippers and buttons",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-fasteners/",
+      "primaryKeyword": "fabrics for zippers and buttons",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Garment-construction constraint.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the softest fabric for children's clothing?",
+      "normalizedQuestion": "fabrics for childrens clothing",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-childrens-clothing/",
+      "primaryKeyword": "fabrics for childrens clothing",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Softness is a hand question, not a single winner.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What natural fabrics are safe for diapers/baby clothes?",
+      "normalizedQuestion": "fabrics for childrens clothing",
+      "pageUrl": "/guides/fabric-questions/fabrics-for-childrens-clothing/",
+      "primaryKeyword": "fabrics for childrens clothing",
+      "category": "use-cases",
+      "status": "MERGED",
+      "reason": "Baby-clothing constraints sit on the children's page. No medical claim is made.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Why do colors fade in printed and solid fabrics?",
+      "normalizedQuestion": "why fabric color fades",
+      "pageUrl": "/guides/fabric-questions/why-fabric-color-fades/",
+      "primaryKeyword": "why fabric color fades",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Colorfastness.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What are methods to lock dye into fabrics?",
+      "normalizedQuestion": "why fabric color fades",
+      "pageUrl": "/guides/fabric-questions/why-fabric-color-fades/",
+      "primaryKeyword": "why fabric color fades",
+      "category": "quality",
+      "status": "MERGED",
+      "reason": "Home dye-lock recipes are not published. Colorfastness is the canonical page.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to prevent puckering on fabric during sewing?",
+      "normalizedQuestion": "sewing pucker",
+      "pageUrl": "/guides/fabric-questions/sewing-pucker/",
+      "primaryKeyword": "sewing pucker",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Cloth and tension, not a machine manual.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the difference between new fabric (shirt/trousers) and old/worn fabric?",
+      "normalizedQuestion": "new and worn fabric",
+      "pageUrl": "/guides/fabric-questions/new-and-worn-fabric/",
+      "primaryKeyword": "new and worn fabric",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Wear changes hand. Not a quality score.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Are crepe de chine and georgette the same fabric?",
+      "normalizedQuestion": "crepe de chine and georgette",
+      "pageUrl": "/guides/fabric-questions/crepe-de-chine-and-georgette/",
+      "primaryKeyword": "crepe de chine and georgette",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Named constructions in the FabStitch material set.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What lining fabric works best to make leather look stylish?",
+      "normalizedQuestion": "lining fabrics",
+      "pageUrl": "/guides/fabric-questions/lining-fabrics/",
+      "primaryKeyword": "lining fabrics",
+      "category": "materials",
+      "status": "PUBLISHED",
+      "reason": "Lining brief. Leather styling claims are not made.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to store/fold clothes to avoid stains and wrinkles?",
+      "normalizedQuestion": "storing clothes",
+      "pageUrl": "/guides/fabric-questions/storing-clothes/",
+      "primaryKeyword": "storing clothes",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Storage, distinct from washing.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How to care for hand-dyed fabrics?",
+      "normalizedQuestion": "hand dyed fabric care",
+      "pageUrl": "/guides/fabric-questions/hand-dyed-fabric-care/",
+      "primaryKeyword": "hand dyed fabric care",
+      "category": "care",
+      "status": "PUBLISHED",
+      "reason": "Unverified colorfastness, distinct from general fading.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the difference between digital print and reverse digital print fabrics?",
+      "normalizedQuestion": "digital print and reverse print",
+      "pageUrl": "/guides/fabric-questions/digital-and-reverse-prints/",
+      "primaryKeyword": "digital print and reverse print",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Print placement. No proprietary process is invented.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "What is the difference between Tencel (Lyocell) and polyester rayon (viscose)?",
+      "normalizedQuestion": "tencel and viscose",
+      "pageUrl": "/guides/fabric-questions/tencel-and-viscose/",
+      "primaryKeyword": "tencel and viscose",
+      "category": "comparisons",
+      "status": "PUBLISHED",
+      "reason": "Two regenerated celluloses with different processes.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "How do fabric masks compare to N95 masks (with regard to valves)?",
+      "normalizedQuestion": "fabric masks and n95",
+      "pageUrl": "",
+      "primaryKeyword": "fabric masks and n95",
+      "category": "",
+      "status": "REJECTED-OFF-TOPIC",
+      "reason": "Medical PPE comparison, not apparel fabric sourcing.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fabrics are considered skin-friendly?",
+      "normalizedQuestion": "skin friendly fabrics",
+      "pageUrl": "/guides/fabric-questions/skin-comfort-and-fabric/",
+      "primaryKeyword": "skin friendly fabrics",
+      "category": "use-cases",
+      "status": "PUBLISHED",
+      "reason": "Hand and finish. No dermatology claim.",
+      "sourceReport": "deep-research-report (1).md"
+    },
+    {
+      "sourceQuestion": "Which fiber blend (hybrid) is most durable in blended fabrics?",
+      "normalizedQuestion": "durable fiber blends",
+      "pageUrl": "/guides/fabric-questions/durable-fiber-blends/",
+      "primaryKeyword": "durable fiber blends",
+      "category": "quality",
+      "status": "PUBLISHED",
+      "reason": "Durability depends on construction. No blend is crowned.",
+      "sourceReport": "deep-research-report (1).md"
+    }
+  ]
+}

@@ -79,6 +79,12 @@ export default async function GuidesPage({
               Fabrics by use
             </Link>
             <Link
+              href="/guides/fabric-questions/"
+              className="inline-flex items-center gap-2 rounded-sm border border-rule-2 bg-paper-raised px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-indigo hover:text-indigo"
+            >
+              Fabric questions
+            </Link>
+            <Link
               href="/collections/"
               className="inline-flex items-center gap-2 rounded-sm border border-rule-2 bg-paper-raised px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-indigo hover:text-indigo"
             >

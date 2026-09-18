@@ -34,6 +34,10 @@ import {
 import { MARKETPLACE_SUPPORT_PAGES } from "@/domain/seo/marketplace-cluster";
 import { MARKETPLACE_TOPIC_PAGES } from "@/domain/seo/marketplace-thousand";
 import {
+  FABRIC_QUESTION_PAGES,
+  fabricQuestionParent,
+} from "@/domain/seo/fabric-questions";
+import {
   DISCOVER_CLUSTER_META,
   discoverClusterPageCount,
   discoverClusterPath,
@@ -72,6 +76,7 @@ export type StorefrontPageType =
   | "best_for"
   | "guide_hub"
   | "guide"
+  | "fabric_question"
   | "help_hub"
   | "help"
   | "brand"
@@ -418,6 +423,7 @@ const staticPages: SeoPageDefinition[] = [
       "/fabrics/",
       "/collections/",
       "/fabrics/best-for/",
+      "/guides/fabric-questions/",
       "/help/",
     ],
     qualityGatePassed: true,
@@ -797,6 +803,7 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
     return guide?.pillarSlug ? `/guides/${guide.pillarSlug}/` : "/guides/";
   }
+  if (page.type === "fabric_question") return fabricQuestionParent(page.path);
   if (page.type === "help_hub") return "/";
   if (page.type === "help" || page.type === "support") return "/help/";
   return undefined;
@@ -825,6 +832,17 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
     schemas.push("Article");
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
     if (guide?.faqs.length) schemas.push("FAQPage");
+  }
+  if (page.type === "fabric_question") {
+    const question = FABRIC_QUESTION_PAGES.find(
+      (item) => item.path === page.path,
+    );
+    if (question?.kind === "question") {
+      schemas.push("Article");
+    } else {
+      schemas.push("CollectionPage");
+    }
+    if (question?.faqs.length) schemas.push("FAQPage");
   }
   if (
     page.type === "marketplace_support" ||
@@ -1027,6 +1045,26 @@ const marketplaceTopicPages: SeoPageDefinition[] = MARKETPLACE_TOPIC_PAGES.map(
   }),
 );
 
+const fabricQuestionPages: SeoPageDefinition[] = FABRIC_QUESTION_PAGES.map(
+  (page): SeoPageDefinition => ({
+    path: page.path,
+    type: "fabric_question",
+    title: page.title,
+    h1: page.h1,
+    description: page.description,
+    primaryTopic: page.primaryKeyword,
+    secondaryTopics: page.secondaryKeywords,
+    intent: page.intent,
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Fabric question inventory",
+    relatedPaths: page.relatedPaths,
+    qualityGatePassed: true,
+    wordCount: page.wordCount,
+    image: page.imagePath,
+  }),
+);
+
 export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
   ...staticPages,
   ...fabricPages,
@@ -1039,6 +1077,7 @@ export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
   ...semanticPages,
   ...marketplaceSupportPages,
   ...marketplaceTopicPages,
+  ...fabricQuestionPages,
 ].map(resolvePage);
 
 export const INDEXABLE_SEO_PAGES = SEO_PAGE_REGISTRY.filter(

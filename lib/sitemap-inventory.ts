@@ -80,6 +80,7 @@ const IMAGE_ELIGIBLE_TYPES = new Set<StorefrontPageType>([
   "intent_hub",
   "semantic_landing",
   "marketplace_topic",
+  "fabric_question",
   "best_for",
   "fabric_hub",
   "collection_hub",
@@ -104,6 +105,7 @@ function partitionFor(pageType: StorefrontPageType): SitemapPartitionId {
       return "best-for";
     case "guide":
     case "guide_hub":
+    case "fabric_question":
       return "guides";
     case "semantic_landing":
       return "discover";

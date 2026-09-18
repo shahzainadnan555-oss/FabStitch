@@ -62,6 +62,7 @@ export function launchPhaseForPageType(type: string): SeoLaunchPhase {
       return "phase_5_collections";
     case "guide":
     case "guide_hub":
+    case "fabric_question":
       return "phase_6_guides";
     case "semantic_landing":
       return "phase_1_core";
