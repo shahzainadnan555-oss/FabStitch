@@ -31,6 +31,7 @@ import {
   INDEXABLE_SEMANTIC_PAGES,
   SEMANTIC_PAGES,
 } from "@/domain/seo/semantic";
+import { MARKETPLACE_SUPPORT_PAGES } from "@/domain/seo/marketplace-cluster";
 import {
   DISCOVER_CLUSTER_META,
   discoverClusterPageCount,
@@ -56,6 +57,7 @@ import {
 export type StorefrontPageType =
   | "home"
   | "marketplace"
+  | "marketplace_support"
   | "fabric_hub"
   | "fabric"
   | "intent_hub"
@@ -767,6 +769,7 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
   ) {
     return "/";
   }
+  if (page.type === "marketplace_support") return "/marketplace/";
   if (page.type === "collection_hub") return "/fabrics/";
   if (page.type === "collection" || page.type === "seasonal_collection") {
     return "/collections/";
@@ -819,6 +822,9 @@ function expectedSchemasFor(page: SeoPageDefinition): SeoSchemaType[] {
     schemas.push("Article");
     const guide = CATALOG_GUIDES.find((item) => item.path === page.path);
     if (guide?.faqs.length) schemas.push("FAQPage");
+  }
+  if (page.type === "marketplace_support") {
+    schemas.push("Article", "FAQPage");
   }
   if (page.type === "commercial_landing") {
     const commercial = COMMERCIAL_LANDING_PAGES.find(
@@ -976,6 +982,25 @@ const semanticPages: SeoPageDefinition[] = [
   })),
 ];
 
+const marketplaceSupportPages: SeoPageDefinition[] =
+  MARKETPLACE_SUPPORT_PAGES.map((page): SeoPageDefinition => ({
+    path: page.path,
+    type: "marketplace_support",
+    title: page.title,
+    h1: page.h1,
+    description: page.description,
+    primaryTopic: page.primaryKeyword,
+    secondaryTopics: ["fabric marketplace", page.family],
+    intent: "commercial_investigation",
+    audience: "Fabric customers",
+    contentOwner: "FabStitch",
+    contentSource: "Marketplace content cluster",
+    relatedPaths: page.relatedPaths,
+    qualityGatePassed: page.indexable,
+    wordCount: page.wordCount,
+    image: page.imagePath,
+  }));
+
 export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
   ...staticPages,
   ...fabricPages,
@@ -986,6 +1011,7 @@ export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
   ...helpPages,
   ...privatePages,
   ...semanticPages,
+  ...marketplaceSupportPages,
 ].map(resolvePage);
 
 export const INDEXABLE_SEO_PAGES = SEO_PAGE_REGISTRY.filter(

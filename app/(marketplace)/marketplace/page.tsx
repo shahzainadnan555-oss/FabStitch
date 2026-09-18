@@ -10,6 +10,7 @@ import {
 } from "@/components/marketplace/results";
 import { PersonalizedCatalogGrid } from "@/components/marketplace/personalized-catalog-grid";
 import { MarketplaceIntro } from "@/components/marketplace/marketplace-intro";
+import { MarketplaceClusterSection } from "@/components/marketplace/marketplace-cluster-section";
 import { ResultsSkeleton } from "@/components/marketplace/route-states";
 import {
   getCustomerCollections,
@@ -210,6 +211,7 @@ async function MarketplaceResults({ query }: { query: MarketplaceQuery }) {
           </div>
         </div>
       </Container>
+      {filtered ? null : <MarketplaceClusterSection />}
     </>
   );
 }

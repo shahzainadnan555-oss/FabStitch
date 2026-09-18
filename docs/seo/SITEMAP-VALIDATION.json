@@ -1,11 +1,11 @@
 {
-  "eligible": 1241,
-  "sitemap": 1241,
+  "eligible": 1263,
+  "sitemap": 1263,
   "childSitemaps": [
     {
       "id": "sitemap-core",
       "path": "/sitemaps/sitemap-core/",
-      "urls": 24,
+      "urls": 46,
       "status": 200
     },
     {
@@ -58,9 +58,9 @@
     }
   ],
   "summary": {
-    "total": 1241,
+    "total": 1263,
     "byPartition": {
-      "core": 24,
+      "core": 46,
       "collections": 16,
       "discover": 1154,
       "fabrics": 7,
@@ -72,8 +72,8 @@
     "withLastmod": 0
   },
   "counts": {
-    "eligible": 1241,
-    "sitemap": 1241,
+    "eligible": 1263,
+    "sitemap": 1263,
     "missing": 0,
     "unexpected": 0,
     "duplicates": 0,

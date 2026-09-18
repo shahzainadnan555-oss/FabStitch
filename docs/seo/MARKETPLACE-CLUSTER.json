@@ -1,0 +1,213 @@
+{
+  "moneyPage": "https://fabstitch.net/marketplace/",
+  "candidates": 57,
+  "published": 22,
+  "rejected": 35,
+  "rejectionReasons": {
+    "existing_canonical": 35
+  },
+  "cannibalizationCandidates": 0,
+  "keywordConflicts": 0,
+  "duplicateTitles": 0,
+  "duplicateH1s": 0,
+  "duplicateCanonicals": 0,
+  "brokenRoutes": 0,
+  "notFound": 0,
+  "brokenImages": 0,
+  "missingAlt": 0,
+  "missingCanonical": 0,
+  "orphanPages": 0,
+  "brokenLinks": 0,
+  "missingSitemap": 0,
+  "noindex": 0,
+  "redirects": 0,
+  "sitemapUrlsAdded": 22,
+  "totalMarketplacePages": 23,
+  "capacity": 1000,
+  "byFamily": {
+    "education": 2,
+    "buying": 9,
+    "sourcing": 3,
+    "b2b": 3,
+    "journey": 3,
+    "brand": 2
+  },
+  "pages": [
+    {
+      "path": "/marketplace/what-is-a-fabric-marketplace/",
+      "family": "education",
+      "title": "What Is a Fabric Marketplace",
+      "h1": "What a fabric marketplace is",
+      "keyword": "what is a fabric marketplace",
+      "canonical": "https://fabstitch.net/marketplace/what-is-a-fabric-marketplace/"
+    },
+    {
+      "path": "/marketplace/how-a-fabric-marketplace-works/",
+      "family": "education",
+      "title": "How a Fabric Marketplace Works",
+      "h1": "How the FabStitch marketplace works",
+      "keyword": "how a fabric marketplace works",
+      "canonical": "https://fabstitch.net/marketplace/how-a-fabric-marketplace-works/"
+    },
+    {
+      "path": "/marketplace/how-to-buy-fabric/",
+      "family": "buying",
+      "title": "How to Buy Fabric",
+      "h1": "How to buy fabric on FabStitch",
+      "keyword": "how to buy fabric on FabStitch",
+      "canonical": "https://fabstitch.net/marketplace/how-to-buy-fabric/"
+    },
+    {
+      "path": "/marketplace/how-to-source-fabric/",
+      "family": "sourcing",
+      "title": "How to Source Fabric",
+      "h1": "How to source fabric in the marketplace",
+      "keyword": "how to source fabric in the marketplace",
+      "canonical": "https://fabstitch.net/marketplace/how-to-source-fabric/"
+    },
+    {
+      "path": "/marketplace/how-to-compare-fabrics/",
+      "family": "buying",
+      "title": "How to Compare Fabrics",
+      "h1": "How to compare fabrics in the marketplace",
+      "keyword": "how to compare fabrics in the marketplace",
+      "canonical": "https://fabstitch.net/marketplace/how-to-compare-fabrics/"
+    },
+    {
+      "path": "/marketplace/how-to-choose-fabric/",
+      "family": "buying",
+      "title": "How to Choose Fabric",
+      "h1": "How to choose a fabric from the marketplace",
+      "keyword": "how to choose fabric from the marketplace",
+      "canonical": "https://fabstitch.net/marketplace/how-to-choose-fabric/"
+    },
+    {
+      "path": "/marketplace/how-to-find-fabric-for-production/",
+      "family": "sourcing",
+      "title": "How to Find Fabric for Production",
+      "h1": "How to find fabric for production",
+      "keyword": "find fabric for production",
+      "canonical": "https://fabstitch.net/marketplace/how-to-find-fabric-for-production/"
+    },
+    {
+      "path": "/marketplace/how-to-source-fabric-for-a-clothing-brand/",
+      "family": "b2b",
+      "title": "Fabric Sourcing for Clothing Brands",
+      "h1": "How clothing brands source fabric on FabStitch",
+      "keyword": "fabric marketplace for clothing brands",
+      "canonical": "https://fabstitch.net/marketplace/how-to-source-fabric-for-a-clothing-brand/"
+    },
+    {
+      "path": "/marketplace/how-to-source-fabric-for-manufacturing/",
+      "family": "b2b",
+      "title": "Fabric Sourcing for Manufacturers",
+      "h1": "How manufacturers use the fabric marketplace",
+      "keyword": "fabric marketplace for manufacturers",
+      "canonical": "https://fabstitch.net/marketplace/how-to-source-fabric-for-manufacturing/"
+    },
+    {
+      "path": "/marketplace/b2b-fabric-marketplace/",
+      "family": "b2b",
+      "title": "B2B Fabric Marketplace",
+      "h1": "Using FabStitch as a B2B fabric marketplace",
+      "keyword": "B2B fabric marketplace",
+      "canonical": "https://fabstitch.net/marketplace/b2b-fabric-marketplace/"
+    },
+    {
+      "path": "/marketplace/fabric-sourcing-for-apparel-production/",
+      "family": "sourcing",
+      "title": "Fabric Sourcing for Apparel Production",
+      "h1": "Sourcing fabric for apparel production",
+      "keyword": "fabric sourcing for apparel production",
+      "canonical": "https://fabstitch.net/marketplace/fabric-sourcing-for-apparel-production/"
+    },
+    {
+      "path": "/marketplace/how-to-evaluate-fabric/",
+      "family": "buying",
+      "title": "How to Evaluate Fabric",
+      "h1": "How to evaluate a fabric before you inquire",
+      "keyword": "how to evaluate fabric",
+      "canonical": "https://fabstitch.net/marketplace/how-to-evaluate-fabric/"
+    },
+    {
+      "path": "/marketplace/how-to-select-fabric-by-gsm/",
+      "family": "buying",
+      "title": "How to Select Fabric by GSM",
+      "h1": "How to select fabric by GSM",
+      "keyword": "select fabric by GSM",
+      "canonical": "https://fabstitch.net/marketplace/how-to-select-fabric-by-gsm/"
+    },
+    {
+      "path": "/marketplace/how-to-select-fabric-for-shirts/",
+      "family": "buying",
+      "title": "How to Select Shirt Fabric",
+      "h1": "How to select shirt fabric",
+      "keyword": "select shirt fabric",
+      "canonical": "https://fabstitch.net/marketplace/how-to-select-fabric-for-shirts/"
+    },
+    {
+      "path": "/marketplace/how-to-select-fabric-for-dresses/",
+      "family": "buying",
+      "title": "How to Select Dress Fabric",
+      "h1": "How to select dress fabric",
+      "keyword": "select dress fabric",
+      "canonical": "https://fabstitch.net/marketplace/how-to-select-fabric-for-dresses/"
+    },
+    {
+      "path": "/marketplace/how-to-select-fabric-for-uniforms/",
+      "family": "buying",
+      "title": "How to Select Uniform Fabric",
+      "h1": "How to select uniform fabric",
+      "keyword": "select uniform fabric",
+      "canonical": "https://fabstitch.net/marketplace/how-to-select-fabric-for-uniforms/"
+    },
+    {
+      "path": "/marketplace/how-to-select-fabric-for-workwear/",
+      "family": "buying",
+      "title": "How to Select Workwear Fabric",
+      "h1": "How to select workwear fabric",
+      "keyword": "select workwear fabric",
+      "canonical": "https://fabstitch.net/marketplace/how-to-select-fabric-for-workwear/"
+    },
+    {
+      "path": "/marketplace/how-to-discover-fabrics/",
+      "family": "journey",
+      "title": "How to Discover Fabrics",
+      "h1": "How to discover fabrics",
+      "keyword": "how to discover fabrics",
+      "canonical": "https://fabstitch.net/marketplace/how-to-discover-fabrics/"
+    },
+    {
+      "path": "/marketplace/how-to-filter-fabrics/",
+      "family": "journey",
+      "title": "How to Filter Fabrics",
+      "h1": "How to filter fabrics",
+      "keyword": "how to filter fabrics",
+      "canonical": "https://fabstitch.net/marketplace/how-to-filter-fabrics/"
+    },
+    {
+      "path": "/marketplace/how-to-prepare-a-fabric-inquiry/",
+      "family": "journey",
+      "title": "How to Prepare a Fabric Inquiry",
+      "h1": "How to prepare a fabric inquiry",
+      "keyword": "prepare a fabric inquiry",
+      "canonical": "https://fabstitch.net/marketplace/how-to-prepare-a-fabric-inquiry/"
+    },
+    {
+      "path": "/marketplace/why-use-fabstitch/",
+      "family": "brand",
+      "title": "Why Use FabStitch",
+      "h1": "Why businesses use the FabStitch marketplace",
+      "keyword": "why use FabStitch marketplace",
+      "canonical": "https://fabstitch.net/marketplace/why-use-fabstitch/"
+    },
+    {
+      "path": "/marketplace/how-fabstitch-helps-buyers/",
+      "family": "brand",
+      "title": "How FabStitch Helps Buyers",
+      "h1": "How FabStitch helps buyers discover fabrics",
+      "keyword": "how FabStitch helps buyers",
+      "canonical": "https://fabstitch.net/marketplace/how-fabstitch-helps-buyers/"
+    }
+  ]
+}
