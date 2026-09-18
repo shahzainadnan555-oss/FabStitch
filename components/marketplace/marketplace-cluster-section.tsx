@@ -1,19 +1,21 @@
 import Link from "next/link";
 import { FaqJsonLd } from "@/components/seo/structured-data";
 import { Container } from "@/components/ui/layout";
-import { Heading, Prose } from "@/components/ui/typography";
+import { Heading, Label, Prose } from "@/components/ui/typography";
+import { cn } from "@/lib/cn";
 import {
   MARKETPLACE_SUPPORT_PAGES,
   type MarketplaceFamily,
+  type MarketplaceSupportPage,
 } from "@/domain/seo/marketplace-cluster";
 
 const FAMILY_ORDER: MarketplaceFamily[] = [
   "education",
   "b2b",
-  "buying",
   "sourcing",
   "journey",
   "brand",
+  "buying",
 ];
 
 const FAMILY_LABEL: Record<MarketplaceFamily, string> = {
@@ -68,25 +70,102 @@ const FAQS = [
   },
 ];
 
+const STEPS = [
+  {
+    index: "01",
+    title: "Discover",
+    body: "Start with one constraint. Collections group a material. Best For groups a garment. Search here when you want the published cards.",
+  },
+  {
+    index: "02",
+    title: "Evaluate",
+    body: "Read composition and construction before colour. Compare two fabrics on the same fields. Leave a spec blank if the page does not state it.",
+  },
+] as const;
+
+function guideLinkClassName() {
+  return "text-sm leading-snug text-ink-2 transition-colors hover:text-indigo focus-visible:text-indigo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo";
+}
+
+function GuideLinks({ pages }: { pages: readonly MarketplaceSupportPage[] }) {
+  return (
+    <ul className="mt-4 space-y-2.5">
+      {pages.map((page) => (
+        <li key={page.path}>
+          <Link href={page.path} className={guideLinkClassName()}>
+            {page.h1}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function GuideCard({
+  label,
+  pages,
+  className,
+  columns = false,
+}: {
+  label: string;
+  pages: readonly MarketplaceSupportPage[];
+  className?: string;
+  columns?: boolean;
+}) {
+  return (
+    <nav
+      aria-label={label}
+      className={cn(
+        "rounded-md border border-rule bg-paper-raised p-5 sm:p-6",
+        className,
+      )}
+    >
+      <Label tone="ink">{label}</Label>
+      {columns ? (
+        <ul className="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {pages.map((page) => (
+            <li key={page.path}>
+              <Link href={page.path} className={guideLinkClassName()}>
+                {page.h1}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <GuideLinks pages={pages} />
+      )}
+    </nav>
+  );
+}
+
 export function MarketplaceClusterSection() {
   const groups = FAMILY_ORDER.map((family) => ({
     family,
     pages: MARKETPLACE_SUPPORT_PAGES.filter((page) => page.family === family),
   })).filter((group) => group.pages.length > 0);
+  const compact = groups.filter((group) => group.family !== "buying");
+  const buying = groups.find((group) => group.family === "buying");
 
   return (
     <section
       id="marketplace-guides"
-      className="border-t border-line bg-paper"
+      className="border-t border-rule bg-paper"
       aria-labelledby="marketplace-guides-heading"
     >
       <FaqJsonLd faqs={FAQS} />
-      <Container className="py-12 sm:py-16">
-        <div className="mx-auto max-w-[52rem]">
-          <Heading id="marketplace-guides-heading" level={2}>
-            How businesses use this marketplace
-          </Heading>
-          <Prose className="mt-4 text-ink-2">
+      <Container className="py-14 sm:py-16">
+        <div className="grid gap-8 border-b border-rule pb-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end lg:gap-16">
+          <div>
+            <Label>For businesses</Label>
+            <Heading
+              id="marketplace-guides-heading"
+              level={2}
+              className="mt-3 max-w-[18ch]"
+            >
+              How businesses use this marketplace
+            </Heading>
+          </div>
+          <Prose className="max-w-[46rem] text-ink-2">
             This page is the place to search documented cloth. A fabric
             marketplace, in the FabStitch sense, is that search: fibre,
             construction, season, weight, or end use, then a fabric page you can
@@ -94,63 +173,76 @@ export function MarketplaceClusterSection() {
             this catalog, and they do not claim FabStitch is the largest or
             cheapest source of cloth.
           </Prose>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div>
-              <Heading level={3}>Discover</Heading>
-              <Prose className="mt-2 text-ink-2">
-                Start with one constraint. Collections group a material. Best
-                For groups a garment. Search here when you want the published
-                cards.
-              </Prose>
-            </div>
-            <div>
-              <Heading level={3}>Evaluate</Heading>
-              <Prose className="mt-2 text-ink-2">
-                Read composition and construction before colour. Compare two
-                fabrics on the same fields. Leave a spec blank if the page does
-                not state it.
-              </Prose>
-            </div>
-          </div>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-[72rem] gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {groups.map((group) => (
-            <nav key={group.family} aria-label={FAMILY_LABEL[group.family]}>
-              <Heading level={3}>{FAMILY_LABEL[group.family]}</Heading>
-              <ul className="mt-3 space-y-2">
-                {group.pages.map((page) => (
-                  <li key={page.path}>
-                    <Link
-                      href={page.path}
-                      className="text-indigo underline-offset-4 hover:underline"
-                    >
-                      {page.h1}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {STEPS.map((step) => (
+            <article
+              key={step.title}
+              className="rounded-md border border-rule bg-paper-raised p-5 sm:p-6"
+            >
+              <p className="font-mono text-label text-gold-ink">{step.index}</p>
+              <Heading level={3} className="mt-3">
+                {step.title}
+              </Heading>
+              <p className="mt-2 max-w-[40ch] text-sm leading-relaxed text-ink-2">
+                {step.body}
+              </p>
+            </article>
           ))}
         </div>
 
-        <div className="mx-auto mt-12 max-w-[52rem]">
-          <Heading level={2}>Marketplace questions</Heading>
-          <dl className="mt-4 space-y-5">
-            {FAQS.map((faq) => (
-              <div key={faq.question}>
-                <dt className="font-semibold text-ink">{faq.question}</dt>
-                <dd className="mt-1 text-ink-2">{faq.answer}</dd>
+        <div className="mt-12">
+          <Label>Guides</Label>
+          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {compact.map((group) => (
+              <GuideCard
+                key={group.family}
+                label={FAMILY_LABEL[group.family]}
+                pages={group.pages}
+              />
+            ))}
+          </div>
+          {buying ? (
+            <GuideCard
+              className="mt-4"
+              label={FAMILY_LABEL.buying}
+              pages={buying.pages}
+              columns
+            />
+          ) : null}
+        </div>
+
+        <div className="mt-12">
+          <Label>Questions</Label>
+          <Heading level={2} className="mt-3">
+            Marketplace questions
+          </Heading>
+          <dl className="mt-5 overflow-hidden rounded-md border border-rule bg-paper-raised">
+            {FAQS.map((faq, index) => (
+              <div
+                key={faq.question}
+                className={cn(
+                  "px-5 py-4 sm:px-6 sm:py-5",
+                  index > 0 && "border-t border-rule",
+                )}
+              >
+                <dt className="text-sm font-semibold text-ink">
+                  {faq.question}
+                </dt>
+                <dd className="mt-1.5 max-w-[68ch] text-sm leading-relaxed text-ink-2">
+                  {faq.answer}
+                </dd>
               </div>
             ))}
           </dl>
-          <p className="mt-8 text-sm text-ink-2">
+          <p className="mt-5 max-w-[68ch] text-sm leading-relaxed text-ink-2">
             Fibre comparisons and material essays stay on their own pages in{" "}
-            <Link href="/discover/" className="text-indigo hover:underline">
+            <Link href="/discover/" className={guideLinkClassName()}>
               fabric discovery
             </Link>{" "}
             and{" "}
-            <Link href="/collections/" className="text-indigo hover:underline">
+            <Link href="/collections/" className={guideLinkClassName()}>
               collections
             </Link>
             , so this catalog remains the commercial URL.
