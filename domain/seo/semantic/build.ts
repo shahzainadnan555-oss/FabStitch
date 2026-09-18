@@ -1,5 +1,6 @@
 import { generateSemanticCandidates } from "./candidates";
 import { composeSemanticPage } from "./compose";
+import { ADDITIONAL_PAGE_CAPACITY, buildLibraryPages } from "./library";
 import { reservedPathSet } from "./reserved";
 import type { SemanticPage } from "./types";
 import { canonicalSeoPath } from "@/domain/seo/publication";
@@ -15,10 +16,37 @@ export type SemanticBuildReport = {
   duplicateH1s: string[];
   duplicateDescriptions: string[];
   duplicateSlugs: string[];
+  additionalCandidates: number;
+  additionalPublished: number;
+  additionalRejected: number;
+  additionalCapacity: number;
 };
 
 function dedupeKey(value: string): string {
   return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function shingles(page: SemanticPage): Set<string> {
+  const text = [page.intro, ...page.sections.flatMap((section) => section.body)]
+    .join(" ")
+    .toLowerCase();
+  const tokens = text.split(/[^a-z0-9]+/).filter((token) => token.length > 3);
+  const grams = new Set<string>();
+  for (let index = 0; index < tokens.length - 2; index += 1) {
+    grams.add(`${tokens[index]} ${tokens[index + 1]} ${tokens[index + 2]}`);
+  }
+  return grams;
+}
+
+function tooSimilar(left: Set<string>, right: Set<string>): boolean {
+  if (left.size < 8 || right.size < 8) return false;
+  let overlap = 0;
+  const [small, large] = left.size < right.size ? [left, right] : [right, left];
+  for (const gram of small) {
+    if (large.has(gram)) overlap += 1;
+  }
+  const union = left.size + right.size - overlap;
+  return union > 0 && overlap / union > 0.72;
 }
 
 /**
@@ -104,8 +132,91 @@ function buildSemanticCorpus(): {
     pages.push(page);
   }
 
-  // Final safety: if still under ~900 strong pages, keep all quality-passed;
-  // report counts honestly.
+  const library = buildLibraryPages();
+  let additionalPublished = 0;
+  let additionalRejected = library.rejected.length;
+  const acceptedFingerprints = pages
+    .filter((page) => page.qualityGatePassed)
+    .map((page) => shingles(page));
+  const titles = new Set(
+    pages
+      .filter((page) => page.qualityGatePassed)
+      .map((page) => dedupeKey(page.title)),
+  );
+  const h1s = new Set(
+    pages
+      .filter((page) => page.qualityGatePassed)
+      .map((page) => dedupeKey(page.h1)),
+  );
+  const descriptions = new Set(
+    pages
+      .filter((page) => page.qualityGatePassed)
+      .map((page) => dedupeKey(page.metaDescription)),
+  );
+  const slugs = new Set(pages.map((page) => page.slug));
+
+  for (const candidate of library.pages) {
+    if (!candidate.qualityGatePassed) {
+      additionalRejected += 1;
+      bump(candidate.qualityNotes[0] ?? "library_quality");
+      pages.push(candidate);
+      continue;
+    }
+    if (slugs.has(candidate.slug) || reserved.has(candidate.path)) {
+      additionalRejected += 1;
+      bump("library_slug_collision");
+      pages.push({
+        ...candidate,
+        indexable: false,
+        qualityGatePassed: false,
+        qualityNotes: [...candidate.qualityNotes, "library_slug_collision"],
+      });
+      continue;
+    }
+    if (
+      titles.has(dedupeKey(candidate.title)) ||
+      h1s.has(dedupeKey(candidate.h1)) ||
+      descriptions.has(dedupeKey(candidate.metaDescription))
+    ) {
+      additionalRejected += 1;
+      bump("library_duplicate_metadata");
+      pages.push({
+        ...candidate,
+        indexable: false,
+        qualityGatePassed: false,
+        qualityNotes: [...candidate.qualityNotes, "library_duplicate_metadata"],
+      });
+      continue;
+    }
+    const fingerprint = shingles(candidate);
+    if (
+      acceptedFingerprints.some((existing) => tooSimilar(existing, fingerprint))
+    ) {
+      additionalRejected += 1;
+      bump("near_duplicate");
+      pages.push({
+        ...candidate,
+        indexable: false,
+        qualityGatePassed: false,
+        qualityNotes: [...candidate.qualityNotes, "near_duplicate"],
+      });
+      continue;
+    }
+    if (additionalPublished >= ADDITIONAL_PAGE_CAPACITY) {
+      additionalRejected += 1;
+      bump("capacity");
+      continue;
+    }
+    slugs.add(candidate.slug);
+    titles.add(dedupeKey(candidate.title));
+    h1s.add(dedupeKey(candidate.h1));
+    descriptions.add(dedupeKey(candidate.metaDescription));
+    acceptedFingerprints.push(fingerprint);
+    additionalPublished += 1;
+    pages.push(candidate);
+  }
+
+  // Rebuild cluster counts after library merge.
   const indexablePages = pages.filter((page) => page.indexable);
   const byCluster: Record<string, number> = {};
   for (const page of indexablePages) {
@@ -128,6 +239,10 @@ function buildSemanticCorpus(): {
       duplicateH1s,
       duplicateDescriptions,
       duplicateSlugs,
+      additionalCandidates: library.pages.length + library.rejected.length,
+      additionalPublished,
+      additionalRejected,
+      additionalCapacity: ADDITIONAL_PAGE_CAPACITY,
     },
   };
 }

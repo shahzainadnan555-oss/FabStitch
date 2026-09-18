@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   CollectionPageJsonLd,
   FaqJsonLd,
@@ -60,6 +61,12 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
   const clusterPath = clusterMeta
     ? discoverClusterPath(clusterMeta.cluster)
     : "/discover/";
+  const imageSrc = page.imagePath ?? page.material?.imageHint;
+  const imageAlt =
+    page.imageAlt ??
+    (page.material
+      ? `${page.material.label} fabric shown for this topic`
+      : page.h1);
 
   const relatedDiscover = INDEXABLE_SEMANTIC_PAGES.filter(
     (candidate) =>
@@ -111,6 +118,17 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
             {page.h1}
           </Heading>
           <Prose className="mt-5 text-ink-2">{page.intro}</Prose>
+          {imageSrc ? (
+            <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-md bg-paper-raised">
+              <Image
+                src={imageSrc}
+                alt={imageAlt}
+                fill
+                sizes="(min-width: 768px) 52rem, 100vw"
+                className="object-cover"
+              />
+            </div>
+          ) : null}
 
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink

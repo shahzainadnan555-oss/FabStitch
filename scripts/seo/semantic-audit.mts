@@ -27,8 +27,10 @@ function main() {
         rejectionReasons: SEMANTIC_BUILD_REPORT.rejectionReasons,
         duplicateTitleCount: SEMANTIC_BUILD_REPORT.duplicateTitles.length,
         duplicateH1Count: SEMANTIC_BUILD_REPORT.duplicateH1s.length,
-        duplicateDescriptionCount:
-          SEMANTIC_BUILD_REPORT.duplicateDescriptions.length,
+        additionalCandidates: SEMANTIC_BUILD_REPORT.additionalCandidates,
+        additionalPublished: SEMANTIC_BUILD_REPORT.additionalPublished,
+        additionalRejected: SEMANTIC_BUILD_REPORT.additionalRejected,
+        additionalCapacity: SEMANTIC_BUILD_REPORT.additionalCapacity,
       },
       null,
       2,

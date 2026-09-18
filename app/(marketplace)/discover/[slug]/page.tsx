@@ -26,7 +26,10 @@ export async function generateMetadata({
     title: page.title,
     description: page.metaDescription,
     index: page.indexable,
-    image: page.material?.imageHint ?? "/media/hero-navy-jersey.jpg",
+    image:
+      page.imagePath ??
+      page.material?.imageHint ??
+      "/media/hero-navy-jersey.jpg",
   });
 }
 

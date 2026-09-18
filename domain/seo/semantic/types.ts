@@ -54,4 +54,6 @@ export type SemanticPage = SemanticTopic & {
   indexable: boolean;
   qualityGatePassed: boolean;
   qualityNotes: readonly string[];
+  imagePath?: string;
+  imageAlt?: string;
 };

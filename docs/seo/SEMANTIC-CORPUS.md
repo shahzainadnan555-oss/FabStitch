@@ -43,7 +43,16 @@ Generated from `scripts/seo/semantic-audit.mts`.
 - Minimum useful section depth and word count
 - Real catalog links via collections + Best For where mapped
 
-## Validation command
+## Expansion library
+
+`domain/seo/semantic/library.ts` can add up to 2,000 further pages.
+Only records with a distinct intent, unique metadata, enough useful copy,
+and a low similarity score against the existing corpus are published.
+The current library publishes the pages that pass. It does not invent
+doorway combinations to fill the remaining capacity.
+
+New indexable pages enter `/discover/[slug]/`, the storefront registry,
+and the sitemap automatically.
 
 ```bash
 node --import=./scripts/register-loader.mjs scripts/seo/semantic-audit.mts
