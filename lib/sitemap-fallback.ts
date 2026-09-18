@@ -1,14 +1,13 @@
 import type { SeoSitemapPage } from "@/lib/api/types";
 import { absoluteSitemapUrl } from "@/lib/sitemaps";
-import { SITEMAP_ELIGIBLE_SEO_PAGES } from "@/domain/seo/storefront-registry";
+import { eligibleSitemapPages } from "@/lib/sitemap-inventory";
 
 /**
- * Local sitemap from the curated storefront SEO registry.
- * Only sitemap-eligible (indexable, public, canonical) pages are included.
- * Priority/changefreq are intentionally omitted (Google ignores them).
+ * Local sitemap URLs from the same eligibility gate as the live sitemap index.
+ * Priority/changefreq are intentionally omitted.
  */
 export function localSitemapUrls(): SeoSitemapPage["urls"] {
-  return SITEMAP_ELIGIBLE_SEO_PAGES.map((page) => ({
+  return eligibleSitemapPages().map((page) => ({
     loc: absoluteSitemapUrl(page.canonicalPath),
     path: page.canonicalPath,
     lastmod: null,

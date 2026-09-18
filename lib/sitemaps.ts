@@ -1,9 +1,6 @@
 import type { SeoSitemapIndex, SeoSitemapPage } from "@/lib/api/types";
 import { absolute, SITE_URL } from "@/lib/seo";
-import type {
-  SitemapChildFile,
-  SitemapUrlEntry,
-} from "@/lib/sitemap-inventory";
+import type { SitemapChildFile } from "@/lib/sitemap-inventory";
 
 const PRODUCTION_SITEMAP_ORIGIN = "https://fabstitch.net";
 
@@ -122,7 +119,11 @@ function renderImageNodes(images: readonly string[]): string {
  * Does not emit priority or changefreq — Google ignores them.
  */
 export function renderInventoryUrlSet(
-  entries: readonly SitemapUrlEntry[],
+  entries: readonly {
+    loc: string;
+    lastmod: string | null;
+    images: readonly string[];
+  }[],
 ): string {
   const includeImages = entries.some((entry) => entry.images.length > 0);
   const urls = entries
@@ -158,16 +159,14 @@ export function renderInventoryUrlSet(
  * Priority and changefreq are intentionally omitted.
  */
 export function renderUrlSet(entries: SeoSitemapPage["urls"]): string {
-  const mapped: SitemapUrlEntry[] = entries.map((entry) => ({
-    path: entry.path || "/",
-    loc: absoluteSitemapUrl(entry.path || entry.loc),
-    lastmod:
-      entry.lastmod && isValidLastmod(entry.lastmod) ? entry.lastmod : null,
-    images: [],
-    partition: "core",
-    pageType: "unknown",
-  }));
-  return renderInventoryUrlSet(mapped);
+  return renderInventoryUrlSet(
+    entries.map((entry) => ({
+      loc: absoluteSitemapUrl(entry.path || entry.loc),
+      lastmod:
+        entry.lastmod && isValidLastmod(entry.lastmod) ? entry.lastmod : null,
+      images: [],
+    })),
+  );
 }
 
 export function xmlResponse(body: string): Response {

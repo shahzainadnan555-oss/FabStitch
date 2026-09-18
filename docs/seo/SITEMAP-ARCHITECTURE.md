@@ -45,10 +45,11 @@ urlset includes Google image sitemap `image:loc` entries.
 `/discover/topics/{cluster}/` (paginated). Semantic pages link back to their
 cluster directory and related topics via normal `<a href>` anchors.
 
-## Validation
+## Source of truth
 
-```bash
-npm run seo:sitemap
-```
+Child sitemaps are generated only from the frontend storefront SEO registry
+after the eligibility gate. The backend sitemap API is not consulted.
 
-Writes `docs/seo/SITEMAP-VALIDATION.json` and fails the process on errors.
+`npm run seo:sitemap` (alias `npm run seo:sitemap:audit`) fails if any eligible
+canonical URL is missing, duplicated, private, redirected, or non-canonical.
+Sitemap inclusion does not guarantee indexing.

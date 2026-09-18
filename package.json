@@ -18,6 +18,7 @@
     "api:health": "node scripts/qa/api-health.mjs",
     "seo": "node --import=./scripts/register-loader.mjs scripts/seo-audit.mts",
     "seo:sitemap": "node --import=./scripts/register-loader.mjs scripts/seo/sitemap-validate.mts",
+    "seo:sitemap:audit": "node --import=./scripts/register-loader.mjs scripts/seo/sitemap-validate.mts",
     "seo:robots": "node --import=./scripts/register-loader.mjs scripts/seo/robots-validate.mts",
     "seo:keywords": "node --import=./scripts/register-loader.mjs scripts/seo/generate-keyword-map.mts",
     "seo:semantic": "node --import=./scripts/register-loader.mjs scripts/seo/semantic-audit.mts",

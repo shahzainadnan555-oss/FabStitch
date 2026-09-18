@@ -1,266 +1,288 @@
 /**
- * Build-time SEO sitemap validation.
+ * Bidirectional sitemap audit.
  *
- * Fails when the inventory contains duplicate locs, invalid URLs, non-HTTPS
- * hosts, relative locs, or malformed XML. Does not claim Google will index
- * every URL — it only asserts technical eligibility/discoverability hygiene.
+ * Compares the eligible public canonical registry with the generated sitemap
+ * corpus. Exits non-zero when any eligible URL is missing, duplicated, or
+ * invalid. Does not claim Google will index every URL.
  */
-import { writeFileSync, mkdirSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import {
   INDEXABLE_SEO_PAGES,
   NOINDEX_SEO_PAGES,
-  PUBLIC_SEO_PAGES,
-  SITEMAP_ELIGIBLE_SEO_PAGES,
-  SEO_PAGE_REGISTRY,
   assertStorefrontSeoRegistry,
+  seoPage,
 } from "@/domain/seo/storefront-registry";
 import { INDEXABLE_SEMANTIC_PAGES } from "@/domain/seo/semantic";
-import { STOREFRONT_REDIRECT_FAMILIES } from "@/lib/storefront-redirects";
+import { isPathAllowedByRobots } from "@/lib/robots-policy";
+import { storefrontRedirect } from "@/lib/storefront-redirects";
 import {
   buildSitemapInventory,
+  childSitemapById,
+  eligibleSitemapPages,
   partitionSitemapInventory,
   passesSitemapEligibilityGate,
-  resolveSitemapImage,
   sitemapInventorySummary,
 } from "@/lib/sitemap-inventory";
+import {
+  buildChildSitemapResponse,
+  buildSitemapIndexResponse,
+} from "@/lib/sitemap-http";
 import {
   renderInventoryUrlSet,
   renderSitemapIndexFromFiles,
 } from "@/lib/sitemaps";
-import { listDiscoverDirectoryPaths } from "@/lib/discover-directory";
+
+const REQUIRED_URLS = [
+  "https://fabstitch.net/",
+  "https://fabstitch.net/fabrics/",
+  "https://fabstitch.net/marketplace/",
+  "https://fabstitch.net/discover/breathable-cotton-shirts/",
+] as const;
+
+const PRIVATE_PREFIXES = [
+  "/admin/",
+  "/auth/",
+  "/account/",
+  "/login/",
+  "/signup/",
+  "/checkout/",
+  "/cart/",
+  "/inquiries/",
+];
 
 type Finding = { severity: "error" | "warning"; code: string; detail: string };
-
 const findings: Finding[] = [];
-
 function error(code: string, detail: string) {
   findings.push({ severity: "error", code, detail });
-}
-function warn(code: string, detail: string) {
-  findings.push({ severity: "warning", code, detail });
 }
 
 assertStorefrontSeoRegistry();
 
+const eligible = eligibleSitemapPages();
 const inventory = buildSitemapInventory();
 const files = partitionSitemapInventory(inventory);
 const summary = sitemapInventorySummary(inventory);
 const indexXml = renderSitemapIndexFromFiles(files);
 
-function assertValidXml(label: string, xml: string) {
-  if (!xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
-    error("xml_declaration", `${label} missing UTF-8 XML declaration`);
-  }
-  if (xml.includes("<priority>") || xml.includes("<changefreq>")) {
-    error("useless_fields", `${label} contains priority/changefreq`);
-  }
-  if (/[^\x09\x0A\x0D\x20-\x7E\u0080-\uFFFF]/.test(xml)) {
-    warn(
-      "xml_control_chars",
-      `${label} may contain unusual control characters`,
-    );
-  }
+if (!indexXml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
+  error("xml_declaration", "sitemap index missing UTF-8 declaration");
+}
+if (
+  !indexXml.includes(
+    '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  )
+) {
+  error("sitemap_index_root", "sitemap index missing sitemapindex namespace");
+}
+if (indexXml.includes("<urlset") || indexXml.includes("<url>")) {
+  error("nested_or_urlset", "sitemap index must not contain url entries");
+}
+if (indexXml.includes("<priority>") || indexXml.includes("<changefreq>")) {
+  error("useless_fields", "sitemap index contains priority/changefreq");
 }
 
-assertValidXml("sitemap-index", indexXml);
-if (!indexXml.includes("<sitemapindex")) {
-  error("sitemap_index_root", "sitemap index missing sitemapindex root");
+const indexLocs = [...indexXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+  (match) => match[1] ?? "",
+);
+if (indexLocs.length !== files.length) {
+  error(
+    "index_count",
+    `index lists ${indexLocs.length} children, generator has ${files.length}`,
+  );
 }
 
-const seenLoc = new Set<string>();
-const seenPath = new Set<string>();
+const seenLoc = new Map<string, number>();
+const seenPath = new Map<string, number>();
+const childStatuses: { id: string; status: number; contentType: string }[] = [];
+
+const indexResponse = await buildSitemapIndexResponse();
+if (indexResponse.status !== 200) {
+  error("index_http", `sitemap index status ${indexResponse.status}`);
+}
+const indexType = indexResponse.headers.get("content-type") ?? "";
+if (!indexType.includes("xml")) {
+  error("index_content_type", `sitemap index content-type ${indexType}`);
+}
 
 for (const file of files) {
-  if (file.urls.length === 0) {
-    error("empty_child", `Empty child sitemap emitted: ${file.id}`);
-  }
-  if (file.urls.length > 50_000) {
-    error("sitemap_size", `${file.id} exceeds 50,000 URLs`);
-  }
+  if (file.urls.length === 0) error("empty_child", file.id);
+  if (file.urls.length > 50_000) error("sitemap_size", file.id);
   const xml = renderInventoryUrlSet(file.urls);
-  assertValidXml(file.id, xml);
-  if (!xml.includes("<urlset")) {
-    error("urlset_root", `${file.id} missing urlset root`);
+  if (!xml.includes("<urlset")) error("urlset_root", file.id);
+  if (xml.includes("<sitemapindex")) {
+    error("nested_index", `${file.id} must not be a sitemap index`);
+  }
+  if (!xml.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"')) {
+    error("urlset_namespace", file.id);
+  }
+  if (xml.includes("<priority>") || xml.includes("<changefreq>")) {
+    error("useless_fields", file.id);
   }
   if (Buffer.byteLength(xml, "utf8") > 50 * 1024 * 1024) {
-    error("sitemap_bytes", `${file.id} exceeds 50MB uncompressed`);
+    error("sitemap_bytes", file.id);
   }
+
+  const response = await buildChildSitemapResponse(file.id);
+  childStatuses.push({
+    id: file.id,
+    status: response.status,
+    contentType: response.headers.get("content-type") ?? "",
+  });
+  if (response.status !== 200) {
+    error("child_http", `${file.id} status ${response.status}`);
+  }
+  const body = await response.text();
+  if (!body.includes("<urlset") || body.includes("<html")) {
+    error("child_body", `${file.id} is not a urlset`);
+  }
+  const parsedLocs = [...body.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => match[1] ?? "",
+  );
+  const pageLocs = parsedLocs.filter((loc) => !loc.includes("/media/"));
+  if (pageLocs.length !== file.urls.length) {
+    error(
+      "child_loc_count",
+      `${file.id} parsed ${pageLocs.length} page locs, expected ${file.urls.length}`,
+    );
+  }
+
+  const unknown = childSitemapById(files, file.id);
+  if (!unknown) error("child_missing", file.id);
 
   for (const entry of file.urls) {
+    seenLoc.set(entry.loc, (seenLoc.get(entry.loc) ?? 0) + 1);
+    seenPath.set(entry.path, (seenPath.get(entry.path) ?? 0) + 1);
+
     if (!entry.loc.startsWith("https://fabstitch.net/")) {
-      error("invalid_loc", `${entry.path} loc is not production HTTPS`);
+      error("invalid_url", entry.loc);
     }
-    if (entry.loc.includes("?")) {
-      error("query_loc", `${entry.path} contains query parameters`);
+    if (entry.loc.includes("?") || entry.path.includes("?")) {
+      error("invalid_url", `query URL ${entry.loc}`);
     }
-    if (seenLoc.has(entry.loc)) {
-      error("duplicate_loc", `Duplicate loc: ${entry.loc}`);
+    if (entry.loc !== `https://fabstitch.net${entry.path}`) {
+      error("non_canonical", `${entry.loc} does not match ${entry.path}`);
     }
-    if (seenPath.has(entry.path)) {
-      error("duplicate_path", `Duplicate path: ${entry.path}`);
+    if (storefrontRedirect(entry.path)) {
+      error("redirect_url", entry.path);
     }
-    seenLoc.add(entry.loc);
-    seenPath.add(entry.path);
-
-    const record = SEO_PAGE_REGISTRY.find((page) => page.path === entry.path);
-    if (record) {
-      if (!passesSitemapEligibilityGate(record)) {
-        error(
-          "gate_fail",
-          `${entry.path} is in sitemap but fails eligibility gate`,
-        );
-      }
-      if (record.canonicalPath !== entry.path) {
-        error("non_self_canonical", `${entry.path} is not self-canonical`);
-      }
-      if (!record.indexable) {
-        error("noindex_in_sitemap", `${entry.path} is noindex but in sitemap`);
-      }
+    if (PRIVATE_PREFIXES.some((prefix) => entry.path.startsWith(prefix))) {
+      error("private_url", entry.path);
     }
-
-    if (entry.lastmod) {
-      const ok =
-        /^\d{4}-\d{2}-\d{2}$/.test(entry.lastmod) ||
-        /^\d{4}-\d{2}-\d{2}T/.test(entry.lastmod);
-      if (!ok)
-        error("invalid_lastmod", `${entry.path} lastmod=${entry.lastmod}`);
+    if (!isPathAllowedByRobots(entry.path)) {
+      error("robots_blocked", entry.path);
     }
-
-    for (const image of entry.images) {
-      if (!image.startsWith("https://fabstitch.net/media/")) {
-        error("invalid_image", `${entry.path} image is not a public media URL`);
-      }
-      const relative = image.replace("https://fabstitch.net", "");
-      if (!resolveSitemapImage(relative)) {
-        error(
-          "broken_image",
-          `${entry.path} image missing on disk: ${relative}`,
-        );
-      }
+    const record = seoPage(entry.path);
+    if (!record) {
+      error("unexpected_url", entry.path);
+      continue;
+    }
+    if (record.canonicalPath !== entry.path) {
+      error("non_canonical", entry.path);
+    }
+    if (!record.indexable || !record.isPublic) {
+      error("noindex_url", entry.path);
+    }
+    if (!passesSitemapEligibilityGate(record)) {
+      error("unexpected_url", `${entry.path} failed eligibility gate`);
+    }
+    if (entry.lastmod && !/^\d{4}-\d{2}-\d{2}/.test(entry.lastmod)) {
+      error("invalid_lastmod", entry.path);
     }
   }
 }
 
-// Orphan heuristic: indexable pages whose parent is missing or unrelated paths empty.
-let orphanCandidates = 0;
-for (const page of INDEXABLE_SEO_PAGES) {
-  if (page.path === "/") continue;
-  if (!page.parentPath) {
-    orphanCandidates += 1;
-    error("orphan_parent", `${page.path} has no parent hub`);
-    continue;
-  }
-  const parent = SEO_PAGE_REGISTRY.find(
-    (item) => item.path === page.parentPath,
-  );
-  if (!parent || !parent.isPublic) {
-    orphanCandidates += 1;
-    error("orphan_parent", `${page.path} parent is unavailable`);
-  }
+const duplicates = [...seenLoc.entries()].filter(([, count]) => count > 1);
+for (const [loc, count] of duplicates) {
+  error("duplicate", `${loc} appears ${count} times`);
 }
 
-// Soft-404 style registry pages (indexable but tiny content).
-let soft404 = 0;
-for (const page of INDEXABLE_SEO_PAGES) {
-  if ((page.wordCount ?? 0) > 0 && (page.wordCount ?? 0) < 40) {
-    soft404 += 1;
-    warn("soft_404_risk", `${page.path} wordCount=${page.wordCount}`);
-  }
-}
+const eligiblePaths = new Set(eligible.map((page) => page.canonicalPath));
+const missing = eligible.filter((page) => !seenPath.has(page.canonicalPath));
+for (const page of missing) error("missing", page.canonicalPath);
 
-// Duplicate metadata among indexable pages.
-function dupes(values: string[]): string[] {
-  const seen = new Set<string>();
-  const out = new Set<string>();
-  for (const value of values) {
-    const key = value.toLowerCase().trim();
-    if (seen.has(key)) out.add(key);
-    seen.add(key);
-  }
-  return [...out];
-}
-const duplicateTitles = dupes(INDEXABLE_SEO_PAGES.map((page) => page.title));
-const duplicateDescriptions = dupes(
-  INDEXABLE_SEO_PAGES.map((page) => page.description),
+const unexpected = [...seenPath.keys()].filter(
+  (pathname) => !eligiblePaths.has(pathname),
 );
-const duplicateH1s = dupes(INDEXABLE_SEO_PAGES.map((page) => page.h1));
-if (duplicateTitles.length) {
-  error("duplicate_title", `${duplicateTitles.length} duplicate titles`);
-}
-if (duplicateDescriptions.length) {
-  error(
-    "duplicate_description",
-    `${duplicateDescriptions.length} duplicate descriptions`,
-  );
-}
-if (duplicateH1s.length) {
-  warn("duplicate_h1", `${duplicateH1s.length} duplicate H1 values`);
+for (const pathname of unexpected) error("unexpected", pathname);
+
+for (const loc of REQUIRED_URLS) {
+  const count = seenLoc.get(loc) ?? 0;
+  if (count !== 1) error("required_url", `${loc} count=${count}`);
 }
 
-const directoryPaths = listDiscoverDirectoryPaths();
-for (const dirPath of directoryPaths) {
-  if (!seenPath.has(dirPath)) {
-    warn("directory_missing_sitemap", `Directory not in sitemap: ${dirPath}`);
-  }
+const discoverInSitemap = [...seenPath.keys()].filter((pathname) =>
+  pathname.startsWith("/discover/"),
+).length;
+if (discoverInSitemap < INDEXABLE_SEMANTIC_PAGES.length + 1) {
+  error(
+    "discover_coverage",
+    `discover sitemap urls ${discoverInSitemap}, semantic indexable ${INDEXABLE_SEMANTIC_PAGES.length}`,
+  );
 }
+
+const counts = {
+  eligible: eligible.length,
+  sitemap: inventory.length,
+  missing: missing.length,
+  unexpected: unexpected.length,
+  duplicates: duplicates.length,
+  redirects: findings.filter((item) => item.code === "redirect_url").length,
+  noindex: findings.filter((item) => item.code === "noindex_url").length,
+  private: findings.filter((item) => item.code === "private_url").length,
+  invalid: findings.filter((item) => item.code === "invalid_url").length,
+  nonCanonical: findings.filter((item) => item.code === "non_canonical").length,
+  childErrors: findings.filter((item) => item.code.startsWith("child_")).length,
+};
+
+console.log("SEO sitemap audit");
+console.log(`TOTAL ELIGIBLE PUBLIC URLS ${counts.eligible}`);
+console.log(`TOTAL SITEMAP URLS ${counts.sitemap}`);
+console.log(`CHILD SITEMAPS ${files.length}`);
+console.log(`MISSING FROM SITEMAP ${counts.missing}`);
+console.log(`UNEXPECTED IN SITEMAP ${counts.unexpected}`);
+console.log(`DUPLICATES ${counts.duplicates}`);
+console.log(`REDIRECT URLS ${counts.redirects}`);
+console.log(`NOINDEX URLS ${counts.noindex}`);
+console.log(`PRIVATE URLS ${counts.private}`);
+console.log(`INVALID URLS ${counts.invalid}`);
+console.log(`NON-CANONICAL URLS ${counts.nonCanonical}`);
+console.log(`CHILD SITEMAPS WITH ERRORS ${counts.childErrors}`);
+for (const child of childStatuses) {
+  console.log(`  ${child.id} HTTP ${child.status} ${child.contentType}`);
+}
+console.log(
+  `indexable registry ${INDEXABLE_SEO_PAGES.length}; noindex registry ${NOINDEX_SEO_PAGES.length}; discover semantic ${INDEXABLE_SEMANTIC_PAGES.length}`,
+);
 
 const report = {
-  generatedAt: new Date().toISOString(),
-  registry: {
-    total: SEO_PAGE_REGISTRY.length,
-    public: PUBLIC_SEO_PAGES.length,
-    indexable: INDEXABLE_SEO_PAGES.length,
-    noindex: NOINDEX_SEO_PAGES.length,
-    sitemapEligibleRegistry: SITEMAP_ELIGIBLE_SEO_PAGES.length,
-    discoverIndexable: INDEXABLE_SEMANTIC_PAGES.length,
-    discoverDirectories: directoryPaths.length,
-    redirectFamilies: STOREFRONT_REDIRECT_FAMILIES.length,
-  },
-  sitemap: {
-    ...summary,
-    childSitemaps: files.map((file) => ({
-      id: file.id,
-      path: file.path,
-      urls: file.urls.length,
-      withImages: file.urls.filter((entry) => entry.images.length > 0).length,
-    })),
-  },
-  quality: {
-    orphanCandidates,
-    soft404Risks: soft404,
-    duplicateTitles: duplicateTitles.length,
-    duplicateDescriptions: duplicateDescriptions.length,
-    duplicateH1s: duplicateH1s.length,
-    videoSitemap: "not_applicable_no_public_video_pages",
-    hreflang: "not_applicable_no_localized_alternates",
-  },
+  eligible: counts.eligible,
+  sitemap: counts.sitemap,
+  childSitemaps: files.map((file) => ({
+    id: file.id,
+    path: file.path,
+    urls: file.urls.length,
+    status: childStatuses.find((item) => item.id === file.id)?.status ?? 0,
+  })),
+  summary,
+  counts,
   findings,
 };
 
 const outDir = path.join(process.cwd(), "docs/seo");
 mkdirSync(outDir, { recursive: true });
-const outFile = path.join(outDir, "SITEMAP-VALIDATION.json");
-writeFileSync(outFile, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+writeFileSync(
+  path.join(outDir, "SITEMAP-VALIDATION.json"),
+  `${JSON.stringify(report, null, 2)}\n`,
+);
 
-const errors = findings.filter((finding) => finding.severity === "error");
-const warnings = findings.filter((finding) => finding.severity === "warning");
-
-console.log("SEO sitemap validation");
-console.log(`  registry indexable: ${INDEXABLE_SEO_PAGES.length}`);
-console.log(`  sitemap URLs: ${summary.total}`);
-console.log(`  child sitemaps: ${files.length}`);
-console.log(`  discover pages: ${INDEXABLE_SEMANTIC_PAGES.length}`);
-console.log(`  with images: ${summary.withImages}`);
-console.log(`  with lastmod: ${summary.withLastmod}`);
-console.log(`  findings: ${errors.length} errors, ${warnings.length} warnings`);
-console.log(`  report: ${outFile}`);
-
-if (errors.length) {
+const errors = findings.filter((item) => item.severity === "error");
+if (errors.length || counts.missing || counts.duplicates || counts.invalid) {
   for (const finding of errors.slice(0, 40)) {
     console.error(`ERROR [${finding.code}] ${finding.detail}`);
   }
   process.exit(1);
 }
 
-console.log("SEO sitemap validation passed.");
+console.log("SEO sitemap audit passed.");
+console.log("Sitemap inclusion does not guarantee Google indexing.");

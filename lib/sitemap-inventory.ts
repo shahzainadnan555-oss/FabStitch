@@ -1,15 +1,21 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import type { SeoSitemapPage } from "@/lib/api/types";
 import {
-  SITEMAP_ELIGIBLE_SEO_PAGES,
+  SEO_PAGE_REGISTRY,
   type SeoPageRecord,
   type StorefrontPageType,
-  seoPage,
 } from "@/domain/seo/storefront-registry";
 import { absoluteAssetUrl, absoluteSitemapUrl } from "@/lib/sitemaps";
-import { sanitizeSitemapUrls } from "@/lib/sitemap-sanitize";
-import { getSeoSitemapIndex, getSeoSitemapPage } from "@/repositories/seo";
+import { isPathAllowedByRobots } from "@/lib/robots-policy";
+import { storefrontRedirect } from "@/lib/storefront-redirects";
+
+/**
+ * Frontend sitemap source of truth.
+ *
+ * URLs come only from the storefront SEO registry (static pages, published
+ * fabrics, collections, guides, and the semantic discover corpus). The backend
+ * sitemap / route-classes APIs are not an authority for inclusion.
+ */
 
 /** Logical Search Console groups for the sitemap index. */
 export type SitemapPartitionId =
@@ -27,7 +33,7 @@ export type SitemapUrlEntry = {
   lastmod: string | null;
   images: readonly string[];
   partition: SitemapPartitionId;
-  pageType: StorefrontPageType | "unknown";
+  pageType: StorefrontPageType;
 };
 
 export type SitemapChildFile = {
@@ -37,8 +43,31 @@ export type SitemapChildFile = {
   urls: readonly SitemapUrlEntry[];
 };
 
+/** Stay under Google's 50,000 URL limit with room to spare. */
+const SITEMAP_URL_LIMIT = 45_000;
 const DISCOVER_CHUNK_SIZE = 500;
-const PRODUCTION_HOST = "fabstitch.net";
+const PRODUCTION_ORIGIN = "https://fabstitch.net";
+
+const PRIVATE_PREFIXES = [
+  "/admin/",
+  "/auth/",
+  "/account/",
+  "/login/",
+  "/signup/",
+  "/checkout/",
+  "/cart/",
+  "/inquiries/",
+  "/buyer/",
+  "/onboarding/",
+  "/supplier/",
+  "/rfq/",
+  "/compare/",
+  "/forgot-password/",
+  "/reset-password/",
+  "/orders/",
+  "/api/",
+  "/search/",
+] as const;
 
 const IMAGE_ELIGIBLE_TYPES = new Set<StorefrontPageType>([
   "home",
@@ -53,9 +82,10 @@ const IMAGE_ELIGIBLE_TYPES = new Set<StorefrontPageType>([
   "collection_hub",
 ]);
 
-function partitionFor(
-  pageType: StorefrontPageType | "unknown",
-): SitemapPartitionId {
+const ISO_LASTMOD =
+  /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?$/;
+
+function partitionFor(pageType: StorefrontPageType): SitemapPartitionId {
   switch (pageType) {
     case "fabric":
       return "products";
@@ -77,6 +107,12 @@ function partitionFor(
     default:
       return "core";
   }
+}
+
+function isPrivatePath(pathname: string): boolean {
+  return PRIVATE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix),
+  );
 }
 
 function publicImageExists(imagePath: string): boolean {
@@ -108,8 +144,24 @@ export function resolveSitemapImage(
 }
 
 /**
- * Final sitemap eligibility gate for a registry page.
- * Sitemap URL must equal the self-canonical indexable public path.
+ * Trustworthy lastmod only. The registry does not currently store content
+ * modification dates, so callers pass null rather than a build timestamp.
+ */
+export function trustworthyLastmod(
+  value: string | null | undefined,
+): string | null {
+  if (!value) return null;
+  const trimmed = value.trim();
+  if (!ISO_LASTMOD.test(trimmed)) return null;
+  const parsed = Date.parse(trimmed);
+  if (!Number.isFinite(parsed)) return null;
+  return trimmed;
+}
+
+/**
+ * Final sitemap eligibility gate.
+ * A URL enters the sitemap only when it is a public, self-canonical,
+ * indexable registry page that robots.txt allows and that does not redirect.
  */
 export function passesSitemapEligibilityGate(page: SeoPageRecord): boolean {
   if (!page.isPublic) return false;
@@ -118,18 +170,32 @@ export function passesSitemapEligibilityGate(page: SeoPageRecord): boolean {
   if (!page.qualityGatePassed) return false;
   if (page.type === "private") return false;
   if (page.path !== page.canonicalPath) return false;
-  if (page.path.includes("?")) return false;
+  if (page.path.includes("?") || page.path.includes("#")) return false;
   if (!page.title.trim() || !page.description.trim() || !page.h1.trim()) {
     return false;
   }
-  if (
-    page.indexable &&
-    (page.wordCount ?? 0) > 0 &&
-    (page.wordCount ?? 0) < 40
-  ) {
+  if (isPrivatePath(page.path)) return false;
+  if (storefrontRedirect(page.path)) return false;
+  if (!isPathAllowedByRobots(page.path)) return false;
+
+  const loc = absoluteSitemapUrl(page.canonicalPath);
+  let parsed: URL;
+  try {
+    parsed = new URL(loc);
+  } catch {
     return false;
   }
+  if (parsed.protocol !== "https:") return false;
+  if (parsed.hostname !== "fabstitch.net") return false;
+  if (parsed.search || parsed.hash) return false;
+  if (`${PRODUCTION_ORIGIN}${page.canonicalPath}` !== loc) return false;
   return true;
+}
+
+export function eligibleSitemapPages(): SeoPageRecord[] {
+  return SEO_PAGE_REGISTRY.filter(passesSitemapEligibilityGate).sort((a, b) =>
+    a.canonicalPath.localeCompare(b.canonicalPath),
+  );
 }
 
 function imagesForPage(page: SeoPageRecord): string[] {
@@ -138,90 +204,58 @@ function imagesForPage(page: SeoPageRecord): string[] {
   return image ? [image] : [];
 }
 
-function entryFromPage(page: SeoPageRecord): SitemapUrlEntry | null {
-  if (!passesSitemapEligibilityGate(page)) return null;
+function entryFromPage(page: SeoPageRecord): SitemapUrlEntry {
   return {
     path: page.canonicalPath,
     loc: absoluteSitemapUrl(page.canonicalPath),
-    lastmod: null,
+    lastmod: trustworthyLastmod(null),
     images: imagesForPage(page),
     partition: partitionFor(page.type),
     pageType: page.type,
   };
 }
 
-function entryFromSanitizedApi(
-  entry: SeoSitemapPage["urls"][number],
-): SitemapUrlEntry | null {
-  const pathname = entry.path || new URL(entry.loc).pathname;
-  const record = seoPage(pathname);
-  if (record) return entryFromPage(record);
-
-  // Unknown paths that survived sanitize are public hubs only.
-  const loc = absoluteSitemapUrl(pathname);
-  try {
-    const host = new URL(loc).hostname;
-    if (host !== PRODUCTION_HOST) return null;
-  } catch {
-    return null;
-  }
-
-  return {
-    path: pathname,
-    loc,
-    lastmod: entry.lastmod ?? null,
-    images: [],
-    partition: "core",
-    pageType: "unknown",
-  };
-}
-
 /**
- * Build the authoritative sitemap inventory from the curated registry,
- * optionally unioned with a sanitized API feed.
+ * Deterministic sitemap inventory from the storefront registry.
+ * Backend sitemap feeds are intentionally ignored.
  */
-export function buildSitemapInventory(
-  apiUrls: SeoSitemapPage["urls"] = [],
-): SitemapUrlEntry[] {
+export function buildSitemapInventory(): SitemapUrlEntry[] {
   const byPath = new Map<string, SitemapUrlEntry>();
-
-  for (const page of SITEMAP_ELIGIBLE_SEO_PAGES) {
+  for (const page of eligibleSitemapPages()) {
     const entry = entryFromPage(page);
-    if (!entry) continue;
+    if (byPath.has(entry.path)) continue;
     byPath.set(entry.path, entry);
   }
-
-  if (apiUrls.length > 0) {
-    for (const raw of sanitizeSitemapUrls(apiUrls)) {
-      const entry = entryFromSanitizedApi(raw);
-      if (!entry) continue;
-      const existing = byPath.get(entry.path);
-      if (!existing) {
-        byPath.set(entry.path, entry);
-        continue;
-      }
-      // Prefer accurate lastmod from API when the registry has none.
-      if (!existing.lastmod && entry.lastmod) {
-        byPath.set(entry.path, { ...existing, lastmod: entry.lastmod });
-      }
-    }
-  }
-
   return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
 }
 
-function chunkDiscover(
+function chunkEntries(
+  partition: SitemapPartitionId,
   entries: readonly SitemapUrlEntry[],
+  chunkSize: number,
+  numbered: boolean,
 ): SitemapChildFile[] {
+  if (entries.length === 0) return [];
+  if (!numbered && entries.length <= chunkSize) {
+    const id = `sitemap-${partition}`;
+    return [
+      {
+        id,
+        path: `/sitemaps/${id}/`,
+        partition,
+        urls: entries,
+      },
+    ];
+  }
   const files: SitemapChildFile[] = [];
-  for (let offset = 0; offset < entries.length; offset += DISCOVER_CHUNK_SIZE) {
-    const slice = entries.slice(offset, offset + DISCOVER_CHUNK_SIZE);
-    const index = Math.floor(offset / DISCOVER_CHUNK_SIZE) + 1;
-    const id = `sitemap-discover-${String(index).padStart(3, "0")}`;
+  for (let offset = 0; offset < entries.length; offset += chunkSize) {
+    const slice = entries.slice(offset, offset + chunkSize);
+    const index = Math.floor(offset / chunkSize) + 1;
+    const id = `sitemap-${partition}-${String(index).padStart(3, "0")}`;
     files.push({
       id,
       path: `/sitemaps/${id}/`,
-      partition: "discover",
+      partition,
       urls: slice,
     });
   }
@@ -240,7 +274,8 @@ const PARTITION_ORDER: SitemapPartitionId[] = [
 
 /**
  * Partition inventory into named child sitemap files.
- * Empty partitions are omitted.
+ * Empty partitions are omitted. Discover (and any oversized group) is sharded
+ * in stable path order. Child files are urlsets, never nested indexes.
  */
 export function partitionSitemapInventory(
   inventory: readonly SitemapUrlEntry[],
@@ -254,42 +289,28 @@ export function partitionSitemapInventory(
 
   const files: SitemapChildFile[] = [];
   for (const partition of PARTITION_ORDER) {
-    const urls = grouped.get(partition) ?? [];
+    const urls = (grouped.get(partition) ?? [])
+      .slice()
+      .sort((a, b) => a.path.localeCompare(b.path));
     if (urls.length === 0) continue;
     if (partition === "discover") {
-      files.push(...chunkDiscover(urls));
+      files.push(...chunkEntries(partition, urls, DISCOVER_CHUNK_SIZE, true));
       continue;
     }
-    const id = `sitemap-${partition}`;
-    files.push({
-      id,
-      path: `/sitemaps/${id}/`,
-      partition,
-      urls,
-    });
+    files.push(
+      ...chunkEntries(
+        partition,
+        urls,
+        SITEMAP_URL_LIMIT,
+        urls.length > SITEMAP_URL_LIMIT,
+      ),
+    );
   }
   return files;
 }
 
+/** Registry-only inventory. Kept async for route callers. */
 export async function resolveSitemapInventory(): Promise<SitemapUrlEntry[]> {
-  try {
-    const index = await getSeoSitemapIndex();
-    if (index.page_count > 0 && index.total_urls > 0) {
-      const pages = await Promise.all(
-        Array.from({ length: index.page_count }, (_, offset) =>
-          getSeoSitemapPage(offset + 1),
-        ),
-      );
-      const urls = pages
-        .flatMap((page) => page.urls)
-        .filter((entry) => entry.loc);
-      if (urls.length > 0) {
-        return buildSitemapInventory(urls);
-      }
-    }
-  } catch {
-    // Fall through to local registry only.
-  }
   return buildSitemapInventory();
 }
 

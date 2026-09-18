@@ -1,19 +1,66 @@
 {
-  "generatedAt": "2026-09-17T18:51:36.869Z",
-  "registry": {
-    "total": 1408,
-    "public": 1408,
-    "indexable": 1203,
-    "noindex": 205,
-    "sitemapEligibleRegistry": 1203,
-    "discoverIndexable": 1097,
-    "discoverDirectories": 18,
-    "redirectFamilies": 8
-  },
-  "sitemap": {
-    "total": 1198,
+  "eligible": 1203,
+  "sitemap": 1203,
+  "childSitemaps": [
+    {
+      "id": "sitemap-core",
+      "path": "/sitemaps/sitemap-core/",
+      "urls": 24,
+      "status": 200
+    },
+    {
+      "id": "sitemap-fabrics",
+      "path": "/sitemaps/sitemap-fabrics/",
+      "urls": 7,
+      "status": 200
+    },
+    {
+      "id": "sitemap-collections",
+      "path": "/sitemaps/sitemap-collections/",
+      "urls": 16,
+      "status": 200
+    },
+    {
+      "id": "sitemap-best-for",
+      "path": "/sitemaps/sitemap-best-for/",
+      "urls": 14,
+      "status": 200
+    },
+    {
+      "id": "sitemap-guides",
+      "path": "/sitemaps/sitemap-guides/",
+      "urls": 14,
+      "status": 200
+    },
+    {
+      "id": "sitemap-products",
+      "path": "/sitemaps/sitemap-products/",
+      "urls": 12,
+      "status": 200
+    },
+    {
+      "id": "sitemap-discover-001",
+      "path": "/sitemaps/sitemap-discover-001/",
+      "urls": 500,
+      "status": 200
+    },
+    {
+      "id": "sitemap-discover-002",
+      "path": "/sitemaps/sitemap-discover-002/",
+      "urls": 500,
+      "status": 200
+    },
+    {
+      "id": "sitemap-discover-003",
+      "path": "/sitemaps/sitemap-discover-003/",
+      "urls": 116,
+      "status": 200
+    }
+  ],
+  "summary": {
+    "total": 1203,
     "byPartition": {
-      "core": 19,
+      "core": 24,
       "collections": 16,
       "discover": 1116,
       "fabrics": 7,
@@ -22,98 +69,20 @@
       "guides": 14
     },
     "withImages": 915,
-    "withLastmod": 0,
-    "childSitemaps": [
-      {
-        "id": "sitemap-core",
-        "path": "/sitemaps/sitemap-core/",
-        "urls": 19,
-        "withImages": 3
-      },
-      {
-        "id": "sitemap-fabrics",
-        "path": "/sitemaps/sitemap-fabrics/",
-        "urls": 7,
-        "withImages": 6
-      },
-      {
-        "id": "sitemap-collections",
-        "path": "/sitemaps/sitemap-collections/",
-        "urls": 16,
-        "withImages": 15
-      },
-      {
-        "id": "sitemap-best-for",
-        "path": "/sitemaps/sitemap-best-for/",
-        "urls": 14,
-        "withImages": 13
-      },
-      {
-        "id": "sitemap-guides",
-        "path": "/sitemaps/sitemap-guides/",
-        "urls": 14,
-        "withImages": 0
-      },
-      {
-        "id": "sitemap-products",
-        "path": "/sitemaps/sitemap-products/",
-        "urls": 12,
-        "withImages": 12
-      },
-      {
-        "id": "sitemap-discover-001",
-        "path": "/sitemaps/sitemap-discover-001/",
-        "urls": 500,
-        "withImages": 393
-      },
-      {
-        "id": "sitemap-discover-002",
-        "path": "/sitemaps/sitemap-discover-002/",
-        "urls": 500,
-        "withImages": 395
-      },
-      {
-        "id": "sitemap-discover-003",
-        "path": "/sitemaps/sitemap-discover-003/",
-        "urls": 116,
-        "withImages": 78
-      }
-    ]
+    "withLastmod": 0
   },
-  "quality": {
-    "orphanCandidates": 0,
-    "soft404Risks": 5,
-    "duplicateTitles": 0,
-    "duplicateDescriptions": 0,
-    "duplicateH1s": 0,
-    "videoSitemap": "not_applicable_no_public_video_pages",
-    "hreflang": "not_applicable_no_localized_alternates"
+  "counts": {
+    "eligible": 1203,
+    "sitemap": 1203,
+    "missing": 0,
+    "unexpected": 0,
+    "duplicates": 0,
+    "redirects": 0,
+    "noindex": 0,
+    "private": 0,
+    "invalid": 0,
+    "nonCanonical": 0,
+    "childErrors": 0
   },
-  "findings": [
-    {
-      "severity": "warning",
-      "code": "soft_404_risk",
-      "detail": "/help/viewing-my-inquiries/ wordCount=33"
-    },
-    {
-      "severity": "warning",
-      "code": "soft_404_risk",
-      "detail": "/help/sign-up/ wordCount=36"
-    },
-    {
-      "severity": "warning",
-      "code": "soft_404_risk",
-      "detail": "/help/sign-in/ wordCount=38"
-    },
-    {
-      "severity": "warning",
-      "code": "soft_404_risk",
-      "detail": "/help/account/ wordCount=32"
-    },
-    {
-      "severity": "warning",
-      "code": "soft_404_risk",
-      "detail": "/help/country-and-currency/ wordCount=39"
-    }
-  ]
+  "findings": []
 }
