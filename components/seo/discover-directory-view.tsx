@@ -4,6 +4,8 @@ import { Heading, Label, Prose } from "@/components/ui/typography";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { discoverClusterPath } from "@/lib/discover-directory";
 import type { SemanticCluster } from "@/domain/seo/semantic/ontology";
+import { directoryNotes } from "@/domain/seo/visible-reading";
+import { VisibleReading } from "@/components/seo/visible-reading";
 
 export function DiscoverDirectoryView({
   cluster,
@@ -41,6 +43,18 @@ export function DiscoverDirectoryView({
           {page > 1 ? `${hubTitle} — page ${page}` : hubTitle}
         </Heading>
         <Prose className="mt-4 max-w-[52rem] text-ink-2">{description}</Prose>
+        <div className="mt-8">
+          <VisibleReading
+            id="directory-reading"
+            heading={`Using the ${label} directory`}
+            paragraphs={directoryNotes({
+              label,
+              description,
+              page,
+              items,
+            }).slice(1)}
+          />
+        </div>
         <p className="mt-3 text-sm text-ink-3">
           {totalItems} topics in this group
           {totalPages > 1 ? ` · page ${page} of ${totalPages}` : ""}.

@@ -4,6 +4,8 @@ import { Container } from "@/components/ui/layout";
 import { PageHeader } from "@/components/marketplace/page-header";
 import { Prose } from "@/components/ui/typography";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/about/", {
@@ -21,7 +23,11 @@ export default function AboutPage() {
         intro="FabStitch is a fabric discovery and purchasing platform built around what a business is making, the cloth it needs and the quantity it can use."
       />
       <Container className="py-10 sm:py-14">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,44rem)_1fr] lg:items-start">
+        <PillarReadingBlock
+          reading={pillarReading("/about/")!}
+          id="about-reading"
+        />
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,44rem)_1fr] lg:items-start">
           <Prose>
             <p>
               Most fabric sourcing still happens by email. A customer describes

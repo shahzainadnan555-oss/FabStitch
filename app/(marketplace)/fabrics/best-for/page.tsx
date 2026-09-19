@@ -6,6 +6,8 @@ import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 import { getCustomerBestFor } from "@/repositories/customer-catalog";
 import { SEO_USE_CASES } from "@/catalog";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 export async function generateMetadata() {
   return registeredStorefrontMetadata("/fabrics/best-for/", {
@@ -39,6 +41,13 @@ export default async function BestForHubPage() {
         intro="Best For edits group fabrics by a documented end use. Pick the product you are building — a shirt, dress, knit, outer layer, or home textile — then compare the fabrics FabStitch has already mapped to that use."
         meta={[{ label: "Published edits", value: useCases.length }]}
       />
+
+      <Container className="border-b border-rule py-10">
+        <PillarReadingBlock
+          reading={pillarReading("/fabrics/best-for/")!}
+          id="best-for-reading"
+        />
+      </Container>
 
       <Container className="py-10 sm:py-14">
         {useCases.length ? (

@@ -11,6 +11,8 @@ import { Container } from "@/components/ui/layout";
 import { IconArrowRight } from "@/components/ui/icon";
 import { CONTACT_EMAIL } from "@/lib/site-config";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/contact/", {
@@ -161,6 +163,12 @@ export default function ContactPage() {
           </div>
         </Container>
       </section>
+      <Container className="py-10">
+        <PillarReadingBlock
+          reading={pillarReading("/contact/")!}
+          id="contact-reading"
+        />
+      </Container>
     </>
   );
 }

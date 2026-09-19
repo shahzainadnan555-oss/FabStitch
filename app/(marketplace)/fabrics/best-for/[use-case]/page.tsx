@@ -19,7 +19,9 @@ import {
 } from "@/lib/storefront-metadata";
 import { numericParam } from "@/lib/query-params";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
-import { SEO_USE_CASE_BY_SLUG } from "@/catalog";
+import { SEO_USE_CASE_BY_SLUG, fabricsForUseCase } from "@/catalog";
+import { bestForNotes } from "@/domain/seo/visible-reading";
+import { VisibleReading } from "@/components/seo/visible-reading";
 
 type Props = {
   params: Promise<{ "use-case": string }>;
@@ -78,9 +80,38 @@ export default async function BestForPage({ params, searchParams }: Props) {
     `Explore fabrics selected for ${useCase.name.toLowerCase()}.`;
   const editorial =
     SEO_USE_CASE_BY_SLUG[useCase.slug as keyof typeof SEO_USE_CASE_BY_SLUG];
-  const bodyIntro =
-    editorial?.introduction?.join(" ") ??
-    `This Best For edit groups FabStitch fabrics whose documented applications include ${useCase.name.toLowerCase()}. Compare composition, construction, and stated weight on each fabric page before you inquire.`;
+  const products = editorial ? fabricsForUseCase(editorial) : [];
+  const reading = editorial
+    ? bestForNotes({
+        label: editorial.label,
+        introduction: editorial.introduction,
+        products: products.map((product) => {
+          const gsm =
+            "measurements" in product
+              ? product.measurements?.find((item) => item.unit === "gsm")
+              : undefined;
+          const gsmMax =
+            gsm && "max" in gsm && typeof gsm.max === "number"
+              ? gsm.max
+              : undefined;
+          return {
+            name: product.name,
+            composition:
+              "composition" in product
+                ? (product.composition ?? []).join("; ")
+                : "",
+            gsm:
+              gsm && typeof gsm.min === "number"
+                ? gsmMax !== undefined && gsmMax !== gsm.min
+                  ? `${gsm.min}–${gsmMax} GSM`
+                  : `${gsm.min} GSM`
+                : null,
+          };
+        }),
+      })
+    : [
+        `This Best For edit groups FabStitch fabrics whose documented applications include ${useCase.name.toLowerCase()}. Compare composition, construction, and stated weight on each fabric page before you inquire.`,
+      ];
 
   return (
     <>
@@ -114,12 +145,11 @@ export default async function BestForPage({ params, searchParams }: Props) {
 
       <Container className="py-10 sm:py-14">
         <section aria-labelledby="use-case-guide" className="max-w-[70ch]">
-          <h2 id="use-case-guide" className="text-h2 font-semibold text-ink">
-            Choosing for {useCase.name.toLowerCase()}
-          </h2>
-          <p className="mt-4 text-body leading-relaxed text-ink-2 text-pretty">
-            {bodyIntro}
-          </p>
+          <VisibleReading
+            id="use-case-guide"
+            heading={`Choosing for ${useCase.name.toLowerCase()}`}
+            paragraphs={reading}
+          />
         </section>
 
         <section className="mt-12" aria-labelledby="use-case-products">

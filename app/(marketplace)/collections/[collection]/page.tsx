@@ -27,7 +27,10 @@ import {
   FABRICS_2027,
   SEASONAL_COLLECTION_BY_SLUG,
   fabricsForSeason,
+  BEST_FOR_BY_SLUG,
 } from "@/catalog";
+import { collectionNotes, seasonalNotes } from "@/domain/seo/visible-reading";
+import { VisibleReading } from "@/components/seo/visible-reading";
 
 type Props = {
   params: Promise<{ collection: string }>;
@@ -109,6 +112,31 @@ export default async function CollectionPage({ params, searchParams }: Props) {
   const namedFabrics = seasonal
     ? fabricsForSeason(seasonal)
     : FABRICS_2027.filter((fabric) => fabric.collection === collection.slug);
+  const reading = seasonal
+    ? seasonalNotes({
+        title: seasonal.title,
+        introduction: seasonal.introduction,
+        products: namedFabrics.map((fabric) => ({
+          name: fabric.name,
+          composition:
+            "composition" in fabric
+              ? (fabric.composition ?? []).join("; ")
+              : "",
+        })),
+      })
+    : collectionNotes({
+        label: collection.name,
+        products: namedFabrics.map((fabric) => ({
+          name: fabric.name,
+          composition:
+            "composition" in fabric
+              ? (fabric.composition ?? []).join("; ")
+              : "",
+          uses: fabric.applications
+            .map((slug) => BEST_FOR_BY_SLUG[slug].label)
+            .join(", "),
+        })),
+      });
 
   return (
     <>
@@ -163,6 +191,14 @@ export default async function CollectionPage({ params, searchParams }: Props) {
           <p className="mt-4 text-body leading-relaxed text-ink-2 text-pretty">
             {bodyIntro}
           </p>
+          <div className="mt-8">
+            <VisibleReading
+              id="collection-reading"
+              heading={seasonal ? seasonal.title : `About ${collection.name}`}
+              paragraphs={reading}
+              level={3}
+            />
+          </div>
         </section>
 
         {enrichment?.sections.length ? (

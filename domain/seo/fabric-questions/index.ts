@@ -142,8 +142,19 @@ const categories: FabricQuestionPage[] = CATEGORIES.map((category) => {
     sections: [
       {
         heading: "Questions in this group",
+        paragraphs: children.map(
+          (page) =>
+            `${page.h1} ${page.answer} Open that page when it is the decision in front of you, then use the marketplace if you need a published fabric.`,
+        ),
+      },
+      {
+        heading: `How to use ${category.label.toLowerCase()}`,
         paragraphs: [
-          `${children.length} questions sit in this group. Open one when it matches the decision in front of you.`,
+          category.answer,
+          `The titles in this group are ${children.map((page) => page.h1).join(", ")}. Each one answers a different question. Do not treat the group page as the answer.`,
+          "These pages do not add a price, a certificate, or a supplier count. If the next step is cloth, open the fabric, collection, or marketplace link on the question page.",
+          `${category.label} is finished when the answer matches the decision in front of you. ${category.answer} If it does not, leave this group instead of stretching ${children[0]?.h1 ?? category.h1} across care, sourcing, or a comparison that already has its own page.`,
+          `The separate questions here are ${children.map((page) => page.h1).join("; ")}. Read one, then stop. The marketplace is the catalog after the question is answered, not a replacement for the answer.`,
         ],
       },
     ],
@@ -158,7 +169,21 @@ const categories: FabricQuestionPage[] = CATEGORIES.map((category) => {
     ]),
     commercial: category.slug === "marketplace",
     sourceIds: [],
-    wordCount: words(`${category.answer} ${category.description}`),
+    wordCount: words(
+      [
+        category.answer,
+        category.description,
+        ...children.flatMap((page) => [
+          page.h1,
+          page.answer,
+          "Open that page when it is the decision in front of you, then use the marketplace if you need a published fabric.",
+        ]),
+        `The titles in this group are ${children.map((page) => page.h1).join(", ")}. Each one answers a different question. Do not treat the group page as the answer.`,
+        "These pages do not add a price, a certificate, or a supplier count. If the next step is cloth, open the fabric, collection, or marketplace link on the question page.",
+        `${category.label} is finished when the answer matches the decision in front of you. ${category.answer} If it does not, leave this group instead of stretching ${children[0]?.h1 ?? category.h1} across care, sourcing, or a comparison that already has its own page.`,
+        `The separate questions here are ${children.map((page) => page.h1).join("; ")}. Read one, then stop. The marketplace is the catalog after the question is answered, not a replacement for the answer.`,
+      ].join(" "),
+    ),
   };
 });
 
@@ -183,7 +208,11 @@ const indexPage: FabricQuestionPage = {
       heading: "How to use it",
       paragraphs: [
         "Start with the group that matches the decision: a definition, a comparison, care, or a sourcing term.",
-        "The marketplace remains the place to look at documented cloth. These pages do not replace it.",
+        "The marketplace remains the place to look at documented cloth. These pages do not replace it and they do not add a price, a certificate, or a supplier count.",
+        ...categories.map(
+          (page) =>
+            `${page.h1}: ${page.answer} The questions in that group stay on their own pages.`,
+        ),
       ],
     },
   ],
@@ -204,7 +233,15 @@ const indexPage: FabricQuestionPage = {
   ]),
   commercial: false,
   sourceIds: [],
-  wordCount: 80,
+  wordCount: words(
+    [
+      "This hub collects one page per distinct fabric question from the research inventory. Duplicates point at the page that already answers them. Off-topic items, including Microsoft Fabric, are not published.",
+      "Start with the group that matches the decision: a definition, a comparison, care, or a sourcing term.",
+      "The marketplace remains the place to look at documented cloth. These pages do not replace it and they do not add a price, a certificate, or a supplier count.",
+      ...categories.flatMap((page) => [page.h1, page.answer]),
+      ...questions.map((page) => page.h1),
+    ].join(" "),
+  ),
 };
 
 export const FABRIC_QUESTION_PAGES: readonly FabricQuestionPage[] = [

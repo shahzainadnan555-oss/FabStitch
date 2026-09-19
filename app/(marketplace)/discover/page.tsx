@@ -13,6 +13,8 @@ import {
   pagesForDiscoverCluster,
 } from "@/lib/discover-directory";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/discover/", {
@@ -54,6 +56,12 @@ export default function DiscoverHubPage() {
           collections, Best For edits, guides and the marketplace — without
           duplicating existing canonical hubs.
         </Prose>
+        <div className="mt-8">
+          <PillarReadingBlock
+            reading={pillarReading("/discover/")!}
+            id="discover-reading"
+          />
+        </div>
 
         <Heading level={2} className="mt-12">
           Browse by topic group

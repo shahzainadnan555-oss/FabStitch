@@ -20,6 +20,9 @@ import {
 import { FabricViewTracker } from "@/components/analytics/fabric-view-tracker";
 import { fabricSeoDescription } from "@/lib/storefront-metadata";
 import { listGuides } from "@/repositories/guides";
+import { FABRICS_2027 } from "@/catalog";
+import { fabricNotes } from "@/domain/seo/visible-reading";
+import { VisibleReading } from "@/components/seo/visible-reading";
 
 /**
  * The FabStitch product page. It accepts the source-neutral customer catalogue
@@ -90,6 +93,30 @@ export async function CatalogFabricPage({
   const heroAttributes = specRows.slice(0, 3);
   const description = fabricSeoDescription(fabric);
   const gsm = fabric.measurements.find((item) => item.unit === "gsm");
+  const gsmLabel =
+    gsm && typeof gsm.min === "number" && typeof gsm.max === "number"
+      ? gsm.min === gsm.max
+        ? `${gsm.min} GSM`
+        : `${gsm.min}–${gsm.max} GSM`
+      : gsm && typeof gsm.min === "number"
+        ? `${gsm.min} GSM`
+        : null;
+  const reading = fabricNotes({
+    name: fabric.name,
+    composition: fabric.composition,
+    construction: fabric.construction,
+    characteristics: fabric.characteristics,
+    applications: fabric.applications.map((item) => item.label),
+    seasons: fabric.seasons,
+    collection: fabric.collection.label,
+    gsm: gsmLabel,
+    siblings: FABRICS_2027.filter(
+      (item) =>
+        item.collection === fabric.collection.slug && item.slug !== fabric.slug,
+    )
+      .slice(0, 8)
+      .map((item) => item.name),
+  });
   const mediaSubject = {
     material: fabric.composition[0] ?? fabric.family.label,
     fabricType: fabric.name,
@@ -182,6 +209,12 @@ export async function CatalogFabricPage({
                   final production specification.
                 </p>
               </section>
+
+              <VisibleReading
+                id={`${fabric.slug}-reading`}
+                heading={`Reading ${fabric.name}`}
+                paragraphs={reading}
+              />
 
               <p className="mt-8 max-w-[65ch] border-l-2 border-gold pl-4 text-sm leading-relaxed text-ink-3 text-pretty">
                 This page includes only details returned by the FabStitch

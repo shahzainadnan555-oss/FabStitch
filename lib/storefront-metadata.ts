@@ -34,12 +34,15 @@ const SNIPPET_ELIGIBLE_PUBLIC_PATHS = new Set([
   "/wholesale-fabric/",
 ]);
 
+const homeRecord = localSeoPage("/");
+
 /** Exact homepage document title. Do not apply this to other routes. */
 export const HOMEPAGE_TITLE =
-  "FabStitch | B2B Fabric Marketplace & Fabric Sourcing";
+  homeRecord?.title ?? "FabStitch | B2B Fabric Marketplace & Fabric Sourcing";
 
 export const HOMEPAGE_DESCRIPTION =
-  "Discover fabrics for apparel, fashion, and manufacturing with FabStitch, a B2B fabric marketplace for discovering materials and sourcing fabric for your next project.";
+  homeRecord?.description ??
+  "Discover apparel, fashion, and manufacturing fabrics on FabStitch, a B2B marketplace for sourcing cloth by material and use.";
 
 function canonicalPath(path: string): string {
   const pathname = path.split(/[?#]/, 1)[0] || "/";
@@ -282,6 +285,31 @@ export async function loadStorefrontSeo(
   } = {},
 ): Promise<StorefrontSeoResult> {
   const canonical = canonicalPath(path);
+  const local = localSeoPage(canonical);
+
+  // Indexable registry pages own title, description, and canonical.
+  // Backend SEO rows and page-level title overrides must not diverge SSR from CSR.
+  if (local?.indexable && overrides.index !== false) {
+    return {
+      page: null,
+      metadata: storefrontMetadata({
+        title: canonical === "/" ? HOMEPAGE_TITLE : local.title,
+        description:
+          canonical === "/" ? HOMEPAGE_DESCRIPTION : local.description,
+        path: local.canonicalPath,
+        image: overrides.image ?? local.image,
+        index: true,
+        type:
+          overrides.type ??
+          (local.type === "guide" ||
+          local.type === "help" ||
+          local.type === "fabric_question"
+            ? "article"
+            : "website"),
+      }),
+      breadcrumbs: [],
+    };
+  }
 
   // Homepage metadata is frontend-owned. The SEO API must not rewrite the
   // title, description, or canonical onto another route.
@@ -340,7 +368,6 @@ export async function loadStorefrontSeo(
 
   // Registry fallback keeps curated money pages indexable when the SEO API
   // has no row yet or is temporarily unavailable.
-  const local = localSeoPage(path);
   if (local?.indexable || isSnippetEligiblePublicPath(canonical)) {
     return {
       page: null,

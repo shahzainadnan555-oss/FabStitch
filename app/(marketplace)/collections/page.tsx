@@ -12,6 +12,8 @@ import {
   COLLECTION_BY_SLUG,
   SEASONAL_COLLECTIONS,
 } from "@/catalog";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/collections/", {
@@ -40,6 +42,12 @@ export default async function CollectionsPage() {
         title="Start with the material."
         intro="Each collection groups related FabStitch fabrics by fiber and character — linen, cotton, silk, denim, technical outerwear, and home textiles. Open a collection to compare construction and weight, or jump to the marketplace to filter across everything."
       />
+      <Container className="border-b border-rule py-10">
+        <PillarReadingBlock
+          reading={pillarReading("/collections/")!}
+          id="collections-reading"
+        />
+      </Container>
       <Container className="py-10 sm:py-14">
         {collections.length ? (
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-12">

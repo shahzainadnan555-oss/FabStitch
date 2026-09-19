@@ -9,6 +9,8 @@ import {
   type MarketplaceSupportPage,
 } from "@/domain/seo/marketplace-cluster";
 import { MARKETPLACE_TOPIC_HUBS } from "@/domain/seo/marketplace-thousand";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 const FAMILY_ORDER: MarketplaceFamily[] = [
   "education",
@@ -165,6 +167,12 @@ export function MarketplaceClusterSection() {
             How businesses use this marketplace
           </Heading>
         </div>
+        <div className="mt-8">
+          <PillarReadingBlock
+            reading={pillarReading("/marketplace/")!}
+            id="marketplace-reading"
+          />
+        </div>
 
         <nav
           aria-label="Marketplace topic directories"
@@ -261,7 +269,10 @@ export function MarketplaceClusterSection() {
             <Label tone="ink">Related topics</Label>
             <ul className="mt-3 flex flex-wrap gap-2">
               {[
-                { href: "/guides/fabric-questions/", label: "Fabric questions" },
+                {
+                  href: "/guides/fabric-questions/",
+                  label: "Fabric questions",
+                },
                 { href: "/guides/fabric-weight-and-gsm/", label: "Fabric GSM" },
                 { href: "/guides/cotton-vs-linen/", label: "Cotton vs linen" },
                 {

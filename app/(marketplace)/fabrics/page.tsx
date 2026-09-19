@@ -12,6 +12,8 @@ import {
 } from "@/repositories/customer-catalog";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 import { COLLECTIONS, FABRICS_2027 } from "@/catalog";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/fabrics/", {
@@ -66,6 +68,13 @@ export default async function FabricsHubPage() {
           { label: "Best For edits", value: bestFor.length },
         ]}
       />
+
+      <Container className="border-b border-rule py-10">
+        <PillarReadingBlock
+          reading={pillarReading("/fabrics/")!}
+          id="fabrics-reading"
+        />
+      </Container>
 
       <Container className="py-10 sm:py-14">
         <section aria-labelledby="intent-landings-heading">
@@ -406,8 +415,8 @@ export default async function FabricsHubPage() {
           </h2>
           <p className="mt-3 max-w-[42rem] text-sm leading-relaxed text-ink-3">
             Every documented FabStitch fabric has its own page. Open a name to
-            read composition and construction, or start from the collection
-            when you want the group first.
+            read composition and construction, or start from the collection when
+            you want the group first.
           </p>
           <div className="mt-6 space-y-6">
             {COLLECTIONS.map((collection) => {

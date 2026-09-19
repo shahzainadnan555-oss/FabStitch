@@ -522,6 +522,173 @@ function sectionWords(sections: TopicSection[], extra: string[]): number {
   );
 }
 
+function deepenDraft(
+  draft: Draft,
+  composed: {
+    intro: string;
+    sections: TopicSection[];
+    table?: TopicTable;
+    faqs: { question: string; answer: string }[];
+  },
+) {
+  const sections = [...composed.sections];
+  const extras = extraTopicSections(draft);
+  for (const section of extras) {
+    const count = sectionWords(sections, [
+      composed.intro,
+      draft.h1,
+      ...composed.faqs.flatMap((faq) => [faq.question, faq.answer]),
+    ]);
+    if (count >= 320) break;
+    sections.push(section);
+  }
+  const count = sectionWords(sections, [
+    composed.intro,
+    draft.h1,
+    draft.description,
+    ...composed.faqs.flatMap((faq) => [faq.question, faq.answer]),
+  ]);
+  if (count < 310) {
+    sections.push({
+      heading: "Before the inquiry",
+      body: [
+        `${draft.h1} should end with a fabric URL. Write the construction, the composition, and the weight only if the fabric page publishes it.`,
+        `The search words for this note are “${draft.keyword}”. Do not widen them until this constraint is either met or dropped.`,
+        draft.description,
+      ],
+    });
+  }
+  return { ...composed, sections };
+}
+
+function extraTopicSections(draft: Draft): TopicSection[] {
+  const name = draft.h1;
+  const material = draft.material;
+  const other = draft.other;
+  const use = draft.use;
+  const attribute = draft.attribute;
+  const construction = draft.construction;
+  const sections: TopicSection[] = [];
+  if (material) {
+    sections.push({
+      heading: `Reading ${material.label.toLowerCase()} on a fabric page`,
+      body: [
+        material.fiberNotes,
+        material.handFeel,
+        material.constructionNotes,
+        material.weightNotes,
+        material.buyerNotes,
+      ],
+    });
+    sections.push({
+      heading: `Where ${material.label.toLowerCase()} helps and where it does not`,
+      body: [
+        `${material.label} is often chosen because ${material.strengths.join(", ").toLowerCase()}.`,
+        `Sample before you commit when ${material.watchouts.join(", ").toLowerCase()}.`,
+        `Typical apparel uses named for this fibre are ${material.typicalUses.join(", ")}. ${name} does not add uses that the fabric page does not list.`,
+      ],
+    });
+  }
+  if (other) {
+    sections.push({
+      heading: `The other cloth in this comparison`,
+      body: [
+        other.fiberNotes,
+        other.buyerNotes,
+        `Strengths to test for ${other.label.toLowerCase()}: ${other.strengths.join(", ").toLowerCase()}.`,
+        `Watchouts: ${other.watchouts.join(", ").toLowerCase()}.`,
+      ],
+    });
+  }
+  if (use) {
+    sections.push({
+      heading: `What ${use.label} asks of the cloth`,
+      body: [
+        use.weightGuidance,
+        use.constructionGuidance,
+        use.seasonalNotes,
+        use.buyerNotes,
+        `Requirements that show up in this brief: ${use.requirements.join(", ")}. Useful traits include ${use.preferredTraits.join(", ")}.`,
+      ],
+    });
+  }
+  if (attribute) {
+    sections.push({
+      heading: `How to judge ${attribute.label}`,
+      body: [
+        attribute.definition,
+        attribute.whyItMatters,
+        attribute.howToJudge,
+        attribute.tradeoffs,
+      ],
+    });
+  }
+  if (construction) {
+    sections.push({
+      heading: `${construction.label} as a starting filter`,
+      body: [
+        `${construction.label} is a construction, not a fibre. ${name} only helps if the fabric page agrees with that construction.`,
+        construction.id === "woven"
+          ? "Woven cloth interlaces warp and weft. It is usually the more stable starting point when a pattern needs to hold a line."
+          : "Knit cloth is built from loops. It usually moves more, so GSM comparisons with a woven are not fair.",
+      ],
+    });
+  }
+  if (draft.buyer) {
+    sections.push({
+      heading: `What ${draft.buyer.label} should bring back`,
+      body: [
+        `The job is ${draft.buyer.job}. Bring a fabric URL and the published composition, not an unnamed swatch.`,
+        `${name} does not set a price, a certificate, or a factory minimum.`,
+      ],
+    });
+  }
+  if (draft.gsm) {
+    sections.push({
+      heading: `Using the ${draft.gsm.label} band`,
+      body: [
+        draft.gsm.note,
+        "Heavier is not better. Compare the band only after construction is fixed, and leave the cell blank if the fabric page omits weight.",
+      ],
+    });
+  }
+  sections.push({
+    heading: "What to do with this note",
+    body: [
+      `${name} is a search note for “${draft.keyword}”. Open the marketplace, keep one construction, and read the fabric page before you inquire.`,
+      "Filtered marketplace URLs stay noindex. Share either the marketplace or a specific fabric URL.",
+    ],
+  });
+  return sections;
+}
+
+function hubCopy(
+  hub: (typeof HUBS)[number],
+  children: readonly { h1: string }[],
+): { heading: string; body: string[] }[] {
+  const names = children.map((child) => child.h1);
+  return [
+    {
+      heading: "How to use this list",
+      body: [
+        hub.intro,
+        `The notes in ${hub.label} are separate questions. Start with ${names[0] ?? hub.label} only if that title matches the brief.`,
+        "Open a note, then return to the marketplace to see published fabrics. A topic page is not a product and it is not a second catalog.",
+        "Filtered marketplace URLs stay noindex. Share either the marketplace or a specific fabric page.",
+      ],
+    },
+    {
+      heading: `Notes in ${hub.label}`,
+      body: names
+        .slice(0, 12)
+        .map(
+          (name) =>
+            `${name} is one note in this directory. It explains a search question. It does not replace the fabric page you inquire on, and it does not add a price or a certificate.`,
+        ),
+    },
+  ];
+}
+
 function materialFact(material: MaterialEntity, seed: string): string {
   const strength = pick(material.strengths, seed, 1);
   const watch = pick(material.watchouts, seed, 2);
@@ -987,7 +1154,7 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
       sibling && sibling.slug !== draft.slug
         ? pathFor(sibling.slug)
         : undefined;
-    const composed = composeDraft(draft);
+    const composed = deepenDraft(draft, composeDraft(draft));
     const count = sectionWords(composed.sections, [
       draft.title,
       draft.h1,
@@ -995,7 +1162,7 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
       composed.intro,
       ...composed.faqs.flatMap((faq) => [faq.question, faq.answer]),
     ]);
-    if (count < 80) {
+    if (count < 300) {
       throw new Error(`Thin marketplace topic ${draft.slug} (${count})`);
     }
     return {
@@ -1038,8 +1205,12 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
         "/guides/",
         ...children.map((child) => child.path),
       ],
-      wordCount: words(
-        `${hub.intro} ${children.map((child) => child.h1).join(" ")}`,
+      wordCount: sectionWords(
+        hubCopy(hub, children).map((section) => ({
+          heading: section.heading,
+          body: section.body,
+        })),
+        children.map((child) => child.h1),
       ),
     };
   });
@@ -1093,15 +1264,10 @@ export function getMarketplaceTopic(
     return {
       ...record,
       intro: hub.intro,
-      sections: [
-        {
-          heading: "How to use this list",
-          body: [
-            "Open a note, then return to the marketplace to see published fabrics. A topic page is not a product and it is not a second catalog.",
-            "Filtered marketplace URLs stay noindex. Share either /marketplace/ or a specific fabric page.",
-          ],
-        },
-      ],
+      sections: hubCopy(
+        hub,
+        directory.map((item) => ({ h1: item.label })),
+      ),
       faqs: [
         {
           question: "Do these pages replace the marketplace?",

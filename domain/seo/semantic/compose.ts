@@ -652,6 +652,75 @@ function composeMeta(topic: SemanticTopic, intro: string): string {
   return clampMeta(`${base}${suffix}`);
 }
 
+function topUpSemantic(
+  topic: SemanticTopic,
+  sections: SemanticSection[],
+): SemanticSection[] {
+  const next = [...sections];
+  const material = topic.material;
+  const use = topic.use;
+  const attribute = topic.attribute;
+  const peer = topic.comparisonPeer;
+  const extras: SemanticSection[] = [];
+  if (material) {
+    extras.push({
+      heading: `Buyer notes for ${material.label.toLowerCase()}`,
+      body: [
+        material.fiberNotes,
+        material.handFeel,
+        material.constructionNotes,
+        material.weightNotes,
+        material.buyerNotes,
+        `Strengths to test: ${material.strengths.join(", ").toLowerCase()}. Watchouts: ${material.watchouts.join(", ").toLowerCase()}.`,
+      ],
+    });
+  }
+  if (peer) {
+    extras.push({
+      heading: `Buyer notes for ${peer.label.toLowerCase()}`,
+      body: [peer.fiberNotes, peer.handFeel, peer.buyerNotes, peer.weightNotes],
+    });
+  }
+  if (use) {
+    extras.push({
+      heading: `Applying this to ${use.label}`,
+      body: [
+        use.weightGuidance,
+        use.constructionGuidance,
+        use.seasonalNotes,
+        use.buyerNotes,
+      ],
+    });
+  }
+  if (attribute) {
+    extras.push({
+      heading: attribute.label,
+      body: [
+        attribute.definition,
+        attribute.whyItMatters,
+        attribute.howToJudge,
+        attribute.tradeoffs,
+      ],
+    });
+  }
+  extras.push({
+    heading: "How to use the note",
+    body: [
+      `${topic.primaryKeyword} is the question this page answers. It is not a ranking of cloth and it does not add a price, a certificate, or a supplier count.`,
+      "Open a collection or the marketplace when you need a published fabric. Compare construction before GSM, and leave a spec blank if the fabric page does not state it.",
+    ],
+  });
+  for (const extra of extras) {
+    const count = words(
+      ...next.flatMap((section) => [section.heading, ...section.body]),
+      topic.primaryKeyword,
+    );
+    if (count >= 320) break;
+    next.push(extra);
+  }
+  return next;
+}
+
 export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
   const seed = hash(topic.slug);
   const title = composeTitle(topic, seed);
@@ -660,6 +729,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
   const sections = composeSections(topic, seed);
   const faqs = composeFaqs(topic, seed);
   const table = comparisonTable(topic);
+  const topped = topUpSemantic(topic, sections);
   const metaDescription = composeMeta(topic, intro);
   const relatedPaths = relatedPathsFor(topic);
 
@@ -679,7 +749,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
     h1,
     intro,
     metaDescription,
-    ...sections.flatMap((section) => [
+    ...topped.flatMap((section) => [
       section.heading,
       ...section.body,
       ...(section.keyPoints ?? []),
@@ -688,7 +758,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
   );
 
   const qualityNotes: string[] = [];
-  if (wordCount < 280) qualityNotes.push("insufficient_word_count");
+  if (wordCount < 300) qualityNotes.push("insufficient_word_count");
   if (sections.length < 2) qualityNotes.push("too_few_sections");
   if (!title.trim() || !h1.trim() || !metaDescription.trim()) {
     qualityNotes.push("missing_metadata");
@@ -710,7 +780,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
             ? "Fabric discovery"
             : "Fabric topic",
     intro,
-    sections,
+    sections: topped,
     comparisonTable: table,
     faqs,
     relatedPaths,

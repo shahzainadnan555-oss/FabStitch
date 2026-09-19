@@ -1,6 +1,6 @@
 {
-  "eligible": 2335,
-  "sitemap": 2335,
+  "eligible": 2337,
+  "sitemap": 2337,
   "childSitemaps": [
     {
       "id": "sitemap-core",
@@ -53,7 +53,7 @@
     {
       "id": "sitemap-discover-003",
       "path": "/sitemaps/sitemap-discover-003/",
-      "urls": 154,
+      "urls": 156,
       "status": 200
     },
     {
@@ -118,11 +118,11 @@
     }
   ],
   "summary": {
-    "total": 2335,
+    "total": 2337,
     "byPartition": {
       "core": 46,
       "collections": 16,
-      "discover": 1154,
+      "discover": 1156,
       "fabrics": 7,
       "best-for": 14,
       "products": 12,
@@ -133,8 +133,8 @@
     "withLastmod": 0
   },
   "counts": {
-    "eligible": 2335,
-    "sitemap": 2335,
+    "eligible": 2337,
+    "sitemap": 2337,
     "missing": 0,
     "unexpected": 0,
     "duplicates": 0,

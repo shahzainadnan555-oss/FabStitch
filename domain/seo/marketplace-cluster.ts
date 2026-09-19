@@ -760,6 +760,15 @@ function pageFromSpec(spec: Spec): MarketplaceSupportPage {
     { heading: "How this uses the marketplace", body: [spec.evaluate] },
     { heading: "What to do next", body: [spec.act] },
     { heading: "Limits", body: [spec.limit] },
+    {
+      heading: `Using “${spec.keyword}” in a brief`,
+      body: [
+        spec.intro,
+        `${spec.h1} stays on one question. The marketplace at /marketplace/ is still the catalog. This page does not add a price, a certificate, or a count of suppliers.`,
+        `After you read the limit — ${spec.limit} — open a fabric page and copy the composition and construction into the inquiry. Leave GSM blank if that page does not publish weight.`,
+        `Teams use this note when they need language for ${spec.keyword}. They still have to look at the cloth. A heading is not a spec.`,
+      ],
+    },
   ];
   const count = words([
     spec.title,
@@ -770,7 +779,7 @@ function pageFromSpec(spec: Spec): MarketplaceSupportPage {
     ...spec.faqs.flatMap((faq) => [faq.question, faq.answer]),
   ]);
   const notes: string[] = [];
-  if (count < 140) notes.push("thin");
+  if (count < 300) notes.push("thin");
   if (!spec.title || !spec.h1 || !spec.description)
     notes.push("missing_metadata");
   if (!spec.imageAlt.trim()) notes.push("missing_alt");

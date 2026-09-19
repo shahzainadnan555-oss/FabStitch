@@ -40,10 +40,21 @@ import {
   FABRIC_QUESTION_PAGES,
   fabricQuestionParent,
 } from "@/domain/seo/fabric-questions";
+import { uniquifySnippets } from "@/domain/seo/snippet-length";
+import {
+  bestForNotes,
+  collectionNotes,
+  countParts,
+  directoryNotes,
+  fabricNotes,
+  pillarReading,
+  seasonalNotes,
+} from "@/domain/seo/visible-reading";
 import {
   DISCOVER_CLUSTER_META,
   discoverClusterPageCount,
   discoverClusterPath,
+  paginateDiscoverCluster,
   pagesForDiscoverCluster,
 } from "@/lib/discover-directory";
 import {
@@ -538,6 +549,24 @@ const fabricPages: SeoPageDefinition[] = FABRICS_2027.map((fabric) => {
     (slug) => BEST_FOR_BY_SLUG[slug].label,
   );
   const description = `Explore ${fabric.name} in the FabStitch 2027 collection${composition ? `, with ${composition}` : ""}${characteristics ? `. ${characteristics}` : ""}${applications.length ? `. Best for ${applications.slice(0, 3).join(", ")}` : ""}.`;
+  const gsm =
+    "measurements" in fabric
+      ? fabric.measurements?.find((item) => item.unit === "gsm")
+      : undefined;
+  const gsmMax =
+    gsm && "max" in gsm && typeof gsm.max === "number" ? gsm.max : undefined;
+  const gsmLabel =
+    gsm && typeof gsm.min === "number"
+      ? gsmMax !== undefined && gsmMax !== gsm.min
+        ? `${gsm.min}–${gsmMax} GSM`
+        : `${gsm.min} GSM`
+      : null;
+  const siblings = FABRICS_2027.filter(
+    (item) =>
+      item.collection === fabric.collection && item.slug !== fabric.slug,
+  )
+    .slice(0, 8)
+    .map((item) => item.name);
   const media = MEDIA_BY_FABRIC_SLUG[fabric.slug];
   const fabricTopic = /\bfabric$/i.test(fabric.name)
     ? fabric.name
@@ -572,6 +601,21 @@ const fabricPages: SeoPageDefinition[] = FABRICS_2027.map((fabric) => {
         .slice(0, 2)
         .map((item) => `/fabrics/best-for/${item!.slug}/`),
     ],
+    wordCount: countParts(
+      fabricNotes({
+        name: fabric.name,
+        composition: "composition" in fabric ? (fabric.composition ?? []) : [],
+        construction:
+          "construction" in fabric ? (fabric.construction ?? []) : [],
+        characteristics:
+          "characteristics" in fabric ? (fabric.characteristics ?? []) : [],
+        applications,
+        seasons: fabric.seasons,
+        collection: collection.label,
+        gsm: gsmLabel,
+        siblings,
+      }),
+    ),
     qualityGatePassed: true,
     image:
       (media.status as string) === "final" && "src" in media
@@ -613,6 +657,27 @@ const collectionPages: SeoPageDefinition[] = CATALOG_COLLECTION_CARDS.map(
         ...products.map((fabric) => `/fabrics/${fabric.slug}/`),
       ],
       productCount: products.length,
+      wordCount: countParts([
+        ...collectionNotes({
+          label: collection.label,
+          products: products.map((product) => ({
+            name: product.name,
+            composition:
+              "composition" in product
+                ? (product.composition ?? []).join("; ")
+                : "",
+            uses: product.applications
+              .map((slug) => BEST_FOR_BY_SLUG[slug].label)
+              .join(", "),
+          })),
+        }),
+        ...(enrichment?.sections.flatMap((section) => [
+          section.heading,
+          section.body,
+        ]) ?? []),
+        ...(enrichment?.faqs?.flatMap((faq) => [faq.question, faq.answer]) ??
+          []),
+      ]),
       qualityGatePassed: products.length >= 3,
       image:
         representativeMedia?.status === "final"
@@ -644,12 +709,19 @@ const seasonalPages: SeoPageDefinition[] = SEASONAL_COLLECTIONS.map((theme) => {
       ...products.map((fabric) => `/fabrics/${fabric.slug}/`),
     ],
     productCount: products.length,
-    wordCount: words([
-      theme.title,
-      theme.description,
-      ...theme.introduction,
-      ...products.map((fabric) => fabric.name),
-    ]),
+    wordCount: countParts(
+      seasonalNotes({
+        title: theme.title,
+        introduction: theme.introduction,
+        products: products.map((product) => ({
+          name: product.name,
+          composition:
+            "composition" in product
+              ? (product.composition ?? []).join("; ")
+              : "",
+        })),
+      }),
+    ),
     qualityGatePassed: products.length >= 3 && words(theme.introduction) >= 50,
     image:
       products[0] && MEDIA_BY_FABRIC_SLUG[products[0].slug]?.status === "final"
@@ -662,12 +734,6 @@ const bestForPages: SeoPageDefinition[] = SEO_USE_CASES.map((useCase) => {
   const products = fabricsForUseCase(useCase);
   const introWords = words(useCase.introduction);
   const indexable = products.length >= 3 && introWords >= 45;
-  const contentWords = words([
-    useCase.title,
-    useCase.description,
-    ...useCase.introduction,
-    ...products.map((fabric) => fabric.name),
-  ]);
   return {
     path: `/fabrics/best-for/${useCase.slug}/`,
     type: "best_for",
@@ -688,7 +754,36 @@ const bestForPages: SeoPageDefinition[] = SEO_USE_CASES.map((useCase) => {
       ).map((guide) => guide.path),
     ],
     productCount: products.length,
-    wordCount: contentWords,
+    wordCount: countParts(
+      bestForNotes({
+        label: useCase.label,
+        introduction: useCase.introduction,
+        products: products.map((product) => {
+          const gsm =
+            "measurements" in product
+              ? product.measurements?.find((item) => item.unit === "gsm")
+              : undefined;
+          const gsmMax =
+            gsm && "max" in gsm && typeof gsm.max === "number"
+              ? gsm.max
+              : undefined;
+          const gsmLabel =
+            gsm && typeof gsm.min === "number"
+              ? gsmMax !== undefined && gsmMax !== gsm.min
+                ? `${gsm.min}–${gsmMax} GSM`
+                : `${gsm.min} GSM`
+              : null;
+          return {
+            name: product.name,
+            composition:
+              "composition" in product
+                ? (product.composition ?? []).join("; ")
+                : "",
+            gsm: gsmLabel,
+          };
+        }),
+      }),
+    ),
     qualityGatePassed: indexable,
     image:
       products[0] && MEDIA_BY_FABRIC_SLUG[products[0].slug]?.status === "final"
@@ -798,7 +893,9 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
   }
   if (page.type === "marketplace_support") return "/marketplace/";
   if (page.type === "marketplace_topic") {
-    const topic = MARKETPLACE_TOPIC_PAGES.find((item) => item.path === page.path);
+    const topic = MARKETPLACE_TOPIC_PAGES.find(
+      (item) => item.path === page.path,
+    );
     if (!topic || topic.kind === "hub") return "/marketplace/";
     return (
       MARKETPLACE_TOPIC_HUBS.find((hub) => hub.family === topic.family)?.path ??
@@ -917,10 +1014,13 @@ function resolvePage(page: SeoPageDefinition): SeoPageRecord {
   assertPublication(publication);
   const resolved = resolvePublication(publication);
   const parentPath = parentPathFor({ ...page, path });
+  const reading = pillarReading(path);
   return {
     ...page,
     path,
     h1: page.h1 ?? page.primaryTopic,
+    wordCount:
+      page.wordCount ?? (reading ? countParts(reading.paragraphs) : undefined),
     canonicalPath: path,
     parentPath: parentPath ? canonicalSeoPath(parentPath) : undefined,
     launchPhase: launchPhaseForPageType(page.type),
@@ -975,7 +1075,17 @@ const discoverDirectoryPages: SeoPageDefinition[] =
           "/guides/",
         ],
         qualityGatePassed: true,
-        wordCount: 160 + Math.min(totalItems, 80),
+        wordCount: countParts(
+          directoryNotes({
+            label: meta.label,
+            description: meta.description,
+            page: pageNum,
+            items:
+              paginateDiscoverCluster(meta.cluster, pageNum)?.items.map(
+                (item) => ({ h1: item.h1 }),
+              ) ?? [],
+          }),
+        ),
       });
     }
     return pages;
@@ -1010,7 +1120,6 @@ const semanticPages: SeoPageDefinition[] = [
       ),
     ],
     qualityGatePassed: true,
-    wordCount: 220,
   },
   ...discoverDirectoryPages,
   ...INDEXABLE_SEMANTIC_PAGES.map((page): SeoPageDefinition => ({
@@ -1091,20 +1200,22 @@ const fabricQuestionPages: SeoPageDefinition[] = FABRIC_QUESTION_PAGES.map(
   }),
 );
 
-export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = [
-  ...staticPages,
-  ...fabricPages,
-  ...collectionPages,
-  ...seasonalPages,
-  ...bestForPages,
-  ...guidePages,
-  ...helpPages,
-  ...privatePages,
-  ...semanticPages,
-  ...marketplaceSupportPages,
-  ...marketplaceTopicPages,
-  ...fabricQuestionPages,
-].map(resolvePage);
+export const SEO_PAGE_REGISTRY: readonly SeoPageRecord[] = uniquifySnippets(
+  [
+    ...staticPages,
+    ...fabricPages,
+    ...collectionPages,
+    ...seasonalPages,
+    ...bestForPages,
+    ...guidePages,
+    ...helpPages,
+    ...privatePages,
+    ...semanticPages,
+    ...marketplaceSupportPages,
+    ...marketplaceTopicPages,
+    ...fabricQuestionPages,
+  ].map(resolvePage),
+);
 
 export const INDEXABLE_SEO_PAGES = SEO_PAGE_REGISTRY.filter(
   (page) => page.indexable,

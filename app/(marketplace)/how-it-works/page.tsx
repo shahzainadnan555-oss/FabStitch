@@ -7,6 +7,8 @@ import { TextileBackdrop } from "@/components/landing/textile-backdrop";
 import { Container } from "@/components/ui/layout";
 import { IconArrowRight } from "@/components/ui/icon";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/how-it-works/");
@@ -97,6 +99,12 @@ export default function HowItWorksPage() {
         </Container>
       </section>
 
+      <Container className="border-b border-rule py-10">
+        <PillarReadingBlock
+          reading={pillarReading("/how-it-works/")!}
+          id="how-it-works-reading"
+        />
+      </Container>
       <section className="bg-chrome">
         <Container className="flex flex-col items-start justify-between gap-6 py-12 sm:flex-row sm:items-end sm:py-16">
           <div>

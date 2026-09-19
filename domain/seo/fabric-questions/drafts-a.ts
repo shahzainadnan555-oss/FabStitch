@@ -40,15 +40,57 @@ function words(value: string): number {
 
 export function buildQuestion(draft: QuestionDraft): FabricQuestionPage {
   const path = `/guides/fabric-questions/${draft.slug}/`;
-  const text = [
+  const sections = [...draft.sections];
+  const points = [...draft.points];
+  let text = [
     draft.answer,
-    ...draft.sections.flatMap((section) => [
-      section.heading,
-      ...section.paragraphs,
-    ]),
-    ...draft.points,
+    ...sections.flatMap((section) => [section.heading, ...section.paragraphs]),
+    ...points,
     ...draft.faqs.flatMap((faq) => [faq.question, faq.answer]),
   ].join(" ");
+  if (words(text) < 300) {
+    sections.push({
+      heading: "How to use this answer",
+      paragraphs: [
+        `“${draft.h1}” is the only question this page answers. The short answer is: ${draft.answer}`,
+        points.length
+          ? `The points to keep are ${points.join(" ")}`
+          : `Keep the answer tied to ${draft.keyword}, not to a neighbouring fabric topic.`,
+        `Related terms that belong here, and not as a keyword list, are ${draft.secondary.join(", ")}. Use them when they describe the same decision.`,
+        "If the next step is a cloth rather than a definition, open the marketplace or the collection linked below and read the published composition and construction. This page does not add a price, a certificate, or a supplier count.",
+        `Care, weight, and sourcing only matter here when they change the answer to ${draft.keyword}. Otherwise leave them on the guide that already owns that subject.`,
+      ],
+    });
+    text = [
+      draft.answer,
+      ...sections.flatMap((section) => [
+        section.heading,
+        ...section.paragraphs,
+      ]),
+      ...points,
+      ...draft.faqs.flatMap((faq) => [faq.question, faq.answer]),
+    ].join(" ");
+  }
+  if (words(text) < 310) {
+    sections.push({
+      heading: "What this page will not decide",
+      paragraphs: [
+        `This page answers “${draft.h1}” and stops there. It does not rank ${draft.keyword} against every other cloth, and it does not turn ${draft.secondary.slice(0, 3).join(", ") || draft.keyword} into a shopping list.`,
+        "Take the answer to a fabric page when you need composition, construction, or a published weight. Leave any cell blank that the fabric page leaves blank.",
+        "The marketplace is the catalog. A question page is the explanation. Share the question URL when the reader needs the definition, and the fabric URL when the reader needs the cloth.",
+        `Related language that stays on this question, rather than on a neighbouring page, is ${draft.secondary.join(", ") || draft.keyword}. Use those words only when they describe the same decision.`,
+      ],
+    });
+    text = [
+      draft.answer,
+      ...sections.flatMap((section) => [
+        section.heading,
+        ...section.paragraphs,
+      ]),
+      ...points,
+      ...draft.faqs.flatMap((faq) => [faq.question, faq.answer]),
+    ].join(" ");
+  }
   return {
     slug: draft.slug,
     kind: "question",
@@ -63,7 +105,7 @@ export function buildQuestion(draft: QuestionDraft): FabricQuestionPage {
     h1: draft.h1,
     description: draft.description,
     answer: draft.answer,
-    sections: draft.sections,
+    sections,
     points: draft.points,
     faqs: draft.faqs,
     imagePath: draft.image,

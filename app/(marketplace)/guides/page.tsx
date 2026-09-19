@@ -7,6 +7,8 @@ import { GUIDE_CATEGORIES } from "@/content/guide-taxonomy";
 import { listGuides } from "@/repositories/guides";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
+import { pillarReading } from "@/domain/seo/visible-reading";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
 const single = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
@@ -93,6 +95,15 @@ export default async function GuidesPage({
           </div>
         </Container>
       </section>
+
+      {selected ? null : (
+        <Container className="border-b border-rule py-10">
+          <PillarReadingBlock
+            reading={pillarReading("/guides/")!}
+            id="guides-reading"
+          />
+        </Container>
+      )}
 
       <Container className="py-8 sm:py-10 lg:py-12">
         <nav aria-label="Guide categories" className="overflow-x-auto">

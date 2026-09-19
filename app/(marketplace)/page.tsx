@@ -18,6 +18,8 @@ import {
   type CustomerCollectionCard,
 } from "@/repositories/customer-catalog";
 import { WebSiteJsonLd } from "@/components/seo/structured-data";
+import { PillarReadingBlock } from "@/components/seo/visible-reading";
+import { pillarReading } from "@/domain/seo/visible-reading";
 import { LANDING_MEDIA } from "@/components/landing/media";
 import { TextileBackdrop } from "@/components/landing/textile-backdrop";
 import {
@@ -204,6 +206,9 @@ function MarketplaceContext() {
           specifications, then find the right fabric for your next sourcing
           requirement.
         </p>
+        <div className="mt-8">
+          <PillarReadingBlock reading={pillarReading("/")!} id="home-reading" />
+        </div>
         <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
           {links.map((link) => (
             <li key={link.href}>

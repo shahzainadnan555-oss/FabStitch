@@ -1,0 +1,29 @@
+{
+  "totalPages": 2542,
+  "publicPages": 2542,
+  "indexablePages": 2337,
+  "title": {
+    "min": 45,
+    "max": 61,
+    "withinRange": 2337,
+    "tooShort": 0,
+    "tooLong": 0,
+    "missing": 0,
+    "duplicate": 0
+  },
+  "description": {
+    "min": 120,
+    "max": 151,
+    "withinRange": 2337,
+    "tooShort": 0,
+    "tooLong": 0,
+    "missing": 0,
+    "duplicate": 0
+  },
+  "content": {
+    "eligible": 2320,
+    "atLeast300": 2320,
+    "under300": 0,
+    "excludedUtility": 17
+  }
+}
