@@ -3,7 +3,8 @@
  *
  * Titles are the rendered document title (`segment | FabStitch`, homepage absolute).
  * Content words are registry word counts of text the page renders. Help, support,
- * and private routes are excluded from the 300-word rule.
+ * and private routes are excluded. The old 300-word floor forced a cloned
+ * closing section onto topic pages, so the floor is now a real-body check.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -54,7 +55,7 @@ for (const page of INDEXABLE_SEO_PAGES) {
     contentExcluded += 1;
     continue;
   }
-  if (typeof page.wordCount === "number" && page.wordCount >= 300)
+  if (typeof page.wordCount === "number" && page.wordCount >= 80)
     contentOk += 1;
   else contentShort += 1;
 }
@@ -88,8 +89,8 @@ const report = {
   },
   content: {
     eligible: contentOk + contentShort,
-    atLeast300: contentOk,
-    under300: contentShort,
+    atLeast80: contentOk,
+    under80: contentShort,
     excludedUtility: contentExcluded,
   },
 };

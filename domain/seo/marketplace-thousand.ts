@@ -499,7 +499,7 @@ function sectionWords(sections: TopicSection[], extra: string[]): number {
 }
 
 function deepenDraft(
-  draft: Draft,
+  _draft: Draft,
   composed: {
     intro: string;
     sections: TopicSection[];
@@ -508,134 +508,7 @@ function deepenDraft(
   },
 ) {
   const sections = [...composed.sections];
-  const extras = extraTopicSections(draft);
-  for (const section of extras) {
-    const count = sectionWords(sections, [
-      composed.intro,
-      draft.h1,
-      ...composed.faqs.flatMap((faq) => [faq.question, faq.answer]),
-    ]);
-    if (count >= 320) break;
-    sections.push(section);
-  }
-  const count = sectionWords(sections, [
-    composed.intro,
-    draft.h1,
-    draft.description,
-    ...composed.faqs.flatMap((faq) => [faq.question, faq.answer]),
-  ]);
-  if (count < 310) {
-    sections.push({
-      heading: "Before the inquiry",
-      body: [
-        `${draft.h1} should end with a fabric URL. Write the construction, the composition, and the weight only if the fabric page publishes it.`,
-        `The search words for this note are “${draft.keyword}”. Do not widen them until this constraint is either met or dropped.`,
-        draft.description,
-      ],
-    });
-  }
   return { ...composed, sections };
-}
-
-function extraTopicSections(draft: Draft): TopicSection[] {
-  const name = draft.h1;
-  const material = draft.material;
-  const other = draft.other;
-  const use = draft.use;
-  const attribute = draft.attribute;
-  const construction = draft.construction;
-  const sections: TopicSection[] = [];
-  if (material) {
-    sections.push({
-      heading: `Reading ${material.label.toLowerCase()} on a fabric page`,
-      body: [
-        material.fiberNotes,
-        material.handFeel,
-        material.constructionNotes,
-        material.weightNotes,
-        material.buyerNotes,
-      ],
-    });
-    sections.push({
-      heading: `Where ${material.label.toLowerCase()} helps and where it does not`,
-      body: [
-        `${material.label} is often chosen because ${material.strengths.join(", ").toLowerCase()}.`,
-        `Sample before you commit when ${material.watchouts.join(", ").toLowerCase()}.`,
-        `Typical apparel uses named for this fibre are ${material.typicalUses.join(", ")}. ${name} does not add uses that the fabric page does not list.`,
-      ],
-    });
-  }
-  if (other) {
-    sections.push({
-      heading: `The other cloth in this comparison`,
-      body: [
-        other.fiberNotes,
-        other.buyerNotes,
-        `Strengths to test for ${other.label.toLowerCase()}: ${other.strengths.join(", ").toLowerCase()}.`,
-        `Watchouts: ${other.watchouts.join(", ").toLowerCase()}.`,
-      ],
-    });
-  }
-  if (use) {
-    sections.push({
-      heading: `What ${use.label} asks of the cloth`,
-      body: [
-        use.weightGuidance,
-        use.constructionGuidance,
-        use.seasonalNotes,
-        use.buyerNotes,
-        `Requirements that show up in this brief: ${use.requirements.join(", ")}. Useful traits include ${use.preferredTraits.join(", ")}.`,
-      ],
-    });
-  }
-  if (attribute) {
-    sections.push({
-      heading: `How to judge ${attribute.label}`,
-      body: [
-        attribute.definition,
-        attribute.whyItMatters,
-        attribute.howToJudge,
-        attribute.tradeoffs,
-      ],
-    });
-  }
-  if (construction) {
-    sections.push({
-      heading: `${construction.label} as a starting filter`,
-      body: [
-        `${construction.label} is a construction, not a fibre. ${name} only helps if the fabric page agrees with that construction.`,
-        construction.id === "woven"
-          ? "Woven cloth interlaces warp and weft. It is usually the more stable starting point when a pattern needs to hold a line."
-          : "Knit cloth is built from loops. It usually moves more, so GSM comparisons with a woven are not fair.",
-      ],
-    });
-  }
-  if (draft.buyer) {
-    sections.push({
-      heading: `What ${draft.buyer.label} should bring back`,
-      body: [
-        `The job is ${draft.buyer.job}. Bring a fabric URL and the published composition, not an unnamed swatch.`,
-        `${name} does not set a price, a certificate, or a factory minimum.`,
-      ],
-    });
-  }
-  if (draft.gsm) {
-    sections.push({
-      heading: `Using the ${draft.gsm.label} band`,
-      body: [
-        draft.gsm.note,
-        "Heavier is not better. Compare the band only after construction is fixed, and leave the cell blank if the fabric page omits weight.",
-      ],
-    });
-  }
-  sections.push({
-    heading: "What to do with this note",
-    body: [
-      `${name} is a search note for “${draft.keyword}”. Open the marketplace, keep one construction, and read the fabric page before you inquire.`,
-      "Filtered marketplace URLs stay noindex. Share either the marketplace or a specific fabric URL.",
-    ],
-  });
-  return sections;
 }
 
 function hubCopy(
@@ -777,24 +650,43 @@ function composeDraft(draft: Draft): {
       intro: `Sourcing ${material.label.toLowerCase()} for ${use.label} on FabStitch starts in the marketplace, not in a second essay about the fibre.`,
       sections: [
         {
-          heading: "Search",
+          heading: `Filter ${material.label.toLowerCase()} for ${use.label}`,
           body: [
-            `Filter toward ${material.label.toLowerCase()} and open only cards that can serve ${use.label}. ${garmentFact(use, seed)}`,
+            `Keep cards that can serve a ${use.garmentLabel}. ${garmentFact(use, seed)}`,
+            pick(
+              [
+                use.constructionGuidance,
+                use.weightGuidance,
+                use.seasonalNotes,
+                use.buyerNotes,
+              ],
+              seed,
+              11,
+            ),
             lens,
           ],
         },
         {
-          heading: "Read the cloth",
+          heading: `What ${material.label.toLowerCase()} changes in that garment`,
           body: [
+            pick(
+              [
+                material.constructionNotes,
+                material.handFeel,
+                material.weightNotes,
+                material.fiberNotes,
+              ],
+              seed,
+              12,
+            ),
             materialFact(material, seed),
-            `Related materials buyers also open include ${material.relatedMaterials.slice(0, 3).join(", ")}. They are neighbours, not substitutes.`,
           ],
         },
         {
-          heading: "Inquire",
+          heading: `What to write on the ${use.garmentLabel} inquiry`,
           body: [
-            `Name the ${use.garmentLabel}, the quantity and the fabric URL. Ask about ${pick(material.watchouts, seed, 8).toLowerCase()} if the page is silent.`,
-            "Do not invent a price, a lead time or a test report.",
+            pick([material.buyerNotes, use.buyerNotes], seed, 13),
+            `Ask about ${pick(material.watchouts, seed, 8).toLowerCase()} if the fabric page is silent. Do not invent a price, a lead time, or a test report.`,
           ],
         },
       ],
@@ -812,16 +704,19 @@ function composeDraft(draft: Draft): {
       intro: `${titleCase(attribute.label)} is a constraint on ${material.label.toLowerCase()}, not a separate fibre. Confirm it on the fabric page after you filter.`,
       sections: [
         {
-          heading: "Marketplace check",
+          heading: `Checking ${attribute.label} on ${material.label.toLowerCase()}`,
           body: [
-            materialFact(material, seed),
-            `Judge ${attribute.label} together with construction. ${attribute.tradeoffs}`,
+            material.constructionNotes,
+            material.weightNotes,
+            `Judge ${attribute.label} with the construction, not from the filter name. ${attribute.howToJudge} ${attribute.tradeoffs}`,
           ],
         },
         {
-          heading: "What not to assume",
+          heading: `What ${material.label.toLowerCase()} still does not guarantee`,
           body: [
-            `A ${attribute.label} filter does not certify the cloth. ${material.typicalUses.slice(0, 3).join(", ")} are common places buyers test ${material.label.toLowerCase()}, and some of those garments will reject this attribute.`,
+            material.handFeel,
+            material.buyerNotes,
+            `${material.typicalUses.slice(0, 3).join(", ")} are common tests for this fibre. Some of those garments will reject ${attribute.label}.`,
           ],
         },
       ],
@@ -840,17 +735,16 @@ function composeDraft(draft: Draft): {
       intro: `Buying ${use.label} with a ${attribute.label} constraint means rejecting cloths that only match the adjective.`,
       sections: [
         {
-          heading: "The garment test",
+          heading: `Testing ${attribute.label} on a ${use.garmentLabel}`,
           body: [
             garmentFact(use, seed),
-            `For ${use.garmentLabel}s, ${attribute.label} matters because ${attribute.whyItMatters.charAt(0).toLowerCase()}${attribute.whyItMatters.slice(1)}`,
+            use.constructionGuidance,
+            `${titleCase(attribute.label)} matters here because ${attribute.whyItMatters.charAt(0).toLowerCase()}${attribute.whyItMatters.slice(1)}`,
           ],
         },
         {
-          heading: "Keep the comparison fair",
-          body: [
-            `Stay inside one construction while you test ${attribute.label} for ${use.label}. ${attribute.tradeoffs}`,
-          ],
+          heading: `Where ${attribute.label} fights ${use.label}`,
+          body: [attribute.tradeoffs, attribute.howToJudge, use.weightGuidance],
         },
       ],
       faqs: [
@@ -867,14 +761,14 @@ function composeDraft(draft: Draft): {
       intro: `${titleCase(construction.label)} ${material.label.toLowerCase()} is a construction decision. The fibre name does not tell you whether the cloth is stable or looped.`,
       sections: [
         {
-          heading: "Start with construction",
+          heading: `Start with ${construction.label}, then read ${material.label.toLowerCase()}`,
           body: [
             `${construction.label} cloth ${construction.id === "woven" ? "interlaces warp and weft, so it is usually more stable" : "is built from loops, so it usually moves more"}. ${material.label} can still be made the other way.`,
             materialFact(material, seed),
           ],
         },
         {
-          heading: "Inquiry limit",
+          heading: `Do not inquire if the page is not ${construction.label}`,
           body: [
             `Ask whether this ${material.label.toLowerCase()} card is actually ${construction.label}. If the page names a different construction, it is a different search.`,
           ],
@@ -894,14 +788,14 @@ function composeDraft(draft: Draft): {
       intro: `${titleCase(use.label)} can be cut from more than one construction. This note is only about starting with a ${construction.label}.`,
       sections: [
         {
-          heading: "Why start here",
+          heading: `Why a ${use.garmentLabel} might start ${construction.label}`,
           body: [
             garmentFact(use, seed),
             `A ${construction.label} is the right first filter when ${pick(use.preferredTraits, seed, 6)} matters for the ${use.garmentLabel}.`,
           ],
         },
         {
-          heading: "When to switch",
+          heading: `When ${use.label} should leave ${construction.label}`,
           body: [
             `If the ${use.garmentLabel} needs the other construction, start a separate marketplace search. Mixing ${construction.label} and the alternative in one grid makes GSM meaningless.`,
           ],
@@ -921,14 +815,14 @@ function composeDraft(draft: Draft): {
       intro: `${titleCase(buyer.label)} use the marketplace to find ${material.label.toLowerCase()} they can specify. The job in front of them is ${buyer.job}.`,
       sections: [
         {
-          heading: "What to bring back",
+          heading: `What ${buyer.label} should bring back for ${material.label.toLowerCase()}`,
           body: [
             materialFact(material, seed),
             "Bring a fabric URL and the published composition. Do not bring an unnamed swatch photo as the spec.",
           ],
         },
         {
-          heading: "What this role should not assume",
+          heading: `What ${buyer.label} should not assume about ${material.label.toLowerCase()}`,
           body: [
             `${titleCase(buyer.label)} still need sampling for ${pick(material.watchouts, seed, 2).toLowerCase()}.`,
             "FabStitch does not add a price, a certificate or a factory minimum on this page.",
@@ -949,11 +843,11 @@ function composeDraft(draft: Draft): {
       intro: `${gsm.label} is a planning band for ${use.label}. It is not a score, and it is not evidence that a FabStitch fabric publishes that exact number.`,
       sections: [
         {
-          heading: "How to use the band",
+          heading: `How to use ${gsm.label} for ${use.label}`,
           body: [gsm.note, garmentFact(use, seed)],
         },
         {
-          heading: "What still matters more",
+          heading: `What matters more than ${gsm.label}`,
           body: [
             `Compare GSM only inside one construction. ${use.constructionGuidance.split(".")[0]}.`,
             "If the fabric page omits weight, leave the cell blank and ask in the inquiry.",
@@ -1141,7 +1035,7 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
       composed.intro,
       ...composed.faqs.flatMap((faq) => [faq.question, faq.answer]),
     ]);
-    if (count < 300) {
+    if (count < 80) {
       throw new Error(`Thin marketplace topic ${draft.slug} (${count})`);
     }
     return {

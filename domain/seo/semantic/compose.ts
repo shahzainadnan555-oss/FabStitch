@@ -181,273 +181,312 @@ function relatedPathsFor(topic: SemanticTopic): string[] {
   return [...paths].filter(knownPath).slice(0, 10);
 }
 
+function cap(value: string): string {
+  return value ? `${value[0]!.toUpperCase()}${value.slice(1)}` : value;
+}
+
+function rotate(
+  fields: readonly string[],
+  seed: number,
+  count: number,
+): string[] {
+  const clean = fields.map((field) => field.trim()).filter(Boolean);
+  if (!clean.length) return [];
+  const start = seed % clean.length;
+  return [...clean.slice(start), ...clean.slice(0, start)].slice(
+    0,
+    Math.min(count, clean.length),
+  );
+}
+
+function section(
+  heading: string,
+  body: string[],
+  keyPoints?: string[],
+): SemanticSection {
+  return {
+    heading,
+    body: body.map((part) => part.trim()).filter(Boolean),
+    keyPoints,
+  };
+}
+
 function composeSections(
   topic: SemanticTopic,
-  seed: number,
+  _seed: number,
 ): SemanticSection[] {
   const material = topic.material;
   const use = topic.use;
   const attribute = topic.attribute;
   const construction = topic.construction;
   const peer = topic.comparisonPeer;
-  const sections: SemanticSection[] = [];
 
   if (topic.pageType === "comparison" && material && peer) {
-    sections.push(
-      {
-        heading: `What ${material.label.toLowerCase()} contributes`,
-        body: [material.fiberNotes, material.constructionNotes],
-        keyPoints: [...material.strengths.slice(0, 2)],
-      },
-      {
-        heading: `What ${peer.label.toLowerCase()} contributes`,
-        body: [peer.fiberNotes, peer.constructionNotes],
-        keyPoints: [...peer.strengths.slice(0, 2)],
-      },
-      {
-        heading: "Hand, drape and texture",
-        body: [
-          material.handFeel,
-          `By contrast, ${peer.handFeel.charAt(0).toLowerCase()}${peer.handFeel.slice(1)}`,
+    return [
+      section(
+        `Where ${material.label.toLowerCase()} and ${peer.label.toLowerCase()} overlap`,
+        [
+          `Both can appear in apparel briefs, and neither wins by reputation. ${material.label} is ${material.family}. ${peer.label} is ${peer.family}. The comparison starts there, then moves to construction and published weight.`,
         ],
-      },
-      {
-        heading: "Weight and published GSM",
-        body: [
-          material.weightNotes,
-          peer.weightNotes,
-          "Compare GSM only when both fabric pages publish it. A missing number is not evidence that one cloth is lighter.",
-        ],
-      },
-      {
-        heading: `When to start with ${material.label.toLowerCase()}`,
-        body: [
-          `Start here when the brief needs ${material.strengths[0]!.toLowerCase()} and the garment sits near ${material.typicalUses.slice(0, 3).join(", ")}.`,
+      ),
+      section(
+        `What ${material.label.toLowerCase()} actually contributes`,
+        [material.fiberNotes, material.handFeel, material.constructionNotes],
+        [...material.strengths.slice(0, 3)],
+      ),
+      section(
+        `What ${peer.label.toLowerCase()} actually contributes`,
+        [peer.fiberNotes, peer.handFeel, peer.constructionNotes],
+        [...peer.strengths.slice(0, 3)],
+      ),
+      section("Hand, weight and the limits of a GSM comparison", [
+        material.weightNotes,
+        peer.weightNotes,
+        "Compare GSM only when both fabric pages publish it, and only inside a similar construction. A missing number is not evidence that one cloth is lighter.",
+      ]),
+      section(
+        `When the brief should start with ${material.label.toLowerCase()}`,
+        [
+          `Start here when you need ${material.strengths[0]!.toLowerCase()}, especially for ${material.typicalUses.slice(0, 3).join(", ")}.`,
           material.buyerNotes,
-          `Still check ${material.watchouts[0]!.toLowerCase()}.`,
+          `Still sample for ${material.watchouts[0]!.toLowerCase()}.`,
         ],
-      },
-      {
-        heading: `When to start with ${peer.label.toLowerCase()}`,
-        body: [
-          `Start here when ${peer.strengths[0]!.toLowerCase()} is the constraint you cannot drop, especially for ${peer.typicalUses.slice(0, 3).join(", ")}.`,
-          peer.buyerNotes,
-          `Still check ${peer.watchouts[0]!.toLowerCase()}.`,
-        ],
-      },
-      {
-        heading: "How a business should source the shortlist",
-        body: [
-          `Open both families on the FabStitch marketplace, then keep one construction before you compare weight. ${material.label} watchouts include ${material.watchouts.slice(0, 2).join("; ").toLowerCase()}. ${peer.label} watchouts include ${peer.watchouts.slice(0, 2).join("; ").toLowerCase()}.`,
-          "Neither fibre is universally better. Inquire with the garment, climate and quantity, and leave unpublished specs blank.",
-        ],
-      },
-    );
-    return sections;
+      ),
+      section(`When the brief should start with ${peer.label.toLowerCase()}`, [
+        `Start here when ${peer.strengths[0]!.toLowerCase()} is the constraint you cannot drop, especially for ${peer.typicalUses.slice(0, 3).join(", ")}.`,
+        peer.buyerNotes,
+        `Still sample for ${peer.watchouts[0]!.toLowerCase()}.`,
+      ]),
+    ];
   }
 
-  if (material) {
-    sections.push({
-      heading: pick(
+  if (material && construction) {
+    return [
+      section(
+        `${cap(construction.label)} is the decision, not the fibre name`,
         [
-          `What ${material.label.toLowerCase()} fabric is in practice`,
-          `Understanding ${material.label.toLowerCase()} as a sourcing family`,
-          `${material.label} fabric beyond the fibre name`,
+          construction.definition,
+          construction.behaviour,
+          `${material.label} can be made in more than one construction. This page is only the ${construction.label} reading.`,
         ],
-        seed,
-        1,
       ),
-      body: [
-        material.fiberNotes,
+      section(`How ${material.label.toLowerCase()} behaves in that build`, [
+        material.constructionNotes,
+        material.handFeel,
+        material.weightNotes,
+      ]),
+      section(
+        `Confirm this ${material.label.toLowerCase()} ${construction.label} on the fabric page`,
+        [
+          construction.buyerNotes,
+          material.buyerNotes,
+          `Watchouts that do not disappear because the construction is named: ${material.watchouts.join("; ")}.`,
+        ],
+      ),
+    ];
+  }
+
+  if (material && use && attribute) {
+    const materialSlice = rotate(
+      [
         material.handFeel,
         material.constructionNotes,
+        material.weightNotes,
+        material.buyerNotes,
       ],
-      keyPoints: [...material.strengths.slice(0, 3)],
-    });
+      hash(use.id + attribute.id),
+      2,
+    );
+    const useSlice = rotate(
+      [use.weightGuidance, use.constructionGuidance, use.seasonalNotes],
+      hash(material.id + attribute.id),
+      1,
+    );
+    return [
+      section(
+        `${cap(attribute.label)} ${material.label.toLowerCase()} for ${use.label}`,
+        [
+          `The garment still has to meet ${use.requirements[0]}. ${cap(attribute.label)} does not replace that.`,
+          attribute.howToJudge,
+          ...useSlice,
+        ],
+      ),
+      section(`What ${material.label.toLowerCase()} adds to that constraint`, [
+        ...materialSlice,
+        `Test ${material.strengths[0]!.toLowerCase()}. Sample for ${material.watchouts[0]!.toLowerCase()}.`,
+      ]),
+      section(`The trade-off on this ${use.garmentLabel}`, [
+        attribute.tradeoffs,
+        `Related checks sit on the ${attribute.label} page. This URL only tests that constraint on ${material.label.toLowerCase()}.`,
+      ]),
+    ];
   }
 
-  if (use) {
-    sections.push({
-      heading: pick(
-        [
-          `What ${use.label} demand from cloth`,
-          `${use.garmentLabel[0]!.toUpperCase()}${use.garmentLabel.slice(1)} requirements that change the shortlist`,
-          `Building a ${use.garmentLabel} fabric brief`,
-        ],
-        seed,
-        2,
-      ),
-      body: [
-        `A credible ${use.garmentLabel} programme starts with garment constraints: ${use.requirements.join(", ")}.`,
+  if (material && use) {
+    const materialSlice = rotate(
+      [
+        material.handFeel,
+        material.constructionNotes,
+        material.weightNotes,
+        material.buyerNotes,
+        material.fiberNotes,
+      ],
+      hash(use.id),
+      2,
+    );
+    const useSlice = rotate(
+      [
         use.weightGuidance,
         use.constructionGuidance,
         use.seasonalNotes,
         use.buyerNotes,
-        `Related garment directions worth comparing: ${use.relatedUses.join(", ")}.`,
       ],
-      keyPoints: [...use.preferredTraits],
-    });
-  }
-
-  if (attribute) {
-    sections.push({
-      heading: pick(
+      hash(material.id),
+      1,
+    );
+    return [
+      section(
+        `What a ${use.garmentLabel} asks of ${material.label.toLowerCase()}`,
         [
-          `What “${attribute.label}” should mean in a fabric brief`,
-          `How to judge ${attribute.label} fabric responsibly`,
-          `${attribute.label[0]!.toUpperCase()}${attribute.label.slice(1)} as a selection filter`,
+          `A ${use.garmentLabel} needs ${use.requirements.slice(0, 2).join(" and ")}. ${material.label} is not automatically that cloth.`,
+          ...useSlice,
         ],
-        seed,
-        3,
       ),
-      body: [
-        attribute.definition,
-        attribute.whyItMatters,
-        attribute.howToJudge,
-        attribute.tradeoffs,
-        `Related attributes to consider alongside ${attribute.label}: ${attribute.relatedAttributes.join(", ")}.`,
-      ],
-    });
-  }
-
-  if (construction) {
-    sections.push({
-      heading: `${construction.label[0]!.toUpperCase()}${construction.label.slice(1)} construction behaviour`,
-      body: [
-        construction.definition,
-        construction.behaviour,
-        construction.buyerNotes,
-      ],
-      keyPoints: [
-        ...construction.typicalUses.map((item) => `Common in ${item}`),
-      ],
-    });
-  }
-
-  if (material && use) {
-    sections.push({
-      heading: pick(
+      section(`${material.label} facts that change this ${use.garmentLabel}`, [
+        ...materialSlice,
+        `Strength to test: ${material.strengths[0]}. Watchout that still applies: ${material.watchouts[0]}.`,
+      ]),
+      section(
+        `Confirm ${material.label.toLowerCase()} before it is specified for ${use.label}`,
         [
-          `When ${material.label.toLowerCase()} fits ${use.label}`,
-          `Matching ${material.label.toLowerCase()} to a ${use.garmentLabel} silhouette`,
-          `${material.label} for ${use.label}: selection logic`,
+          `Name the ${use.garmentLabel} in the inquiry, then read construction and weight on the fabric page. A missing cell stays missing.`,
+          material.watchouts[1]
+            ? `Also sample for ${material.watchouts[1].toLowerCase()}.`
+            : material.buyerNotes,
         ],
-        seed,
-        4,
       ),
-      body: [
-        `${material.label} appears in ${use.label} when the published construction supports the silhouette. ${material.buyerNotes}`,
-        use.buyerNotes,
-        `Typical ${material.label.toLowerCase()} strengths — ${material.strengths.join("; ").toLowerCase()} — only help if they align with ${use.garmentLabel} requirements such as ${use.requirements.slice(0, 2).join(" and ")}.`,
-        `Watchouts still apply: ${material.watchouts.join("; ")}.`,
-      ],
-      keyPoints: [
-        `Start from the ${use.garmentLabel}, then filter ${material.label.toLowerCase()} constructions`,
-        "Confirm weight, opacity and recovery on the fabric record",
-      ],
-    });
+    ];
   }
 
   if (material && attribute) {
-    sections.push({
-      heading: `How ${attribute.label} shows up in ${material.label.toLowerCase()}`,
-      body: [
-        `${attribute.label[0]!.toUpperCase()}${attribute.label.slice(1)} is not automatic for every ${material.label.toLowerCase()} cloth. ${attribute.howToJudge}`,
-        material.weightNotes,
-        `Buyer note: ${material.buyerNotes}`,
-      ],
-    });
-  }
-
-  if (use && attribute && !material) {
-    sections.push({
-      heading: `${attribute.label[0]!.toUpperCase()}${attribute.label.slice(1)} choices for ${use.label}`,
-      body: [
-        `For ${use.label}, “${attribute.label}” only helps when it serves ${use.requirements.slice(0, 2).join(" and ")}.`,
-        attribute.tradeoffs,
-        use.constructionGuidance,
-      ],
-    });
-  }
-
-  sections.push({
-    heading: pick(
+    const materialSlice = rotate(
       [
-        "How to shortlist on FabStitch",
-        "A practical discovery path",
-        "From brief to inquiry",
+        material.handFeel,
+        material.constructionNotes,
+        material.weightNotes,
+        material.buyerNotes,
       ],
-      seed,
-      5,
-    ),
-    body: [
-      "Open the marketplace with the garment and material filters that match your brief, then compare named fabrics on composition, construction and documented Best For uses.",
-      "Collections help when the fibre family is decided. Best For edits help when the product is decided. Guides help when you need the underlying concept — weight, weave, or selection logic.",
-      "When a property is not published, do not invent it from a photo. Ask in the inquiry with the silhouette, climate and quantity context attached.",
-    ],
-    keyPoints: [
-      "Filter by real constraints",
-      "Compare documented specs",
-      "Inquire with a clear brief",
-    ],
-  });
-
-  if (topic.pageType === "commercial") {
-    sections.push({
-      heading: "Buying and sourcing considerations",
-      body: [
-        "Online fabric discovery should still follow a sourcing discipline: define the garment, compare documented cloths, sample where needed, then inquire with quantities and constraints.",
-        "FabStitch is built for that workflow — browse, compare, and move into inquiry without inventing supplier claims or inventory promises that are not on the record.",
-        "For wholesale or bulk intent, use the wholesale and sourcing hubs alongside this topic page so commercial process guidance stays canonical.",
-      ],
-    });
+      hash(attribute.id),
+      2,
+    );
+    return [
+      section(`Judging ${attribute.label} on ${material.label.toLowerCase()}`, [
+        attribute.howToJudge,
+        attribute.whyItMatters,
+        ...materialSlice,
+      ]),
+      section(`Where ${attribute.label} is the wrong assumption`, [
+        attribute.tradeoffs,
+        `Sample for ${material.watchouts[0]!.toLowerCase()}. A ${attribute.label} title does not prove it.`,
+      ]),
+    ];
   }
 
-  if (topic.pageType === "education") {
-    sections.push({
-      heading: "Common mistakes to avoid",
-      body: [
-        "Choosing by fibre buzzword without construction and weight.",
-        "Assuming photos prove opacity, stretch recovery or durability.",
-        "Copying a competitor’s cloth name without matching the garment constraints.",
-        "Skipping sampling when care, recovery or climate risk is high.",
+  if (use && attribute) {
+    const useSlice = rotate(
+      [
+        use.weightGuidance,
+        use.constructionGuidance,
+        use.seasonalNotes,
+        use.buyerNotes,
       ],
-    });
+      hash(attribute.id),
+      2,
+    );
+    return [
+      section(`Why ${attribute.label} matters for ${use.label}`, [
+        `A ${use.garmentLabel} needs ${use.requirements.slice(0, 2).join(" and ")}.`,
+        attribute.whyItMatters,
+        ...useSlice,
+      ]),
+      section(`How ${attribute.label} can fail a ${use.garmentLabel}`, [
+        attribute.howToJudge,
+        attribute.tradeoffs,
+      ]),
+    ];
   }
 
-  // Ensure enough depth for quality gate without empty filler.
-  if (sections.length < 4) {
-    if (material) {
-      sections.push({
-        heading: `${material.label} applications and related directions`,
-        body: [
-          `Documented apparel directions for ${material.label.toLowerCase()} often include ${material.typicalUses.join(", ")}.`,
-          `Related materials worth comparing on FabStitch: ${material.relatedMaterials.join(", ")}.`,
-          material.buyerNotes,
-        ],
-      });
-    } else if (use) {
-      sections.push({
-        heading: `Materials often considered for ${use.label}`,
-        body: [
-          `Buyers typically compare cellulosics, protein fibres, synthetics and blends against the ${use.garmentLabel} brief rather than locking a fibre name too early.`,
-          use.constructionGuidance,
-          `Keep related garment pathways in view: ${use.relatedUses.join(", ")}.`,
-        ],
-      });
-    } else if (attribute) {
-      sections.push({
-        heading: `Putting ${attribute.label} into a sourcing workflow`,
-        body: [
-          `Translate “${attribute.label}” into measurable checks on the fabric record — weight, construction, stretch notes or opacity — before you shortlist.`,
-          attribute.whyItMatters,
-          "Then move into FabStitch marketplace filters and inquire with the attribute written as a constraint, not as marketing language.",
-        ],
-      });
-    }
+  if (material) {
+    return [
+      section(
+        `How ${material.label.toLowerCase()} behaves`,
+        [material.fiberNotes, material.handFeel],
+        [...material.strengths],
+      ),
+      section("Construction and weight change it more than the family name", [
+        material.constructionNotes,
+        material.weightNotes,
+      ]),
+      section("Where it is used, and what to watch", [
+        `Documented directions include ${material.typicalUses.join(", ")}.`,
+        material.buyerNotes,
+        `Watchouts: ${material.watchouts.join("; ")}. Compare with ${material.relatedMaterials.join(", ")} only after construction is fixed.`,
+      ]),
+    ];
   }
 
-  return sections;
+  if (use) {
+    return [
+      section(`What ${use.label} require from cloth`, [
+        `Start with the garment, not a fibre name. The constraints are ${use.requirements.join(", ")}.`,
+        `Useful traits, when the fabric page supports them: ${use.preferredTraits.join(", ")}.`,
+      ]),
+      section("Weight and construction for this garment", [
+        use.weightGuidance,
+        use.constructionGuidance,
+        use.seasonalNotes,
+      ]),
+      section("How to write the brief", [
+        use.buyerNotes,
+        `Neighbouring garment families, not substitutes: ${use.relatedUses.join(", ")}.`,
+      ]),
+    ];
+  }
+
+  if (attribute) {
+    return [
+      section(`What ${attribute.label} means on a cloth`, [
+        attribute.definition,
+        attribute.whyItMatters,
+      ]),
+      section("How to judge it without trusting the title", [
+        attribute.howToJudge,
+      ]),
+      section("Trade-offs and neighbouring checks", [
+        attribute.tradeoffs,
+        `Read these beside ${attribute.label}: ${attribute.relatedAttributes.join(", ")}.`,
+      ]),
+    ];
+  }
+
+  if (construction) {
+    return [
+      section(cap(construction.label), [
+        construction.definition,
+        construction.behaviour,
+      ]),
+      section("Where it is used", [
+        construction.buyerNotes,
+        `Common applications: ${construction.typicalUses.join(", ")}.`,
+      ]),
+    ];
+  }
+
+  return [
+    section(topic.primaryKeyword, [
+      `This page is about ${topic.primaryKeyword}. Use the linked collection or the marketplace to see a published fabric, and do not treat a missing spec as a zero.`,
+    ]),
+  ];
 }
 
 function comparisonTable(topic: SemanticTopic): SemanticTable | undefined {
@@ -505,12 +544,16 @@ function composeFaqs(topic: SemanticTopic, seed: number): SemanticFaq[] {
     });
   }
   faqs.push({
-    question: "Can I buy fabric on FabStitch from this page?",
-    answer:
-      "This page explains the topic and links into FabStitch discovery. Browse matching fabrics in the marketplace or collections, then inquire on the cloths that fit your brief.",
+    question: `Where does a ${topic.primaryKeyword} search go next?`,
+    answer: material
+      ? `Open published ${material.label.toLowerCase()} fabrics and compare construction before weight. ${material.buyerNotes}`
+      : use
+        ? `Use the ${use.label} brief on this page, then open a fabric page. ${use.buyerNotes}`
+        : attribute
+          ? attribute.howToJudge
+          : `Follow the links to a collection, a guide, or the marketplace. This page is not itself a cloth.`,
   });
 
-  // Keep 3–4 FAQs, rotated by seed for variety without emptiness.
   if (faqs.length > 4) {
     const start = seed % Math.max(1, faqs.length - 3);
     return faqs.slice(start, start + 4);
@@ -669,69 +712,29 @@ function topUpSemantic(
   topic: SemanticTopic,
   sections: SemanticSection[],
 ): SemanticSection[] {
-  const next = [...sections];
+  const count = words(
+    ...sections.flatMap((item) => [item.heading, ...item.body]),
+    topic.primaryKeyword,
+  );
+  if (count >= 80) return sections;
   const material = topic.material;
   const use = topic.use;
-  const attribute = topic.attribute;
-  const peer = topic.comparisonPeer;
-  const extras: SemanticSection[] = [];
   if (material) {
-    extras.push({
-      heading: `Buyer notes for ${material.label.toLowerCase()}`,
-      body: [
-        material.fiberNotes,
-        material.handFeel,
-        material.constructionNotes,
-        material.weightNotes,
+    return [
+      ...sections,
+      section(`Buyer note for ${material.label.toLowerCase()}`, [
         material.buyerNotes,
-        `Strengths to test: ${material.strengths.join(", ").toLowerCase()}. Watchouts: ${material.watchouts.join(", ").toLowerCase()}.`,
-      ],
-    });
-  }
-  if (peer) {
-    extras.push({
-      heading: `Buyer notes for ${peer.label.toLowerCase()}`,
-      body: [peer.fiberNotes, peer.handFeel, peer.buyerNotes, peer.weightNotes],
-    });
+        material.weightNotes,
+      ]),
+    ];
   }
   if (use) {
-    extras.push({
-      heading: `Applying this to ${use.label}`,
-      body: [
-        use.weightGuidance,
-        use.constructionGuidance,
-        use.seasonalNotes,
-        use.buyerNotes,
-      ],
-    });
+    return [
+      ...sections,
+      section(`Brief for ${use.label}`, [use.buyerNotes, use.weightGuidance]),
+    ];
   }
-  if (attribute) {
-    extras.push({
-      heading: attribute.label,
-      body: [
-        attribute.definition,
-        attribute.whyItMatters,
-        attribute.howToJudge,
-        attribute.tradeoffs,
-      ],
-    });
-  }
-  extras.push({
-    heading: "How to use the note",
-    body: [
-      `${topic.primaryKeyword} is the question this page answers. It is not a ranking of cloth and it does not add a price, a certificate, or a supplier count.`,
-      "Open a collection or the marketplace when you need a published fabric. Compare construction before GSM, and leave a spec blank if the fabric page does not state it.",
-    ],
-  });
-  for (const extra of extras) {
-    const count = words(
-      ...next.flatMap((section) => [section.heading, ...section.body]),
-      topic.primaryKeyword,
-    );
-    if (count >= 320) break;
-    next.push(extra);
-  }
-  return next;
+  return sections;
 }
 
 export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
@@ -771,7 +774,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
   );
 
   const qualityNotes: string[] = [];
-  if (wordCount < 300) qualityNotes.push("insufficient_word_count");
+  if (wordCount < 80) qualityNotes.push("insufficient_word_count");
   if (sections.length < 2) qualityNotes.push("too_few_sections");
   if (!title.trim() || !h1.trim() || !metaDescription.trim()) {
     qualityNotes.push("missing_metadata");
@@ -807,9 +810,12 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
     collectionSlugs,
     bestForSlugs,
     fabricQueryHints,
-    ctaHeading: "Continue into FabStitch discovery",
-    ctaBody:
-      "Browse matching fabrics, compare documented specs, then inquire with your garment brief.",
+    ctaHeading: `Next step for ${topic.primaryKeyword}`,
+    ctaBody: topic.material
+      ? `Open a published ${topic.material.label.toLowerCase()} fabric and inquire on that URL. This page does not add a price or a certificate.`
+      : topic.use
+        ? `Open a fabric whose page supports the ${topic.use.garmentLabel} brief, then inquire there.`
+        : "Open a fabric page from the links on this note, then inquire on that URL.",
     wordCount,
     indexable: qualityGatePassed,
     qualityGatePassed,

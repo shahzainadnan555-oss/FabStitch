@@ -1199,23 +1199,19 @@ const SPECS: readonly LibrarySpec[] = [
 function sectionsFor(spec: LibrarySpec): SemanticSection[] {
   return [
     {
-      heading: "What this means",
+      heading: spec.h1,
       body: [spec.what],
     },
     {
-      heading: "Why it matters when sourcing",
+      heading: `Why ${spec.keyword} changes the brief`,
       body: [spec.why, spec.how],
     },
     {
-      heading: `Applying ${spec.keyword} on FabStitch`,
-      body: [
-        `${spec.h1} stays separate from nearby topics because the decision is narrower than a general fabric overview. ${spec.what}`,
-        `Write the constraint in the words a buyer can check, then open the related FabStitch page that already states it. ${spec.how} ${spec.choose}`,
-        `Stop if a linked guide already answers this exact question, and use this page when it does not. ${spec.watch}`,
-      ],
+      heading: `Using ${spec.keyword} on a real cloth`,
+      body: [spec.choose, spec.watch],
     },
     {
-      heading: "What to avoid and how to choose",
+      heading: `What to avoid with ${spec.keyword}`,
       body: [spec.watch, spec.choose],
       keyPoints: [
         `Keep the decision tied to ${spec.keyword}, not to a swapped synonym.`,
@@ -1257,7 +1253,7 @@ export function buildLibraryPages(): {
       ...spec.faqs.flatMap((faq) => [faq.question, faq.answer]),
     ]);
     const notes: string[] = [];
-    if (count < 280) notes.push("insufficient_word_count");
+    if (count < 220) notes.push("insufficient_word_count");
     if (pageSections.length < 2) notes.push("too_few_sections");
     if (!spec.title.trim() || !spec.h1.trim() || !spec.description.trim()) {
       notes.push("missing_metadata");
