@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SeoImage } from "@/components/seo/seo-image";
 import Link from "next/link";
 import { PageHeader } from "@/components/marketplace/page-header";
 import { Container } from "@/components/ui/layout";
@@ -105,13 +105,11 @@ export function SeoIntentLanding({ page }: { page: IntentLandingContent }) {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div className="min-w-0">
             <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-md border border-rule-2 bg-paper-sunk">
-              <Image
+              <SeoImage
                 src={page.image}
                 alt={page.imageAlt}
-                fill
                 priority
                 sizes="(min-width: 1024px) 60vw, 100vw"
-                className="object-cover"
               />
             </div>
 
@@ -164,13 +162,12 @@ export function SeoIntentLanding({ page }: { page: IntentLandingContent }) {
                           className="group block overflow-hidden rounded-md border border-rule-2 bg-paper-raised transition-colors hover:border-indigo"
                         >
                           <div className="relative aspect-[4/3] overflow-hidden">
-                            <Image
+                            <SeoImage
                               src={src}
                               alt={media?.alt ?? `${fabric.name} fabric`}
-                              fill
                               priority={index === 0}
                               sizes="(min-width: 1024px) 20vw, (min-width: 640px) 40vw, 100vw"
-                              className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
                             />
                           </div>
                           <span className="flex items-center justify-between gap-3 p-4">

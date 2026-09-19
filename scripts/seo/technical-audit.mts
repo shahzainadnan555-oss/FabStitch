@@ -30,6 +30,7 @@ import {
   MARKETPLACE_TOPIC_PAGES,
 } from "@/domain/seo/marketplace-thousand";
 import { INDEXABLE_SEMANTIC_PAGES } from "@/domain/seo/semantic";
+import { imageAsset } from "@/domain/seo/image-assets";
 import { HELP_ARTICLES } from "@/features/help/content";
 import {
   FOOTER_LINK_GROUPS,
@@ -431,7 +432,7 @@ for (const page of indexable) {
     brokenImages += 1;
     fail("broken_image", `${page.path} ${page.image}`);
   }
-  const alt = altByPath.get(page.path);
+  const alt = imageAsset(page.image)?.alt ?? altByPath.get(page.path);
   if (
     page.type === "fabric" ||
     page.type === "marketplace_topic" ||

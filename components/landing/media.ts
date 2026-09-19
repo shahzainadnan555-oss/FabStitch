@@ -11,5 +11,5 @@ export const LANDING_MEDIA = {
   twill: "/media/fabrics/twill.jpg",
   performance: "/media/fabrics/polyester.jpg",
   fleece: "/media/fabrics/fleece.jpg",
-  knit: "/Knit-Fabrics-4-1024x684.jpg",
+  knit: "/media/fabrics/knit-fabric.jpg",
 } as const;

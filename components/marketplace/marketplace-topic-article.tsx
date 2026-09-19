@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { SeoImage } from "@/components/seo/seo-image";
 import { ArticleJsonLd, FaqJsonLd } from "@/components/seo/structured-data";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ButtonLink } from "@/components/ui/button";
@@ -57,14 +57,7 @@ export function MarketplaceTopicArticle({
           </Heading>
           <Prose className="mt-5 text-ink-2">{page.intro}</Prose>
           <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-md bg-paper-raised">
-            <Image
-              src={page.imagePath}
-              alt={page.imageAlt}
-              fill
-              sizes="(min-width: 768px) 52rem, 100vw"
-              className="object-cover"
-              priority
-            />
+            <SeoImage src={page.imagePath} alt={page.imageAlt} />
           </div>
           <div className="mt-8">
             <ButtonLink

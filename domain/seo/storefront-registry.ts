@@ -50,6 +50,7 @@ import {
   pillarReading,
   seasonalNotes,
 } from "@/domain/seo/visible-reading";
+import { clusterImage } from "@/domain/seo/topic-image";
 import {
   DISCOVER_CLUSTER_META,
   discoverClusterPageCount,
@@ -234,6 +235,7 @@ const staticPages: SeoPageDefinition[] = [
       ...CURATED_FABRIC_SLUGS.map((slug) => `/fabrics/${slug}/`),
     ],
     qualityGatePassed: true,
+    image: "/media/fabrics/cotton-poplin-primary.webp",
   },
   {
     path: "/fabrics/",
@@ -269,6 +271,7 @@ const staticPages: SeoPageDefinition[] = [
     ],
     qualityGatePassed: true,
     productCount: FABRICS_2027.length,
+    image: "/media/fabrics/european-flax-linen-primary.webp",
   },
   ...COMMERCIAL_LANDING_PAGES.map((page): SeoPageDefinition => ({
     path: page.path,
@@ -389,6 +392,7 @@ const staticPages: SeoPageDefinition[] = [
     ],
     qualityGatePassed: true,
     productCount: FABRICS_2027.length,
+    image: "/media/fabrics/silk-chiffon-primary.webp",
   },
   {
     path: "/fabrics/best-for/",
@@ -825,6 +829,9 @@ const guidePages: SeoPageDefinition[] = CATALOG_GUIDES.map((guide) => {
     ],
     wordCount: guide.wordCount,
     qualityGatePassed: indexable,
+    image: guide.fabricSlugs
+      .map((slug) => MEDIA_BY_FABRIC_SLUG[slug])
+      .find((media) => media?.status === "final" && media.src)?.src,
   };
 });
 
@@ -1075,6 +1082,7 @@ const discoverDirectoryPages: SeoPageDefinition[] =
           "/guides/",
         ],
         qualityGatePassed: true,
+        image: clusterImage(meta.cluster),
         wordCount: countParts(
           directoryNotes({
             label: meta.label,
@@ -1120,6 +1128,7 @@ const semanticPages: SeoPageDefinition[] = [
       ),
     ],
     qualityGatePassed: true,
+    image: "/media/fabrics/cotton-poplin-primary.webp",
   },
   ...discoverDirectoryPages,
   ...INDEXABLE_SEMANTIC_PAGES.map((page): SeoPageDefinition => ({
@@ -1137,7 +1146,7 @@ const semanticPages: SeoPageDefinition[] = [
     relatedPaths: page.relatedPaths,
     qualityGatePassed: page.qualityGatePassed,
     wordCount: page.wordCount,
-    image: page.material?.imageHint,
+    image: page.imagePath ?? page.material?.imageHint,
   })),
 ];
 

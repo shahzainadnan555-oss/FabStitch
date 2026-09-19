@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { SeoImage } from "@/components/seo/seo-image";
 import {
   CollectionPageJsonLd,
   FaqJsonLd,
@@ -121,13 +121,7 @@ export function SemanticLandingPage({ page }: { page: SemanticPage }) {
           <Prose className="mt-5 text-ink-2">{page.intro}</Prose>
           {imageSrc ? (
             <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-md bg-paper-raised">
-              <Image
-                src={imageSrc}
-                alt={imageAlt}
-                fill
-                sizes="(min-width: 768px) 52rem, 100vw"
-                className="object-cover"
-              />
+              <SeoImage src={imageSrc} alt={imageAlt} />
             </div>
           ) : null}
 

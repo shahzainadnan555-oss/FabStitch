@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { cn } from "@/lib/cn";
+import { SeoImage } from "@/components/seo/seo-image";
 import {
   FabricMedia,
   type MediaAsset,
@@ -67,12 +67,11 @@ export function FabricGallery({
                 )}
               >
                 <span className="relative block size-16">
-                  <Image
+                  <SeoImage
                     src={asset.src}
-                    alt=""
-                    fill
+                    alt={asset.alt || KIND_LABEL[asset.kind ?? "flat"]}
                     sizes="4rem"
-                    className="object-cover"
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
                 </span>
                 <span className="block border-t border-rule bg-paper px-1.5 py-1">

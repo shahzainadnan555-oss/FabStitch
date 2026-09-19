@@ -7,6 +7,7 @@ import type {
 } from "./types";
 import { generateSemanticCandidates } from "./candidates";
 import { CATALOG_GUIDES } from "@/content/guides";
+import { illustrativeImage } from "@/domain/seo/topic-image";
 import {
   CATALOG_COLLECTION_CARDS,
   SEASONAL_COLLECTIONS,
@@ -765,6 +766,13 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
   }
 
   const qualityGatePassed = qualityNotes.length === 0;
+  const picture = illustrativeImage({
+    materialHint: topic.material?.imageHint,
+    peerHint: topic.comparisonPeer?.imageHint,
+    useId: topic.use?.id,
+    attributeId: topic.attribute?.id,
+    constructionId: topic.construction?.id,
+  });
 
   return {
     ...topic,
@@ -794,12 +802,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
     indexable: qualityGatePassed,
     qualityGatePassed,
     qualityNotes,
-    imagePath: topic.material?.imageHint,
-    imageAlt:
-      topic.pageType === "comparison" && topic.material && topic.comparisonPeer
-        ? `${topic.material.label} and ${topic.comparisonPeer.label} fabrics compared for apparel selection`
-        : topic.material
-          ? `${topic.material.label} fabric shown for this selection brief`
-          : undefined,
+    imagePath: picture.path,
+    imageAlt: picture.alt,
   };
 }

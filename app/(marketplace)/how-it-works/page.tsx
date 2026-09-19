@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { LANDING_MEDIA } from "@/components/landing/media";
 import { ScrollReveal } from "@/components/marketplace/landing-motion";
@@ -7,6 +6,7 @@ import { TextileBackdrop } from "@/components/landing/textile-backdrop";
 import { Container } from "@/components/ui/layout";
 import { IconArrowRight } from "@/components/ui/icon";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { SeoImage } from "@/components/seo/seo-image";
 import { pillarReading } from "@/domain/seo/visible-reading";
 import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
@@ -65,13 +65,12 @@ export default function HowItWorksPage() {
             </p>
           </div>
           <div className="relative hidden min-h-60 lg:col-span-4 lg:block">
-            <Image
+            <SeoImage
               src={LANDING_MEDIA.linen}
               alt="Natural linen weave in close detail"
-              fill
               priority
               sizes="28vw"
-              className="rounded-md object-cover"
+              className="absolute inset-0 h-full w-full rounded-md object-cover"
             />
           </div>
         </Container>

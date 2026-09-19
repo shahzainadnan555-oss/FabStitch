@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { SeoImage } from "@/components/seo/seo-image";
 import {
   ArticleJsonLd,
   CollectionPageJsonLd,
@@ -95,13 +95,7 @@ export function FabricQuestionArticle({ page }: { page: FabricQuestionPage }) {
           </Heading>
           <Prose className="mt-5 text-ink-2">{page.answer}</Prose>
           <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-md bg-paper-raised">
-            <Image
-              src={page.imagePath}
-              alt={page.imageAlt}
-              fill
-              sizes="(min-width: 768px) 52rem, 100vw"
-              className="object-cover"
-            />
+            <SeoImage src={page.imagePath} alt={page.imageAlt} />
           </div>
           {page.commercial ? (
             <div className="mt-8">

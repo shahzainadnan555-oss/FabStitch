@@ -835,5 +835,5 @@ export const MEDIA_BY_FABRIC_SLUG: Record<string, FabricMedia> = {
   "wool-cashmere-melton": { status: "final", src: "/media/fabrics/wool-cashmere-melton-primary.webp", alt: "wool cashmere melton fabric" },
   "wool-mohair-fresco": { status: "final", src: "/media/fabrics/wool-mohair-fresco-primary.webp", alt: "wool mohair fresco fabric" },
   "wool-alpaca-brushed": { status: "final", src: "/media/fabrics/wool-alpaca-brushed-primary.webp", alt: "wool alpaca brushed fabric" },
-  "wool-hemp-canvas": { status: "final", src: "/media/fabrics/wool-hemp-canvas-primary.webp", alt: "wool hemp canvas fabric" },
+  "wool-hemp-canvas": { status: "final", src: "/media/fabrics/wool-hemp-canvas-primary.webp", alt: "Wool and hemp canvas with a firm woven surface" },
 };

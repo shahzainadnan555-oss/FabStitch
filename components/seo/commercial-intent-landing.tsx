@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { SeoImage } from "@/components/seo/seo-image";
 import { TextileBackdrop } from "@/components/landing/textile-backdrop";
 import { Container } from "@/components/ui/layout";
 import { ButtonLink } from "@/components/ui/button";
@@ -110,13 +110,11 @@ export function CommercialIntentLanding({
               </div>
             </div>
             <div className="relative hidden min-h-64 overflow-hidden rounded-md border border-white/15 lg:col-span-5 lg:block">
-              <Image
+              <SeoImage
                 src={page.image}
                 alt={page.imageAlt}
-                fill
                 priority
                 sizes="36vw"
-                className="object-cover"
               />
             </div>
           </div>
@@ -196,13 +194,12 @@ export function CommercialIntentLanding({
                           className="group block overflow-hidden rounded-md border border-rule-2 bg-paper-raised transition-colors hover:border-indigo"
                         >
                           <div className="relative aspect-[4/3] overflow-hidden">
-                            <Image
+                            <SeoImage
                               src={src}
                               alt={media?.alt ?? `${fabric.name} fabric`}
-                              fill
                               priority={index === 0}
                               sizes="(min-width: 1024px) 20vw, (min-width: 640px) 40vw, 100vw"
-                              className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
                             />
                           </div>
                           <span className="flex items-center justify-between gap-3 p-4">

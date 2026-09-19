@@ -233,7 +233,7 @@ Use WebP or AVIF for new stills. Keep the subject and characteristic weave insid
 - **twill:** `/media/fabrics/twill.jpg` — AVAILABLE
 - **performance:** `/media/fabrics/polyester.jpg` — AVAILABLE
 - **fleece:** `/media/fabrics/fleece.jpg` — AVAILABLE
-- **knit:** `/Knit-Fabrics-4-1024x684.jpg` — AVAILABLE
+- **knit:** `/media/fabrics/knit-fabric.jpg` — AVAILABLE
 - **heroVideo:** `/media/silk-hero.mp4` — AVAILABLE, excluded from image totals
 
 ## Reuse plan

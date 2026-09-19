@@ -6,6 +6,7 @@ import { hasIndexAffectingSearchParams } from "@/lib/seo-query";
 import { getSeoPageByPath } from "@/repositories/seo";
 import type { CustomerCatalogFabric } from "@/repositories/customer-catalog";
 import { seoPage as localSeoPage } from "@/domain/seo/storefront-registry";
+import { imageAsset } from "@/domain/seo/image-assets";
 import { absolute } from "@/lib/seo";
 
 const DEFAULT_SOCIAL_IMAGE = "/media/hero-navy-jersey.jpg";
@@ -91,6 +92,8 @@ export function storefrontMetadata({
   const canonical = canonicalPath(path);
   const isHome = canonical === "/";
   const socialImage = image ?? DEFAULT_SOCIAL_IMAGE;
+  const socialAsset = imageAsset(socialImage);
+  const socialAlt = socialAsset?.alt ?? "FabStitch fabric";
   const documentTitle = metadataTitle(isHome ? HOMEPAGE_TITLE : title, {
     absolute: isHome,
   });
@@ -119,7 +122,12 @@ export function storefrontMetadata({
       url: isHome ? absolute("/") : canonical,
       locale: "en_US",
       images: [
-        { url: socialImage, alt: socialTitle, width: 1200, height: 630 },
+        {
+          url: socialImage,
+          alt: socialAlt,
+          width: socialAsset?.width ?? 1200,
+          height: socialAsset?.height ?? 630,
+        },
       ],
     },
     twitter: {
@@ -223,7 +231,14 @@ function backendMetadata(
         description: socialDescription,
         url: canonical,
         ...(socialImage
-          ? { images: [{ url: socialImage, alt: socialDisplay }] }
+          ? {
+              images: [
+                {
+                  url: socialImage,
+                  alt: imageAsset(socialImage)?.alt ?? socialDisplay,
+                },
+              ],
+            }
           : {}),
       },
       twitter: {
@@ -262,7 +277,14 @@ function backendMetadata(
       description: socialDescription,
       url: canonical,
       ...(socialImage
-        ? { images: [{ url: socialImage, alt: socialDisplay }] }
+        ? {
+            images: [
+              {
+                url: socialImage,
+                alt: imageAsset(socialImage)?.alt ?? socialDisplay,
+              },
+            ],
+          }
         : {}),
     },
     twitter: {

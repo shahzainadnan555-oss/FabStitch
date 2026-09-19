@@ -12,6 +12,8 @@ import {
 } from "@/domain/seo/semantic/ontology";
 import { MARKETPLACE_SUPPORT_PAGES } from "@/domain/seo/marketplace-cluster";
 import { getSemanticPage } from "@/domain/seo/semantic";
+import { illustrativeImage } from "@/domain/seo/topic-image";
+import { imageAlt } from "@/domain/seo/image-assets";
 
 /**
  * Exactly 1,000 marketplace topic pages.
@@ -275,46 +277,20 @@ function bestForPath(useId?: string): string | undefined {
   return `/fabrics/best-for/${useId}/`;
 }
 
-function imageAltFor(partial: {
+function topicPicture(partial: {
   material?: MaterialEntity;
   other?: MaterialEntity;
   use?: UseEntity;
   attribute?: AttributeEntity;
   construction?: ConstructionEntity;
-  gsm?: GsmBand;
-}): string {
-  if (partial.material && partial.other) {
-    return `${partial.material.label} and ${partial.other.label} fabrics compared for a shortlist`;
-  }
-  if (partial.material && partial.use) {
-    return `${partial.material.label} fabric considered for ${partial.use.label}`;
-  }
-  if (partial.material && partial.attribute) {
-    return `${partial.material.label} fabric reviewed for a ${partial.attribute.label} brief`;
-  }
-  if (partial.material && partial.construction) {
-    return `${partial.construction.label} ${partial.material.label.toLowerCase()} fabric surface`;
-  }
-  if (partial.use && partial.gsm) {
-    return `Fabric sample used when planning ${partial.use.label} weight`;
-  }
-  if (partial.use && partial.construction) {
-    return `${partial.construction.label} fabric considered for ${partial.use.label}`;
-  }
-  if (partial.use) {
-    return `Fabric sample reviewed for ${partial.use.label}`;
-  }
-  if (partial.material) {
-    return `${partial.material.label} fabric used as a marketplace example`;
-  }
-  return "Cotton fabric used to illustrate marketplace topic guides";
-}
-
-function imageFor(material?: MaterialEntity): { path: string; alt: string } {
-  return {
-    path: material?.imageHint || COTTON,
-    alt: imageAltFor({ material }),
-  };
+}): { path: string; alt: string } {
+  return illustrativeImage({
+    materialHint: partial.material?.imageHint,
+    peerHint: partial.other?.imageHint,
+    useId: partial.use?.id,
+    attributeId: partial.attribute?.id,
+    constructionId: partial.construction?.id,
+  });
 }
 
 type Draft = {
@@ -342,11 +318,11 @@ function draftBase(
     imageAlt?: string;
   },
 ): Draft {
-  const image = imageFor(partial.material);
+  const image = topicPicture(partial);
   return {
     ...partial,
     imagePath: partial.imagePath ?? image.path,
-    imageAlt: partial.imageAlt ?? imageAltFor(partial),
+    imageAlt: partial.imageAlt ?? image.alt,
   };
 }
 
@@ -1197,7 +1173,7 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
       primaryKeyword: `${hub.label.toLowerCase()} marketplace topics`,
       secondaryKeywords: [hub.label.toLowerCase(), "fabric sourcing"],
       imagePath: COTTON,
-      imageAlt: "Cotton fabric used to illustrate marketplace topic guides",
+      imageAlt: imageAlt(COTTON),
       relatedPaths: [
         "/marketplace/",
         "/fabrics/",

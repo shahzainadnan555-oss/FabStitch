@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SeoImage } from "@/components/seo/seo-image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Container } from "@/components/ui/layout";
@@ -155,13 +155,11 @@ function Hero() {
           </div>
           <div className="absolute -bottom-2 -left-1 w-[34%] overflow-hidden rounded-md border-[5px] border-chrome bg-paper-raised shadow-[0_24px_55px_-30px_rgba(20,31,56,0.8)] sm:-left-5 md:-left-7">
             <div className="relative aspect-[4/5]">
-              <Image
+              <SeoImage
                 src={LANDING_MEDIA.linen}
                 alt="Natural linen texture in close detail"
-                fill
                 priority
                 sizes="(min-width: 1024px) 16rem, 34vw"
-                className="object-cover"
               />
             </div>
           </div>
@@ -252,34 +250,29 @@ function MaterialManifesto() {
         <div className="relative min-h-[24rem] lg:col-span-5 lg:min-h-[30rem]">
           <div className="absolute top-0 right-0 w-[72%] overflow-hidden rounded-md">
             <div className="relative aspect-[4/5]">
-              <Image
+              <SeoImage
                 src={LANDING_MEDIA.cotton}
                 alt="Cotton fabric gathered into sculptural folds"
-                fill
                 sizes="(min-width: 1024px) 28rem, 70vw"
-                className="fs-textile-drift object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
           </div>
           <div className="absolute bottom-0 left-0 w-[58%] overflow-hidden rounded-md border-[6px] border-navy-surface">
             <div className="relative aspect-square">
-              <Image
+              <SeoImage
                 src={LANDING_MEDIA.denim}
                 alt="Dense denim texture showing a diagonal twill"
-                fill
                 sizes="(min-width: 1024px) 22rem, 58vw"
-                className="object-cover"
               />
             </div>
           </div>
           <div className="absolute right-[7%] bottom-[7%] w-[35%] overflow-hidden rounded-md border-[5px] border-navy-surface">
             <div className="relative aspect-[3/4]">
-              <Image
+              <SeoImage
                 src={LANDING_MEDIA.performance}
                 alt="Performance textile with a smooth technical surface"
-                fill
                 sizes="14rem"
-                className="object-cover"
               />
             </div>
           </div>
@@ -423,12 +416,11 @@ function EditorialFeature() {
   return (
     <section className="grid min-h-[34rem] overflow-hidden border-b border-rule-2 bg-chrome lg:grid-cols-2">
       <div className="relative min-h-[23rem] lg:min-h-full">
-        <Image
+        <SeoImage
           src={LANDING_MEDIA.twill}
           alt="Twill fabric shaped into architectural folds"
-          fill
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="fs-textile-drift object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-t from-ink-surface/25 via-transparent to-transparent" />
         <div className="absolute right-5 bottom-5 bg-paper-raised px-4 py-3 shadow-card">
@@ -478,21 +470,15 @@ function CampaignStatement() {
               LANDING_MEDIA.poplin,
               LANDING_MEDIA.knit,
               LANDING_MEDIA.fleece,
-            ].map((src, index) => (
+            ].map((src) => (
               <div
                 key={src}
                 className="relative h-[clamp(4rem,9vw,8rem)] overflow-hidden rounded-sm"
               >
-                <Image
+                <SeoImage
                   src={src}
-                  alt=""
-                  fill
                   sizes="45vw"
-                  className={
-                    index === 1
-                      ? "fs-textile-drift object-cover"
-                      : "object-cover"
-                  }
+                  className="absolute inset-0 h-full w-full object-cover"
                 />
               </div>
             ))}
@@ -687,12 +673,11 @@ function WhyFabStitch() {
         objectPosition="80% center"
       />
       <div className="relative min-h-[20rem] lg:min-h-[32rem]">
-        <Image
+        <SeoImage
           src="/media/fabrics/canvas.jpg"
           alt="Canvas fabric in a close structured weave"
-          fill
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="fs-textile-drift object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div
           aria-hidden
@@ -784,22 +769,19 @@ function SourcingStory() {
       <Container className="grid items-center gap-8 py-12 sm:py-14 lg:grid-cols-12 lg:py-18">
         <div className="relative min-h-[28rem] lg:col-span-7 lg:min-h-[35rem]">
           <div className="absolute inset-y-0 left-0 w-[78%] overflow-hidden rounded-md">
-            <Image
+            <SeoImage
               src={LANDING_MEDIA.knit}
-              alt="Knitted fabric production shown through the material itself"
-              fill
+              alt="Knit fabric laid flat, showing a looped construction"
               sizes="(min-width: 1024px) 55vw, 80vw"
-              className="object-cover"
             />
           </div>
           <div className="absolute right-0 bottom-[8%] w-[42%] overflow-hidden rounded-md border-[6px] border-paper">
             <div className="relative aspect-[4/5]">
-              <Image
+              <SeoImage
                 src={LANDING_MEDIA.jersey}
                 alt="Jersey fabric close-up showing soft construction"
-                fill
                 sizes="20rem"
-                className="fs-textile-drift object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
           </div>
@@ -882,12 +864,11 @@ function HowItWorks() {
             ))}
           </ol>
           <div className="relative min-h-[20rem] overflow-hidden rounded-md">
-            <Image
+            <SeoImage
               src="/media/fabrics/denim.jpg"
               alt="Denim textile folds showing structure and depth"
-              fill
               sizes="(min-width: 1024px) 38vw, 92vw"
-              className="fs-textile-drift object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-linear-to-t from-navy-surface/50 via-transparent to-transparent" />
           </div>
@@ -900,12 +881,11 @@ function HowItWorks() {
 function ClosingCta() {
   return (
     <section className="relative flex min-h-[31rem] items-end overflow-hidden bg-navy-surface text-on-ink sm:min-h-[36rem]">
-      <Image
+      <SeoImage
         src={LANDING_MEDIA.heroPoster}
-        alt=""
-        fill
+        alt="Navy jersey knit fabric with a close, even surface"
         sizes="100vw"
-        className="fs-textile-drift object-cover object-[65%_center] opacity-55"
+        className="absolute inset-0 h-full w-full object-cover object-[65%_center] opacity-55"
       />
       <div className="absolute inset-0 bg-linear-to-r from-navy-surface via-navy-surface/84 to-navy-surface/20" />
       <Container className="relative py-12 sm:py-16 lg:py-18">

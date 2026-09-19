@@ -10,12 +10,40 @@ import { getGuide, guideLinks, listGuides } from "@/repositories/guides";
 import { findHub } from "@/domain/seo/guide-hubs";
 import { ArticleJsonLd, FaqJsonLd } from "@/components/seo/structured-data";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { MEDIA_BY_FABRIC_SLUG } from "@/catalog";
+import { SeoImage } from "@/components/seo/seo-image";
+import { imageAlt } from "@/domain/seo/image-assets";
 
 const HUB_CATEGORY: Record<string, string> = {
   "2027-fabric-directions": "sourcing-buying",
   "fabric-education": "fabric-basics",
   "choosing-fabrics": "fabric-applications",
 };
+
+function guidePicture(guide: {
+  heading: string;
+  fabricSlugs: readonly string[];
+}): { src: string; alt: string } {
+  for (const slug of guide.fabricSlugs) {
+    const media = MEDIA_BY_FABRIC_SLUG[slug];
+    if (media?.status === "final" && media.src) {
+      return { src: media.src, alt: media.alt ?? imageAlt(media.src) };
+    }
+  }
+  const heading = guide.heading.toLowerCase();
+  const src = heading.includes("linen")
+    ? "/media/fabrics/european-flax-linen-primary.webp"
+    : heading.includes("silk")
+      ? "/media/fabrics/silk-chiffon-primary.webp"
+      : heading.includes("wool")
+        ? "/media/fabrics/tropical-wool-super-110s-130s-primary.webp"
+        : heading.includes("denim")
+          ? "/media/fabrics/lightweight-denim-primary.webp"
+          : heading.includes("knit")
+            ? "/media/fabrics/mercerized-cotton-jersey-primary.webp"
+            : "/media/fabrics/cotton-poplin-primary.webp";
+  return { src, alt: imageAlt(src) };
+}
 
 export async function generateStaticParams() {
   const guides = await listGuides();
@@ -38,7 +66,7 @@ export async function generateMetadata({
     description: guide.metaDescription ?? guide.summary ?? undefined,
     type: "article",
     index: true,
-    image: "/media/hero-navy-jersey.jpg",
+    image: guidePicture(guide).src,
   });
 }
 
@@ -68,7 +96,7 @@ export default async function GuidePage({
         headline={guide.heading}
         description={guide.metaDescription}
         path={guide.path}
-        image="/media/hero-navy-jersey.jpg"
+        image={guidePicture(guide).src}
         author={guide.author}
         publishedAt={guide.publishedAt}
         updatedAt={guide.updatedAt}
@@ -90,6 +118,16 @@ export default async function GuidePage({
         title={guide.heading}
         intro={guide.summary ?? undefined}
       />
+      <Container className="pb-2">
+        <div className="relative mx-auto aspect-[16/10] max-w-[52rem] overflow-hidden rounded-md bg-paper-raised">
+          <SeoImage
+            src={guidePicture(guide).src}
+            alt={guidePicture(guide).alt}
+            priority
+            sizes="(min-width: 768px) 52rem, 100vw"
+          />
+        </div>
+      </Container>
 
       <Container className="py-8 sm:py-10">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_17rem]">

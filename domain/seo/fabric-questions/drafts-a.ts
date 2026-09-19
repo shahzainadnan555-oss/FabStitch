@@ -4,6 +4,7 @@ import type {
   FabricQuestionSection,
   FabricQuestionTable,
 } from "./types";
+import { imageAlt } from "@/domain/seo/image-assets";
 
 const COTTON = "/media/fabrics/cotton-poplin-primary.webp";
 const LINEN = "/media/fabrics/european-flax-linen-primary.webp";
@@ -109,7 +110,7 @@ export function buildQuestion(draft: QuestionDraft): FabricQuestionPage {
     points: draft.points,
     faqs: draft.faqs,
     imagePath: draft.image,
-    imageAlt: draft.alt,
+    imageAlt: imageAlt(draft.image),
     relatedPaths: [
       "/guides/fabric-questions/",
       `/guides/fabric-questions/${draft.category}/`,

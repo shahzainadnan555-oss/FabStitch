@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { imageAsset } from "@/domain/seo/image-assets";
 
 export function ResilientFabricImage({
   src,
@@ -22,16 +23,19 @@ export function ResilientFabricImage({
 
   if (failed) return fallback;
 
+  const known = imageAsset(src);
+  const remote = /^https?:\/\//i.test(src);
   return (
     <Image
       src={src}
-      alt={alt}
-      fill
-      unoptimized={/^https?:\/\//i.test(src)}
-      priority={priority}
+      alt={known?.alt || alt}
+      width={known?.width ?? 1600}
+      height={known?.height ?? 1200}
+      unoptimized={remote}
       sizes={sizes}
+      priority={priority}
       onError={() => setFailed(true)}
-      className={className}
+      className={`absolute inset-0 h-full w-full ${className ?? ""}`}
     />
   );
 }

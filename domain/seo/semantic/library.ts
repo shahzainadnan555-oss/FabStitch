@@ -1,5 +1,6 @@
 import type { SemanticPage, SemanticSection } from "./types";
 import { isReservedSemanticSlug } from "./reserved";
+import { imageAlt } from "@/domain/seo/image-assets";
 
 /**
  * Additional semantic pages with distinct search intent.
@@ -1082,7 +1083,7 @@ const SPECS: readonly LibrarySpec[] = [
     description:
       "Rayon is a family name and viscose is a common process inside it. Learn how FabStitch expects you to read the label.",
     keyword: "viscose vs rayon",
-    imagePath: LINEN,
+    imagePath: "/media/fabrics/linen-viscose-primary.webp",
     imageAlt: "Cellulosic cloth where the fibre label must be read carefully",
     relatedPaths: ["/fabrics/", "/guides/", "/marketplace/", "/collections/"],
     what: "Rayon is a broad name for regenerated cellulose fibres. Viscose is a common type within that language. In the market the words are sometimes swapped. They are not a licence to ignore the word printed on the fabric page.",
@@ -1310,7 +1311,7 @@ export function buildLibraryPages(): {
       qualityGatePassed: passed,
       qualityNotes: notes,
       imagePath: spec.imagePath,
-      imageAlt: spec.imageAlt,
+      imageAlt: imageAlt(spec.imagePath),
     });
   }
 

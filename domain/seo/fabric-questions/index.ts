@@ -3,6 +3,7 @@ import { FABRIC_QUESTION_DRAFTS_B } from "./drafts-b";
 import { FABRIC_QUESTION_DRAFTS_C } from "./drafts-c";
 import { FABRIC_QUESTION_SOURCES } from "./inventory";
 import type { FabricQuestionCategory, FabricQuestionPage } from "./types";
+import { imageAlt } from "@/domain/seo/image-assets";
 
 export const FABRIC_QUESTION_INDEX_PATH = "/guides/fabric-questions/";
 
@@ -161,7 +162,7 @@ const categories: FabricQuestionPage[] = CATEGORIES.map((category) => {
     points: children.slice(0, 4).map((page) => page.h1),
     faqs: [],
     imagePath: COTTON,
-    imageAlt: "Cotton fabric used to illustrate fabric question guides",
+    imageAlt: imageAlt(COTTON),
     relatedPaths: unique([
       FABRIC_QUESTION_INDEX_PATH,
       "/guides/",
@@ -225,7 +226,7 @@ const indexPage: FabricQuestionPage = {
     },
   ],
   imagePath: COTTON,
-  imageAlt: "Cotton fabric representing the fabric question hub",
+  imageAlt: imageAlt(COTTON),
   relatedPaths: unique([
     "/guides/",
     "/marketplace/",

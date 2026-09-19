@@ -1,5 +1,6 @@
 import { INDEXABLE_SEMANTIC_PAGES } from "@/domain/seo/semantic";
 import { MATERIALS, USES } from "@/domain/seo/semantic/ontology";
+import { imageAlt } from "@/domain/seo/image-assets";
 
 /**
  * Marketplace support cluster.
@@ -792,7 +793,7 @@ function pageFromSpec(spec: Spec): MarketplaceSupportPage {
     description: spec.description,
     primaryKeyword: spec.keyword,
     imagePath: spec.imagePath,
-    imageAlt: spec.imageAlt,
+    imageAlt: imageAlt(spec.imagePath),
     intro: spec.intro,
     sections,
     faqs: spec.faqs,

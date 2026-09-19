@@ -15,6 +15,7 @@ import {
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 import { pillarReading } from "@/domain/seo/visible-reading";
 import { PillarReadingBlock } from "@/components/seo/visible-reading";
+import { SeoImage } from "@/components/seo/seo-image";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/discover/", {
@@ -56,6 +57,13 @@ export default function DiscoverHubPage() {
           collections, Best For edits, guides and the marketplace — without
           duplicating existing canonical hubs.
         </Prose>
+        <div className="relative mt-8 aspect-[16/10] max-w-[52rem] overflow-hidden rounded-md bg-paper-raised">
+          <SeoImage
+            src="/media/fabrics/cotton-poplin-primary.webp"
+            priority
+            sizes="(min-width: 768px) 52rem, 100vw"
+          />
+        </div>
         <div className="mt-8">
           <PillarReadingBlock
             reading={pillarReading("/discover/")!}

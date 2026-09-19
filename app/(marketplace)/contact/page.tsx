@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { LANDING_MEDIA } from "@/components/landing/media";
 import { TextileBackdrop } from "@/components/landing/textile-backdrop";
@@ -11,6 +10,7 @@ import { Container } from "@/components/ui/layout";
 import { IconArrowRight } from "@/components/ui/icon";
 import { CONTACT_EMAIL } from "@/lib/site-config";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
+import { SeoImage } from "@/components/seo/seo-image";
 import { pillarReading } from "@/domain/seo/visible-reading";
 import { PillarReadingBlock } from "@/components/seo/visible-reading";
 
@@ -79,13 +79,12 @@ export default function ContactPage() {
 
           <PointerFabric className="relative min-h-[22rem] md:col-span-6 md:min-h-[32rem] lg:col-span-7">
             <div className="fs-pointer-fabric-layer absolute inset-0 overflow-hidden rounded-md bg-navy-surface shadow-[0_35px_90px_-45px_rgba(20,31,56,0.75)]">
-              <Image
+              <SeoImage
                 src={LANDING_MEDIA.heroPoster}
-                alt="Deep navy fabric folded into fluid contours"
-                fill
+                alt="Deep navy jersey fabric folded into fluid contours"
                 priority
                 sizes="(min-width: 1024px) 52vw, (min-width: 768px) 48vw, 100vw"
-                className="fs-textile-drift object-cover object-[62%_center]"
+                className="absolute inset-0 h-full w-full object-cover object-[62%_center]"
               />
               <div
                 aria-hidden

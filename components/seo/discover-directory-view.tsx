@@ -5,7 +5,9 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { discoverClusterPath } from "@/lib/discover-directory";
 import type { SemanticCluster } from "@/domain/seo/semantic/ontology";
 import { directoryNotes } from "@/domain/seo/visible-reading";
+import { clusterImage } from "@/domain/seo/topic-image";
 import { VisibleReading } from "@/components/seo/visible-reading";
+import { SeoImage } from "@/components/seo/seo-image";
 
 export function DiscoverDirectoryView({
   cluster,
@@ -43,6 +45,12 @@ export function DiscoverDirectoryView({
           {page > 1 ? `${hubTitle} — page ${page}` : hubTitle}
         </Heading>
         <Prose className="mt-4 max-w-[52rem] text-ink-2">{description}</Prose>
+        <div className="relative mt-8 aspect-[16/10] max-w-[52rem] overflow-hidden rounded-md bg-paper-raised">
+          <SeoImage
+            src={clusterImage(cluster)}
+            sizes="(min-width: 768px) 52rem, 100vw"
+          />
+        </div>
         <div className="mt-8">
           <VisibleReading
             id="directory-reading"
