@@ -1,12 +1,13 @@
 /**
- * Public image records: real file dimensions and alt text that describes the photograph.
- * Alt text is not a keyword list. Filenames already in /media/fabrics are kept.
+ * Public image records: real file dimensions, alt text, and a short title.
+ * Alt and title describe the photograph. They are not keyword lists.
  */
 export type ImageAsset = {
   src: string;
   width: number;
   height: number;
   alt: string;
+  title: string;
 };
 
 const ASSETS = {
@@ -284,52 +285,52 @@ const ASSETS = {
   "/media/fabrics/french-terry-classic-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry classic fabric",
+    alt: "Classic French terry with a looped knit back",
   },
   "/media/fabrics/french-terry-heavyweight-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry heavyweight fabric",
+    alt: "Heavyweight French terry with a dense looped back",
   },
   "/media/fabrics/french-terry-lightweight-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry lightweight fabric",
+    alt: "Lightweight French terry with a fine looped back",
   },
   "/media/fabrics/french-terry-loopback-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry loopback fabric",
+    alt: "French terry showing its looped knit back",
   },
   "/media/fabrics/french-terry-modal-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry modal fabric",
+    alt: "Modal French terry with a soft looped back",
   },
   "/media/fabrics/french-terry-organic-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry organic fabric",
+    alt: "Organic cotton French terry with a looped back",
   },
   "/media/fabrics/french-terry-peached-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry peached fabric",
+    alt: "Peached French terry with a softened face",
   },
   "/media/fabrics/french-terry-recycled-cotton-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry recycled cotton fabric",
+    alt: "Recycled-cotton French terry with a looped back",
   },
   "/media/fabrics/french-terry-slub-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry slub fabric",
+    alt: "Slub French terry with irregular yarn texture",
   },
   "/media/fabrics/french-terry-stretch-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "french terry stretch fabric",
+    alt: "Stretch French terry with a looped knit back",
   },
   "/media/fabrics/heavy-linen-upholstery-primary.webp": {
     width: 1600,
@@ -624,52 +625,52 @@ const ASSETS = {
   "/media/fabrics/ponte-brushed-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte brushed fabric",
+    alt: "Brushed ponte double knit with a softened face",
   },
   "/media/fabrics/ponte-compact-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte compact fabric",
+    alt: "Compact ponte knit with a stable double-knit face",
   },
   "/media/fabrics/ponte-cotton-rayon-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte cotton rayon fabric",
+    alt: "Cotton-rayon ponte with a smooth double-knit face",
   },
   "/media/fabrics/ponte-double-knit-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte double knit fabric",
+    alt: "Ponte double knit with a stable matte face",
   },
   "/media/fabrics/ponte-lightweight-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte lightweight fabric",
+    alt: "Lightweight ponte knit with a fine stable face",
   },
   "/media/fabrics/ponte-matte-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte matte fabric",
+    alt: "Matte ponte knit with a smooth double-knit face",
   },
   "/media/fabrics/ponte-rayon-nylon-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte rayon nylon fabric",
+    alt: "Rayon-nylon ponte with a smooth stable face",
   },
   "/media/fabrics/ponte-ribbed-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte ribbed fabric",
+    alt: "Ribbed ponte knit with a fine vertical texture",
   },
   "/media/fabrics/ponte-structured-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte structured fabric",
+    alt: "Structured ponte knit with a firm double-knit body",
   },
   "/media/fabrics/ponte-travel-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "ponte travel fabric",
+    alt: "Travel ponte knit with a smooth stable face",
   },
   "/media/fabrics/poplin.jpg": {
     width: 736,
@@ -884,52 +885,52 @@ const ASSETS = {
   "/media/fabrics/tencel-brushed-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel brushed fabric",
+    alt: "Brushed Tencel fabric with a softened surface",
   },
   "/media/fabrics/tencel-cotton-poplin-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel cotton poplin fabric",
+    alt: "Tencel and cotton poplin with a smooth plain weave",
   },
   "/media/fabrics/tencel-denim-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel denim fabric",
+    alt: "Tencel denim with a twill face",
   },
   "/media/fabrics/tencel-heavy-twill-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel heavy twill fabric",
+    alt: "Heavy Tencel twill with a pronounced diagonal",
   },
   "/media/fabrics/tencel-jersey-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel jersey fabric",
+    alt: "Tencel jersey with a fine knit surface",
   },
   "/media/fabrics/tencel-linen-blend-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel linen blend fabric",
+    alt: "Tencel and linen blend with a natural woven texture",
   },
   "/media/fabrics/tencel-plain-weave-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel plain weave fabric",
+    alt: "Tencel plain weave with an even cloth surface",
   },
   "/media/fabrics/tencel-sateen-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel sateen fabric",
+    alt: "Tencel sateen with a smooth lustrous face",
   },
   "/media/fabrics/tencel-shirting-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel shirting fabric",
+    alt: "Tencel shirting cloth with a fine woven surface",
   },
   "/media/fabrics/tencel-twill-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "tencel twill fabric",
+    alt: "Tencel twill with a clear diagonal weave",
   },
   "/media/fabrics/three-layer-membrane-laminate-primary.webp": {
     width: 1600,
@@ -984,17 +985,17 @@ const ASSETS = {
   "/media/fabrics/wool-alpaca-brushed-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool alpaca brushed fabric",
+    alt: "Brushed wool-alpaca cloth with a soft raised nap",
   },
   "/media/fabrics/wool-cashmere-melton-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool cashmere melton fabric",
+    alt: "Wool-cashmere melton with a dense felted face",
   },
   "/media/fabrics/wool-cotton-twill-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool cotton twill fabric",
+    alt: "Wool-cotton twill with a fine diagonal weave",
   },
   "/media/fabrics/wool-felt-upholstery-primary.webp": {
     width: 1600,
@@ -1014,12 +1015,12 @@ const ASSETS = {
   "/media/fabrics/wool-linen-tailoring-open-weave-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool linen tailoring open weave fabric",
+    alt: "Open-weave wool and linen tailoring cloth",
   },
   "/media/fabrics/wool-mohair-fresco-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool mohair fresco fabric",
+    alt: "Wool-mohair fresco with an airy woven surface",
   },
   "/media/fabrics/wool-mohair-open-weave-primary.webp": {
     width: 1600,
@@ -1029,12 +1030,12 @@ const ASSETS = {
   "/media/fabrics/wool-polyamide-crepe-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool polyamide crepe fabric",
+    alt: "Wool-polyamide crepe with a fine pebbled weave",
   },
   "/media/fabrics/wool-polyester-suiting-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool polyester suiting fabric",
+    alt: "Wool-polyester suiting with a smooth tailored face",
   },
   "/media/fabrics/wool-silk-bi-stretch-primary.webp": {
     width: 1600,
@@ -1044,7 +1045,7 @@ const ASSETS = {
   "/media/fabrics/wool-silk-suiting-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool silk suiting fabric",
+    alt: "Wool and silk suiting with a fine woven face",
   },
   "/media/fabrics/wool-technical-hybrid-primary.webp": {
     width: 1600,
@@ -1054,12 +1055,12 @@ const ASSETS = {
   "/media/fabrics/wool-viscose-twill-primary.webp": {
     width: 1600,
     height: 1200,
-    alt: "wool viscose twill fabric",
+    alt: "Wool-viscose twill with a clear diagonal weave",
   },
   "/media/fabstitch-mark.png": {
     width: 600,
     height: 603,
-    alt: "Fabstitch mark fabric",
+    alt: "FabStitch monogram",
   },
   "/media/hero-navy-jersey.jpg": {
     width: 1536,
@@ -1071,23 +1072,102 @@ const ASSETS = {
   { width: number; height: number; alt: string }
 >;
 
+/**
+ * Short natural title for a photograph. Not a keyword list, and not copied
+ * onto unrelated images.
+ */
+export function imageTitle(alt: string): string {
+  const clean = alt.replace(/\s+/g, " ").trim();
+  if (!clean) return "Fabric texture";
+  const cut = clean.split(/,|\s+with\s+|\s+in\s+/i);
+  const first = cut[0]?.trim() ?? clean;
+  const base =
+    first.length >= 16 && first.length < clean.length ? first : clean;
+  const titled = base.charAt(0).toUpperCase() + base.slice(1);
+  return titled.length > 90
+    ? titled.slice(0, 87).replace(/\s+\S*$/, "")
+    : titled;
+}
+
+function usableHint(hint: string | undefined): hint is string {
+  if (!hint) return false;
+  const text = hint.trim();
+  if (text.length < 8 || /^fabric$/i.test(text)) return false;
+  const counts = new Map<string, number>();
+  for (const word of text.toLowerCase().split(/\s+/)) {
+    if (word.length < 5) continue;
+    const next = (counts.get(word) ?? 0) + 1;
+    if (next >= 3) return false;
+    counts.set(word, next);
+  }
+  return true;
+}
+
+/** Contextual copy when a file is not in the catalog. Describes the filename, not the page keyword list. */
+export function describeImageSrc(src: string): string {
+  const file = src.split("?")[0]?.split("/").pop() ?? "";
+  const stem = file
+    .replace(/\.[a-z0-9]+$/i, "")
+    .replace(/-primary$/, "")
+    .replace(/[_]+/g, "-");
+  const words = stem
+    .split("-")
+    .map((word) => word.trim())
+    .filter((word) => word && word !== "img" && word !== "image");
+  if (!words.length) return "Fabric texture";
+  const label = words
+    .map((word, index) =>
+      index === 0
+        ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        : word.toLowerCase(),
+    )
+    .join(" ");
+  return `${label} fabric texture`;
+}
+
 export function imageAsset(
   src: string | undefined | null,
 ): ImageAsset | undefined {
   if (!src) return undefined;
-  const path = src.split("?")[0];
+  const path = src.split("?")[0] ?? src;
   const record = ASSETS[path as keyof typeof ASSETS];
   if (!record) return undefined;
-  return { src: path, ...record };
+  return {
+    src: path,
+    width: record.width,
+    height: record.height,
+    alt: record.alt,
+    title: imageTitle(record.alt),
+  };
+}
+
+/**
+ * Metadata for a rendered image.
+ * Catalog records win. A missing record falls back to a real hint, then the filename.
+ */
+export function imageCopy(
+  src: string | undefined | null,
+  hint?: string,
+): ImageAsset {
+  const known = imageAsset(src);
+  if (known) return known;
+  const alt = usableHint(hint) ? hint.trim() : describeImageSrc(src ?? "");
+  return {
+    src: src?.split("?")[0] ?? "",
+    alt,
+    title: imageTitle(alt),
+    width: 1600,
+    height: 1200,
+  };
 }
 
 export function imageAlt(
   src: string | undefined | null,
-  fallback = "Fabric photograph",
+  fallback?: string,
 ): string {
-  return imageAsset(src)?.alt ?? fallback;
+  return imageCopy(src, fallback).alt;
 }
 
 export const IMAGE_ASSETS: readonly ImageAsset[] = Object.entries(ASSETS).map(
-  ([src, record]) => ({ src, ...record }),
+  ([src]) => imageAsset(src)!,
 );

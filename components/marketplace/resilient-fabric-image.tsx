@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { imageAsset } from "@/domain/seo/image-assets";
+import { imageCopy } from "@/domain/seo/image-assets";
 
 export function ResilientFabricImage({
   src,
   alt,
+  title,
   sizes,
   priority,
   className,
@@ -14,6 +15,7 @@ export function ResilientFabricImage({
 }: {
   src: string;
   alt: string;
+  title?: string;
   sizes: string;
   priority?: boolean;
   className?: string;
@@ -23,14 +25,15 @@ export function ResilientFabricImage({
 
   if (failed) return fallback;
 
-  const known = imageAsset(src);
+  const copy = imageCopy(src, alt);
   const remote = /^https?:\/\//i.test(src);
   return (
     <Image
       src={src}
-      alt={known?.alt || alt}
-      width={known?.width ?? 1600}
-      height={known?.height ?? 1200}
+      alt={copy.alt}
+      title={title?.trim() || copy.title}
+      width={copy.width}
+      height={copy.height}
       unoptimized={remote}
       sizes={sizes}
       priority={priority}

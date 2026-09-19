@@ -26,6 +26,7 @@ import { ResilientFabricImage } from "./resilient-fabric-image";
 export type MediaAsset = {
   src: string;
   alt: string;
+  title?: string;
   /** What this frame shows. Drives the thumbnail caption. */
   kind?: "flat" | "drape" | "macro" | "application";
 };
@@ -102,6 +103,7 @@ export function FabricMedia({
         <ResilientFabricImage
           src={asset.src}
           alt={asset.alt}
+          title={asset.title}
           priority={priority}
           sizes={sizes}
           className="object-cover"
