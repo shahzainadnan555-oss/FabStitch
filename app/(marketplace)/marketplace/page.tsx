@@ -165,6 +165,7 @@ async function MarketplaceResults({ query }: { query: MarketplaceQuery }) {
       <>
         <CatalogDatasetCommit datasetKey={marketplaceDatasetKey(query)} />
         <CatalogLoadError title="Unable to load fabrics right now." />
+        <MarketplaceClusterSection />
       </>
     );
   }

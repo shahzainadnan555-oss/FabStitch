@@ -29,6 +29,7 @@
     "seo:technical-audit": "node --import=./scripts/register-loader.mjs scripts/seo/technical-audit.mts",
     "seo:metadata-quality": "node --import=./scripts/register-loader.mjs scripts/seo/metadata-quality-audit.mts",
     "seo:image-audit": "node --import=./scripts/register-loader.mjs scripts/seo/image-seo-audit.mts",
+    "seo:full-audit": "node --import=./scripts/register-loader.mjs scripts/seo/full-audit.mts",
     "qa": "node scripts/qa.mjs",
     "qa:backend": "node --import=./scripts/register-loader.mjs scripts/qa/backend-contract.mts",
     "qa:live": "node --import=./scripts/register-loader.mjs scripts/qa/live-journey.mts",

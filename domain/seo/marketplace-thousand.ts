@@ -1000,8 +1000,11 @@ function discoverPath(draft: Draft): string | undefined {
     return page?.indexable ? page.path : undefined;
   }
   if (draft.material) {
-    const page = getSemanticPage(`${draft.material.id}-fabric-guide`);
-    return page?.indexable ? page.path : undefined;
+    const page = getSemanticPage(`${draft.material.id}-fabric`);
+    if (page?.indexable) return page.path;
+    return draft.material.collectionSlug
+      ? `/collections/${draft.material.collectionSlug}/`
+      : undefined;
   }
   return undefined;
 }

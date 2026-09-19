@@ -126,6 +126,12 @@ for (const src of [
   add(home, src, "decorative", "homepage backdrop");
 }
 
+add(
+  "/marketplace/",
+  "/media/fabrics/cotton-poplin-primary.webp",
+  "content",
+  "fabric marketplace cotton poplin",
+);
 add("/contact/", LANDING_MEDIA.heroPoster, "content", "contact");
 add("/contact/", LANDING_MEDIA.heroPoster, "decorative", "contact backdrop");
 add("/contact/", LANDING_MEDIA.linen, "decorative", "contact backdrop");

@@ -11,6 +11,7 @@ import {
 import { MARKETPLACE_TOPIC_HUBS } from "@/domain/seo/marketplace-thousand";
 import { pillarReading } from "@/domain/seo/visible-reading";
 import { PillarReadingBlock } from "@/components/seo/visible-reading";
+import { SeoImage } from "@/components/seo/seo-image";
 
 const FAMILY_ORDER: MarketplaceFamily[] = [
   "education",
@@ -84,6 +85,25 @@ const STEPS = [
     title: "Evaluate",
     body: "Read composition and construction before colour. Compare two fabrics on the same fields. Leave a spec blank if the page does not state it.",
   },
+  {
+    index: "03",
+    title: "Compare",
+    body: "Hold the garment still and read the same cells on each fabric page. A comparison guide explains the difference. It does not replace those pages.",
+  },
+  {
+    index: "04",
+    title: "Inquire",
+    body: "Send the inquiry on the fabric URL you chose, with the quantity you need. This catalog does not quote a price, a lead time, or a factory minimum.",
+  },
+] as const;
+
+const APPAREL_LINKS = [
+  { href: "/fabrics/best-for/shirts/", label: "Shirt fabrics" },
+  { href: "/fabrics/best-for/dresses/", label: "Dress fabrics" },
+  { href: "/fabrics/best-for/tailoring/", label: "Tailoring fabrics" },
+  { href: "/fabrics/best-for/outerwear/", label: "Outerwear fabrics" },
+  { href: "/fabrics/best-for/activewear/", label: "Activewear fabrics" },
+  { href: "/collections/denim/", label: "Denim collection" },
 ] as const;
 
 function guideLinkClassName() {
@@ -167,11 +187,23 @@ export function MarketplaceClusterSection() {
             How businesses use this marketplace
           </Heading>
         </div>
-        <div className="mt-8">
+        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <PillarReadingBlock
             reading={pillarReading("/marketplace/")!}
             id="marketplace-reading"
           />
+          <figure className="overflow-hidden rounded-md border border-rule bg-paper-raised">
+            <div className="relative aspect-[4/3]">
+              <SeoImage
+                src="/media/fabrics/cotton-poplin-primary.webp"
+                sizes="18rem"
+              />
+            </div>
+            <figcaption className="px-4 py-3 text-sm leading-relaxed text-ink-3">
+              Cotton poplin from the catalog, shown beside the sourcing notes
+              because shirtings are a common first search.
+            </figcaption>
+          </figure>
         </div>
 
         <nav
@@ -209,6 +241,30 @@ export function MarketplaceClusterSection() {
             </article>
           ))}
         </div>
+
+        <nav
+          aria-label="Apparel and production uses"
+          className="mt-8 rounded-md border border-rule bg-paper-raised p-5 sm:p-6"
+        >
+          <Label tone="ink">Apparel and production</Label>
+          <p className="mt-3 max-w-[68ch] text-sm leading-relaxed text-ink-2">
+            Manufacturing use starts from the garment. These edits group
+            published fabrics by application. Open one, then come back here to
+            search the same catalog.
+          </p>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {APPAREL_LINKS.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="inline-flex rounded-sm border border-rule bg-paper px-3 py-1.5 text-sm text-ink-2 hover:border-indigo hover:text-indigo"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className="mt-12">
           <Label>Guides</Label>

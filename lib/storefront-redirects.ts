@@ -1,3 +1,5 @@
+import { MATERIALS, USES } from "@/domain/seo/semantic/ontology";
+
 const BEST_FOR_REDIRECTS: Record<string, string> = {
   shirts: "shirts",
   dresses: "dresses",
@@ -12,6 +14,50 @@ const BEST_FOR_REDIRECTS: Record<string, string> = {
 export function bestForPathForApplication(slug: string): string {
   const mapped = BEST_FOR_REDIRECTS[slug.toLowerCase()];
   return mapped ? `/fabrics/best-for/${mapped}/` : "/fabrics/best-for/";
+}
+
+function slugPart(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+
+const FABRIC_GUIDE_REDIRECTS = new Map<string, string>();
+for (const material of MATERIALS) {
+  const from = `/discover/${slugPart(`${material.id}-fabric-guide`)}/`;
+  const skipped = ["cotton", "linen", "silk", "denim"].includes(material.id);
+  const to =
+    skipped && material.collectionSlug
+      ? `/collections/${material.collectionSlug}/`
+      : `/discover/${slugPart(`${material.id}-fabric`)}/`;
+  FABRIC_GUIDE_REDIRECTS.set(from, to);
+}
+for (const use of USES) {
+  FABRIC_GUIDE_REDIRECTS.set(
+    `/discover/${slugPart(`${use.garmentLabel}-fabric-guide`)}/`,
+    `/discover/${slugPart(`fabric-for-${use.id}`)}/`,
+  );
+  FABRIC_GUIDE_REDIRECTS.set(
+    `/discover/${slugPart(`buy-${use.garmentLabel}-fabric-online`)}/`,
+    `/discover/${slugPart(`fabric-for-${use.id}`)}/`,
+  );
+}
+for (const material of MATERIALS) {
+  const skipped = ["cotton", "linen", "silk", "denim"].includes(material.id);
+  const materialTarget =
+    skipped && material.collectionSlug
+      ? `/collections/${material.collectionSlug}/`
+      : `/discover/${slugPart(`${material.id}-fabric`)}/`;
+  FABRIC_GUIDE_REDIRECTS.set(
+    `/discover/${slugPart(`buy-${material.id}-fabric-online`)}/`,
+    materialTarget,
+  );
+  FABRIC_GUIDE_REDIRECTS.set(
+    `/discover/${slugPart(`bulk-${material.id}-fabric`)}/`,
+    "/wholesale-fabric/",
+  );
 }
 
 const HELP_REDIRECTS: Record<string, string> = {
@@ -90,6 +136,12 @@ export const STOREFRONT_REDIRECT_FAMILIES: readonly StorefrontRedirect[] = [
     to: "/guides/fabric-weight-and-gsm/, /guides/woven-vs-knit-fabrics/",
     reason: "Preferred research aliases map to existing authoritative guides",
   },
+  {
+    from: "/discover/{material}-fabric-guide/, /discover/{garment}-fabric-guide/",
+    to: "the material, collection, or use page that already covers that topic",
+    reason:
+      "Guide aliases repeated the same fabric explanation and redirect to the canonical page",
+  },
 ];
 
 /**
@@ -152,6 +204,10 @@ export function storefrontRedirect(pathname: string): string | null {
     canonicalCase === "/support-centre/"
   ) {
     return "/support/";
+  }
+
+  if (FABRIC_GUIDE_REDIRECTS.has(canonicalCase)) {
+    return FABRIC_GUIDE_REDIRECTS.get(canonicalCase) ?? null;
   }
 
   const guide = canonicalCase.match(/^\/guides\/([^/]+)\/$/);

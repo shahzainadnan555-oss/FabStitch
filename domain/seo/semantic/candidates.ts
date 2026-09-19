@@ -272,42 +272,6 @@ export function generateSemanticCandidates(): SemanticTopic[] {
     }
   }
 
-  for (const material of MATERIALS) {
-    push(
-      topic({
-        slug: slugify([material.id, "fabric-guide"]),
-        pageType: "education",
-        cluster: "education",
-        intent: "informational",
-        primaryKeyword: `${material.label.toLowerCase()} fabric guide`,
-        secondaryKeywords: [
-          `what is ${material.label.toLowerCase()} fabric`,
-          `how to choose ${material.label.toLowerCase()} fabric`,
-        ],
-        material,
-        educationKey: "material-guide",
-      }),
-    );
-  }
-
-  for (const use of USES) {
-    push(
-      topic({
-        slug: slugify([use.garmentLabel, "fabric-guide"]),
-        pageType: "education",
-        cluster: "education",
-        intent: "informational",
-        primaryKeyword: `${use.garmentLabel} fabric guide`,
-        secondaryKeywords: [
-          `how to choose fabric for ${use.label}`,
-          `types of ${use.garmentLabel} fabric`,
-        ],
-        useId: use.id,
-        educationKey: "use-guide",
-      }),
-    );
-  }
-
   for (const attribute of ATTRIBUTES) {
     push(
       topic({
@@ -345,54 +309,6 @@ export function generateSemanticCandidates(): SemanticTopic[] {
         }),
       );
     }
-  }
-
-  for (const material of MATERIALS) {
-    push(
-      topic({
-        slug: slugify(["buy", material.id, "fabric-online"]),
-        pageType: "commercial",
-        cluster: "commercial",
-        intent: "commercial",
-        primaryKeyword: `buy ${material.label.toLowerCase()} fabric online`,
-        secondaryKeywords: [
-          `${material.label.toLowerCase()} fabric online`,
-          `order ${material.label.toLowerCase()} fabric`,
-        ],
-        material,
-        educationKey: "buy-online",
-      }),
-    );
-    push(
-      topic({
-        slug: slugify(["bulk", material.id, "fabric"]),
-        pageType: "commercial",
-        cluster: "commercial",
-        intent: "commercial",
-        primaryKeyword: `bulk ${material.label.toLowerCase()} fabric`,
-        secondaryKeywords: [
-          `${material.label.toLowerCase()} fabric wholesale`,
-          `${material.label.toLowerCase()} fabric for wholesale`,
-        ],
-        material,
-        educationKey: "bulk",
-      }),
-    );
-  }
-
-  for (const use of USES) {
-    push(
-      topic({
-        slug: slugify(["buy", use.garmentLabel, "fabric-online"]),
-        pageType: "commercial",
-        cluster: "commercial",
-        intent: "commercial",
-        primaryKeyword: `buy ${use.garmentLabel} fabric online`,
-        secondaryKeywords: [`${use.garmentLabel} fabric online`],
-        useId: use.id,
-        educationKey: "buy-use-online",
-      }),
-    );
   }
 
   const tripleAttributes = [

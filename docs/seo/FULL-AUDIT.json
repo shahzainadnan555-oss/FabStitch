@@ -1,0 +1,59 @@
+{
+  "generatedAt": "2026-09-19T14:02:00.775Z",
+  "pagesAudited": 2471,
+  "publicPages": 2471,
+  "indexable": 2266,
+  "noindex": 205,
+  "sitemapUrls": 2266,
+  "titles": {
+    "missing": 0,
+    "duplicate": 0,
+    "poor": 0
+  },
+  "descriptions": {
+    "missing": 0,
+    "duplicate": 0,
+    "poor": 0
+  },
+  "canonicals": {
+    "missing": 0,
+    "duplicate": 0,
+    "invalid": 0
+  },
+  "content": {
+    "lowValue": 0,
+    "duplicate": 0,
+    "overlappingIntent": 0,
+    "thinUtilityNoted": 16,
+    "note": "Low-value means a non-utility page under 80 words. Word count is not a ranking target. Help articles under 120 words are noted, not padded."
+  },
+  "links": {
+    "broken": 0,
+    "orphan": 0,
+    "deep": 0
+  },
+  "images": {
+    "broken": 0,
+    "missingAlt": 0,
+    "missingTitle": 0,
+    "missingDimensions": 0,
+    "invalidUrls": 0,
+    "irrelevantOrMissing": 0
+  },
+  "structuredData": {
+    "invalid": 0,
+    "conflicting": 0
+  },
+  "sitemap": {
+    "missing": 0,
+    "duplicates": 0,
+    "invalid": 0
+  },
+  "redirects": {
+    "chains": 0,
+    "loops": 0
+  },
+  "metaKeywords": 0,
+  "coreWebVitalsMeasured": false,
+  "findings": []
+}

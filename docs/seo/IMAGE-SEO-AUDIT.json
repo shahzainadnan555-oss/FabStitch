@@ -1,27 +1,27 @@
 {
-  "totalImages": 2557,
-  "meaningful": 2542,
+  "totalImages": 2487,
+  "meaningful": 2472,
   "decorativeEmptyAlt": 15,
   "alt": {
-    "present": 2542,
+    "present": 2472,
     "missing": 0
   },
   "title": {
-    "present": 2542,
+    "present": 2472,
     "missing": 0
   },
   "brokenImages": 0,
   "missingDimensions": 0,
   "invalidImageUrls": 0,
   "irrelevantOrMissing": 0,
-  "pagesAffected": 2483,
+  "pagesAffected": 2413,
   "catalogImages": 212,
   "catalogMissingAlt": 0,
   "catalogMissingTitle": 0,
   "strayImages": 0,
   "before": {
     "missingAlt": 0,
-    "missingTitle": 2542,
+    "missingTitle": 2472,
     "brokenImages": 0,
     "note": "The previous image pass set alt text and dimensions, and did not emit title attributes."
   },

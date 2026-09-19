@@ -97,6 +97,19 @@ const STATIC_PATHS = new Set([
   "/fabrics/wool-fabric/",
 ]);
 
+function materialReadingPath(material: {
+  id: string;
+  collectionSlug?: string;
+}): string {
+  if (
+    ["cotton", "linen", "silk", "denim"].includes(material.id) &&
+    material.collectionSlug
+  ) {
+    return `/collections/${material.collectionSlug}/`;
+  }
+  return `/discover/${slugify(`${material.id}-fabric`)}/`;
+}
+
 function knownPath(target: string): boolean {
   if (STATIC_PATHS.has(target) || GUIDE_PATHS.has(target)) return true;
   if (COLLECTION_PATHS.has(target)) return true;
@@ -123,12 +136,10 @@ function relatedPathsFor(topic: SemanticTopic): string[] {
     paths.add(`/collections/${topic.comparisonPeer.collectionSlug}/`);
   }
   if (topic.material) {
-    paths.add(`/discover/${slugify(`${topic.material.id}-fabric-guide`)}/`);
+    paths.add(materialReadingPath(topic.material));
   }
   if (topic.comparisonPeer) {
-    paths.add(
-      `/discover/${slugify(`${topic.comparisonPeer.id}-fabric-guide`)}/`,
-    );
+    paths.add(materialReadingPath(topic.comparisonPeer));
   }
   if (topic.use?.bestForSlug) {
     const canonical =
@@ -139,9 +150,6 @@ function relatedPathsFor(topic: SemanticTopic): string[] {
   if (topic.construction?.guidePath) paths.add(topic.construction.guidePath);
 
   if (topic.use) {
-    paths.add(
-      `/discover/${slugify(`${topic.use.garmentLabel}-fabric-guide`)}/`,
-    );
     paths.add(`/discover/${slugify(`fabric-for-${topic.use.id}`)}/`);
   }
   if (topic.pageType === "commercial") {
@@ -622,6 +630,10 @@ function composeIntro(topic: SemanticTopic, seed: number): string {
 
   if (use && attribute) {
     return `For ${use.label}, “${attribute.label}” only matters when it serves the garment. This page connects ${use.garmentLabel} requirements with a practical reading of ${attribute.label} fabric traits.`;
+  }
+
+  if (material && topic.construction) {
+    return `${topic.construction.label} ${material.label.toLowerCase()} is a construction decision. ${topic.construction.definition} The fibre notes still apply, but weave or knit changes the cloth more than the family name.`;
   }
 
   if (material) {
