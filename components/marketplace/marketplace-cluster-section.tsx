@@ -257,6 +257,31 @@ export function MarketplaceClusterSection() {
             </Link>
             , so this catalog remains the commercial URL.
           </p>
+          <nav aria-label="Related fabric topics" className="mt-6">
+            <Label tone="ink">Related topics</Label>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {[
+                { href: "/guides/fabric-questions/", label: "Fabric questions" },
+                { href: "/guides/fabric-weight-and-gsm/", label: "Fabric GSM" },
+                { href: "/guides/cotton-vs-linen/", label: "Cotton vs linen" },
+                {
+                  href: "/guides/woven-vs-knit-fabrics/",
+                  label: "Woven vs knit",
+                },
+                { href: "/fabric-sourcing/", label: "Fabric sourcing" },
+                { href: "/wholesale-fabric/", label: "Wholesale fabric" },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="inline-flex rounded-sm border border-rule bg-paper px-3 py-1.5 text-sm text-ink-2 hover:border-indigo hover:text-indigo"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </Container>
     </section>

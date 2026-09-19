@@ -7,6 +7,11 @@ import { IconArrowRight } from "@/components/ui/icon";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 import { getCustomerCollections } from "@/repositories/customer-catalog";
+import {
+  CATALOG_COLLECTION_CARDS,
+  COLLECTION_BY_SLUG,
+  SEASONAL_COLLECTIONS,
+} from "@/catalog";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/collections/", {
@@ -144,6 +149,31 @@ export default async function CollectionsPage() {
               Read fabric guides
             </Link>
           </div>
+          <nav aria-label="Collection index" className="mt-8">
+            <h3 className="text-sm font-semibold text-ink">All collections</h3>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {[
+                ...CATALOG_COLLECTION_CARDS.map((card) => ({
+                  href: `/collections/${card.slug}/`,
+                  label: COLLECTION_BY_SLUG[card.slug]?.label ?? card.slug,
+                })),
+                ...SEASONAL_COLLECTIONS.map((theme) => ({
+                  href: `/collections/${theme.slug}/`,
+                  label: theme.title,
+                })),
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    prefetch={false}
+                    className="inline-flex rounded-sm border border-rule-2 bg-paper-raised px-3 py-1.5 text-sm text-ink hover:border-indigo hover:text-indigo"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </section>
       </Container>
     </>

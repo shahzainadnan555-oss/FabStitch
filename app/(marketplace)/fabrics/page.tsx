@@ -11,6 +11,7 @@ import {
   listCustomerCatalog,
 } from "@/repositories/customer-catalog";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
+import { COLLECTIONS, FABRICS_2027 } from "@/catalog";
 
 export async function generateMetadata(): Promise<Metadata> {
   return registeredStorefrontMetadata("/fabrics/", {
@@ -373,11 +374,73 @@ export default async function FabricsHubPage() {
               <IconArrowRight width={14} height={14} aria-hidden />
             </Link>
             <Link
+              href="/guides/fabric-questions/"
+              className="inline-flex items-center gap-2 rounded-sm border border-rule-2 bg-paper-raised px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-indigo hover:text-indigo"
+            >
+              Fabric questions
+            </Link>
+            <Link
+              href="/guides/fabric-weight-and-gsm/"
+              className="inline-flex items-center gap-2 rounded-sm border border-rule-2 bg-paper-raised px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-indigo hover:text-indigo"
+            >
+              Fabric weight and GSM
+            </Link>
+            <Link
               href="/marketplace/"
               className="inline-flex items-center gap-2 rounded-sm border border-indigo bg-indigo px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-hover"
             >
               Search the marketplace
             </Link>
+          </div>
+        </section>
+
+        <section className="mt-14" aria-labelledby="named-fabrics-heading">
+          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+            Catalog index
+          </p>
+          <h2
+            id="named-fabrics-heading"
+            className="mt-2 text-h2 font-semibold text-ink"
+          >
+            Named fabrics by collection
+          </h2>
+          <p className="mt-3 max-w-[42rem] text-sm leading-relaxed text-ink-3">
+            Every documented FabStitch fabric has its own page. Open a name to
+            read composition and construction, or start from the collection
+            when you want the group first.
+          </p>
+          <div className="mt-6 space-y-6">
+            {COLLECTIONS.map((collection) => {
+              const fabrics = FABRICS_2027.filter(
+                (fabric) => fabric.collection === collection.slug,
+              );
+              if (!fabrics.length) return null;
+              return (
+                <div key={collection.slug}>
+                  <h3 className="text-sm font-semibold text-ink">
+                    <Link
+                      href={`/collections/${collection.slug}/`}
+                      className="hover:text-indigo"
+                    >
+                      {collection.label}
+                    </Link>
+                  </h3>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {fabrics.map((fabric) => (
+                      <li key={fabric.slug}>
+                        <Link
+                          href={`/fabrics/${fabric.slug}/`}
+                          prefetch={false}
+                          className="inline-flex rounded-sm border border-rule-2 bg-paper-raised px-3 py-1.5 text-sm text-ink transition-colors hover:border-indigo hover:text-indigo"
+                        >
+                          {fabric.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </section>
 

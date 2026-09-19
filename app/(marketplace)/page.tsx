@@ -182,7 +182,9 @@ function MarketplaceContext() {
     { href: "/fabrics/best-for/shirts/", label: "Shirt fabrics" },
     { href: "/fabrics/best-for/dresses/", label: "Dress fabrics" },
     { href: "/guides/", label: "Fabric guides" },
+    { href: "/guides/fabric-questions/", label: "Fabric questions" },
     { href: "/wholesale-fabric/", label: "Wholesale fabric" },
+    { href: "/fabric-sourcing/", label: "Fabric sourcing" },
     { href: "/discover/", label: "Fabric discovery topics" },
   ] as const;
 

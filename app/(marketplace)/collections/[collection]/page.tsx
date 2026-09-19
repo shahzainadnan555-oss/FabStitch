@@ -23,6 +23,11 @@ import {
   FaqJsonLd,
 } from "@/components/seo/structured-data";
 import { COLLECTION_SEO_BY_SLUG } from "@/content/collection-seo";
+import {
+  FABRICS_2027,
+  SEASONAL_COLLECTION_BY_SLUG,
+  fabricsForSeason,
+} from "@/catalog";
 
 type Props = {
   params: Promise<{ collection: string }>;
@@ -95,6 +100,15 @@ export default async function CollectionPage({ params, searchParams }: Props) {
         .map((item) => [item.slug, item]),
     ).values(),
   ];
+  const seasonal =
+    collection.slug in SEASONAL_COLLECTION_BY_SLUG
+      ? SEASONAL_COLLECTION_BY_SLUG[
+          collection.slug as keyof typeof SEASONAL_COLLECTION_BY_SLUG
+        ]
+      : undefined;
+  const namedFabrics = seasonal
+    ? fabricsForSeason(seasonal)
+    : FABRICS_2027.filter((fabric) => fabric.collection === collection.slug);
 
   return (
     <>
@@ -218,6 +232,26 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               ]}
             />
           )}
+          {namedFabrics.length ? (
+            <nav aria-label="Named fabrics" className="mt-8">
+              <h3 className="text-sm font-semibold text-ink">
+                Named fabrics in this collection
+              </h3>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {namedFabrics.map((fabric) => (
+                  <li key={fabric.slug}>
+                    <Link
+                      href={`/fabrics/${fabric.slug}/`}
+                      prefetch={false}
+                      className="inline-flex rounded-sm border border-rule-2 bg-paper-raised px-3 py-1.5 text-sm text-ink hover:border-indigo hover:text-indigo"
+                    >
+                      {fabric.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : null}
         </section>
 
         {bestFor.length ? (

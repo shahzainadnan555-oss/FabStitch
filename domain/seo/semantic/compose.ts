@@ -5,6 +5,13 @@ import type {
   SemanticTable,
   SemanticTopic,
 } from "./types";
+import { generateSemanticCandidates } from "./candidates";
+import { CATALOG_GUIDES } from "@/content/guides";
+import {
+  CATALOG_COLLECTION_CARDS,
+  SEASONAL_COLLECTIONS,
+  SEO_USE_CASES,
+} from "@/catalog";
 
 function hash(input: string): number {
   let value = 2166136261;
@@ -30,6 +37,75 @@ function words(...parts: string[]): number {
   return parts.join(" ").split(/\s+/).filter(Boolean).length;
 }
 
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+
+const SEMANTIC_SLUGS = new Set(
+  generateSemanticCandidates().map((topic) => topic.slug),
+);
+const GUIDE_PATHS = new Set(CATALOG_GUIDES.map((guide) => guide.path));
+const COLLECTION_PATHS = new Set([
+  ...CATALOG_COLLECTION_CARDS.map((card) => `/collections/${card.slug}/`),
+  ...SEASONAL_COLLECTIONS.map((theme) => `/collections/${theme.slug}/`),
+]);
+const SEO_USE_SLUGS = new Set<string>(
+  SEO_USE_CASES.map((useCase) => useCase.slug),
+);
+const BEST_FOR_CANONICAL: Record<string, string> = {
+  shirting: "shirts",
+  dresses: "dresses",
+  trousers: "trousers",
+  jackets: "outerwear",
+  coats: "outerwear",
+  suiting: "tailoring",
+  "soft-tailoring": "tailoring",
+  "performance-apparel": "activewear",
+  "workwear-trousers": "trousers",
+  blouses: "womens-clothing",
+  "full-skirts": "dresses",
+  outerwear: "outerwear",
+  knitwear: "knitwear",
+};
+const STATIC_PATHS = new Set([
+  "/marketplace/",
+  "/fabrics/",
+  "/collections/",
+  "/fabrics/best-for/",
+  "/fabric-sourcing/",
+  "/wholesale-fabric/",
+  "/guides/",
+  "/discover/",
+  "/guides/fabric-questions/",
+  "/guides/fabric-weight-and-gsm/",
+  "/guides/cotton-vs-linen/",
+  "/guides/woven-vs-knit-fabrics/",
+  "/guides/how-to-buy-fabric-online/",
+  "/guides/how-to-source-fabric-for-clothing-brands/",
+  "/guides/how-to-choose-fabric-for-shirts/",
+  "/guides/how-to-choose-fabric-for-dresses/",
+  "/fabrics/clothing/",
+  "/fabrics/apparel/",
+  "/fabrics/fashion/",
+  "/fabrics/shirt-fabric/",
+  "/fabrics/dress-fabric/",
+  "/fabrics/wool-fabric/",
+]);
+
+function knownPath(target: string): boolean {
+  if (STATIC_PATHS.has(target) || GUIDE_PATHS.has(target)) return true;
+  if (COLLECTION_PATHS.has(target)) return true;
+  const discover = target.match(/^\/discover\/([^/]+)\/$/);
+  if (discover) return SEMANTIC_SLUGS.has(discover[1] ?? "");
+  const bestFor = target.match(/^\/fabrics\/best-for\/([^/]+)\/$/);
+  if (bestFor) return SEO_USE_SLUGS.has(bestFor[1] ?? "");
+  return false;
+}
+
 function relatedPathsFor(topic: SemanticTopic): string[] {
   const paths = new Set<string>([
     "/marketplace/",
@@ -46,23 +122,26 @@ function relatedPathsFor(topic: SemanticTopic): string[] {
     paths.add(`/collections/${topic.comparisonPeer.collectionSlug}/`);
   }
   if (topic.material) {
-    paths.add(`/discover/${topic.material.id}-fabric-guide/`);
+    paths.add(`/discover/${slugify(`${topic.material.id}-fabric-guide`)}/`);
   }
   if (topic.comparisonPeer) {
-    paths.add(`/discover/${topic.comparisonPeer.id}-fabric-guide/`);
+    paths.add(
+      `/discover/${slugify(`${topic.comparisonPeer.id}-fabric-guide`)}/`,
+    );
   }
   if (topic.use?.bestForSlug) {
-    paths.add(`/fabrics/best-for/${topic.use.bestForSlug}/`);
+    const canonical =
+      BEST_FOR_CANONICAL[topic.use.bestForSlug] ?? topic.use.bestForSlug;
+    paths.add(`/fabrics/best-for/${canonical}/`);
   }
   if (topic.attribute?.guidePath) paths.add(topic.attribute.guidePath);
   if (topic.construction?.guidePath) paths.add(topic.construction.guidePath);
 
-  if (topic.material) {
-    paths.add(`/discover/${topic.material.id}-fabric-guide/`);
-    if (topic.use) paths.add(`/discover/fabric-for-${topic.use.id}/`);
-  }
   if (topic.use) {
-    paths.add(`/discover/${topic.use.garmentLabel}-fabric-guide/`);
+    paths.add(
+      `/discover/${slugify(`${topic.use.garmentLabel}-fabric-guide`)}/`,
+    );
+    paths.add(`/discover/${slugify(`fabric-for-${topic.use.id}`)}/`);
   }
   if (topic.pageType === "commercial") {
     paths.add("/wholesale-fabric/");
@@ -90,7 +169,7 @@ function relatedPathsFor(topic: SemanticTopic): string[] {
   }
 
   paths.delete(topic.path);
-  return [...paths].slice(0, 10);
+  return [...paths].filter(knownPath).slice(0, 10);
 }
 
 function composeSections(

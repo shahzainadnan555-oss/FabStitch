@@ -32,7 +32,10 @@ import {
   SEMANTIC_PAGES,
 } from "@/domain/seo/semantic";
 import { MARKETPLACE_SUPPORT_PAGES } from "@/domain/seo/marketplace-cluster";
-import { MARKETPLACE_TOPIC_PAGES } from "@/domain/seo/marketplace-thousand";
+import {
+  MARKETPLACE_TOPIC_HUBS,
+  MARKETPLACE_TOPIC_PAGES,
+} from "@/domain/seo/marketplace-thousand";
 import {
   FABRIC_QUESTION_PAGES,
   fabricQuestionParent,
@@ -172,7 +175,9 @@ const staticPages: SeoPageDefinition[] = [
       "/fabrics/best-for/shirts/",
       "/fabrics/best-for/dresses/",
       "/guides/",
+      "/guides/fabric-questions/",
       "/wholesale-fabric/",
+      "/fabric-sourcing/",
       "/discover/",
     ],
     qualityGatePassed: true,
@@ -210,6 +215,9 @@ const staticPages: SeoPageDefinition[] = [
       "/fabrics/apparel/",
       "/fabrics/fashion/",
       "/guides/",
+      "/guides/fabric-questions/",
+      "/guides/fabric-weight-and-gsm/",
+      "/guides/cotton-vs-linen/",
       "/guides/how-to-buy-fabric-online/",
       "/guides/how-to-source-fabric-for-clothing-brands/",
       ...CURATED_FABRIC_SLUGS.map((slug) => `/fabrics/${slug}/`),
@@ -636,7 +644,12 @@ const seasonalPages: SeoPageDefinition[] = SEASONAL_COLLECTIONS.map((theme) => {
       ...products.map((fabric) => `/fabrics/${fabric.slug}/`),
     ],
     productCount: products.length,
-    wordCount: words(theme.introduction),
+    wordCount: words([
+      theme.title,
+      theme.description,
+      ...theme.introduction,
+      ...products.map((fabric) => fabric.name),
+    ]),
     qualityGatePassed: products.length >= 3 && words(theme.introduction) >= 50,
     image:
       products[0] && MEDIA_BY_FABRIC_SLUG[products[0].slug]?.status === "final"
@@ -647,8 +660,14 @@ const seasonalPages: SeoPageDefinition[] = SEASONAL_COLLECTIONS.map((theme) => {
 
 const bestForPages: SeoPageDefinition[] = SEO_USE_CASES.map((useCase) => {
   const products = fabricsForUseCase(useCase);
-  const contentWords = words(useCase.introduction);
-  const indexable = products.length >= 3 && contentWords >= 45;
+  const introWords = words(useCase.introduction);
+  const indexable = products.length >= 3 && introWords >= 45;
+  const contentWords = words([
+    useCase.title,
+    useCase.description,
+    ...useCase.introduction,
+    ...products.map((fabric) => fabric.name),
+  ]);
   return {
     path: `/fabrics/best-for/${useCase.slug}/`,
     type: "best_for",
@@ -778,7 +797,14 @@ function parentPathFor(page: SeoPageDefinition): string | undefined {
     return "/";
   }
   if (page.type === "marketplace_support") return "/marketplace/";
-  if (page.type === "marketplace_topic") return "/marketplace/";
+  if (page.type === "marketplace_topic") {
+    const topic = MARKETPLACE_TOPIC_PAGES.find((item) => item.path === page.path);
+    if (!topic || topic.kind === "hub") return "/marketplace/";
+    return (
+      MARKETPLACE_TOPIC_HUBS.find((hub) => hub.family === topic.family)?.path ??
+      "/marketplace/"
+    );
+  }
   if (page.type === "collection_hub") return "/fabrics/";
   if (page.type === "collection" || page.type === "seasonal_collection") {
     return "/collections/";

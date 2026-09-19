@@ -36,6 +36,10 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
   {
     label: "Resources",
     links: [
+      { label: "Fabric questions", href: "/guides/fabric-questions/" },
+      { label: "Fabric sourcing", href: "/fabric-sourcing/" },
+      { label: "Wholesale fabric", href: "/wholesale-fabric/" },
+      { label: "Discover", href: "/discover/" },
       { label: "Help", href: "/help/" },
       { label: "Support", href: "/support/" },
       { label: "How FabStitch works", href: "/help/how-fabstitch-works/" },

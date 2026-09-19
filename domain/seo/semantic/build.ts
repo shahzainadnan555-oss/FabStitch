@@ -4,6 +4,7 @@ import { ADDITIONAL_PAGE_CAPACITY, buildLibraryPages } from "./library";
 import { reservedPathSet } from "./reserved";
 import type { SemanticPage } from "./types";
 import { canonicalSeoPath } from "@/domain/seo/publication";
+import { SEO_USE_CASES } from "@/catalog";
 
 export type SemanticBuildReport = {
   candidates: number;
@@ -216,8 +217,28 @@ function buildSemanticCorpus(): {
     pages.push(candidate);
   }
 
+  const liveDiscover = new Set(
+    pages.filter((page) => page.indexable).map((page) => page.path),
+  );
+  const liveBestFor = new Set(
+    SEO_USE_CASES.map((useCase) => `/fabrics/best-for/${useCase.slug}/`),
+  );
+  const linkedPages = pages.map((page) => ({
+    ...page,
+    relatedPaths: page.relatedPaths.filter((target) => {
+      if (target.startsWith("/discover/")) return liveDiscover.has(target);
+      if (
+        target.startsWith("/fabrics/best-for/") &&
+        target !== "/fabrics/best-for/"
+      ) {
+        return liveBestFor.has(target);
+      }
+      return !/\s/.test(target);
+    }),
+  }));
+
   // Rebuild cluster counts after library merge.
-  const indexablePages = pages.filter((page) => page.indexable);
+  const indexablePages = linkedPages.filter((page) => page.indexable);
   const byCluster: Record<string, number> = {};
   for (const page of indexablePages) {
     byCluster[page.cluster] = (byCluster[page.cluster] ?? 0) + 1;
@@ -227,7 +248,7 @@ function buildSemanticCorpus(): {
     candidates.length - pages.filter((page) => page.qualityGatePassed).length;
 
   return {
-    pages,
+    pages: linkedPages,
     report: {
       candidates: candidates.length,
       accepted: pages.filter((page) => page.qualityGatePassed).length,

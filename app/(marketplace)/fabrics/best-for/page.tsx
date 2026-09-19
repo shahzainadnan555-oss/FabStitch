@@ -5,6 +5,7 @@ import { IconArrowRight } from "@/components/ui/icon";
 import { registeredStorefrontMetadata } from "@/lib/storefront-metadata";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
 import { getCustomerBestFor } from "@/repositories/customer-catalog";
+import { SEO_USE_CASES } from "@/catalog";
 
 export async function generateMetadata() {
   return registeredStorefrontMetadata("/fabrics/best-for/", {
@@ -76,6 +77,22 @@ export default async function BestForHubPage() {
             No Best For edits are published yet.
           </p>
         )}
+        <nav aria-label="Best For index" className="mt-10">
+          <h2 className="text-sm font-semibold text-ink">All use edits</h2>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {SEO_USE_CASES.map((useCase) => (
+              <li key={useCase.slug}>
+                <Link
+                  href={`/fabrics/best-for/${useCase.slug}/`}
+                  prefetch={false}
+                  className="inline-flex rounded-sm border border-rule-2 bg-paper-raised px-3 py-1.5 text-sm text-ink hover:border-indigo hover:text-indigo"
+                >
+                  {useCase.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </Container>
     </>
   );
