@@ -137,7 +137,7 @@ export const EDUCATION_GUIDES: CatalogGuide[] = [
     slug: "cotton-vs-linen",
     type: "comparison",
     title: "Cotton vs linen: which fabric is right for your project?",
-    heading: "Cotton vs linen: which fabric is right for your project?",
+    heading: "Where cotton and linen differ",
     metaDescription:
       "Compare cotton and linen for drape, crease, weight and typical uses so you can choose a starting collection on FabStitch.",
     summary:
@@ -158,6 +158,22 @@ export const EDUCATION_GUIDES: CatalogGuide[] = [
         keyPoints: [
           "Match fibre to the garment line, not the other way around.",
           "Blends such as linen-cotton sit between the two extremes.",
+        ],
+      },
+      {
+        heading: "Breathability, crease, and moisture",
+        body: "Linen often feels cooler because flax yarns leave a more open, irregular surface, not because a label says “breathable.” Cotton can be just as open in a voile or just as warm in a flannel. Crease is the usual linen trade-off: a dry linen shirt will mark at the elbow. A linen-cotton blend usually creases less and looks less slubby. Neither behaviour is a defect unless the brief asked for a pressed, smooth surface.",
+        keyPoints: [
+          "Cool hand comes from yarn and cloth structure, not the fibre slogan.",
+          "Crease is expected in dry linen and reduced in many blends.",
+        ],
+      },
+      {
+        heading: "What to compare before you source either fibre",
+        body: "Put European flax linen, a linen blend, and a cotton poplin or oxford side by side and read composition, construction, and any published weight. Leave GSM blank when a page omits it. Do not call a blend pure linen, and do not call every cotton organic. Price, mill, and certificate are not on these collection pages. The inquiry is where quantity and those commercial questions belong.",
+        keyPoints: [
+          "Compare named fabrics, not the two fibre words.",
+          "Commercial terms stay in the inquiry.",
         ],
       },
     ],

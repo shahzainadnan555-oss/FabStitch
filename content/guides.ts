@@ -321,6 +321,15 @@ const CORE_GUIDES: CatalogGuide[] = [
         ],
       },
       {
+        heading: "What buyers should check before ordering",
+        body: "Write the published GSM, or the words “not published”, next to construction and fibre. A 180 GSM cotton jersey and a 180 GSM cotton poplin can share a number and still cut, curl, and cover differently, because one is a knit and the other is a weave. Denim pages may state ounces per square yard instead of GSM. Do not convert that ounce figure into a GSM on the inquiry unless both sides have agreed the conversion.\n\nAsk for width, shrinkage, and finish only when the garment needs them and the fabric page is silent. Do not treat a heavier cloth as higher quality. Opacity, drape, and warmth are separate checks.",
+        keyPoints: [
+          "Same GSM does not mean the same construction.",
+          "Ounces, momme, and denier stay in their own units.",
+          "A missing weight stays missing in the brief.",
+        ],
+      },
+      {
         heading: "Using weight in fabric discovery",
         body: "Use the marketplace GSM filter only when the product has a stated GSM range. An upper or lower bound returns fabrics whose documented range overlaps the request. Products with no supported GSM are excluded from a GSM-constrained result rather than guessed into it.\n\nAfter filtering, open the product page to confirm the range, season, construction and applications. Pair this guide with lightweight fabric guidance and woven vs knit notes when mass and structure are both undecided.",
         keyPoints: [

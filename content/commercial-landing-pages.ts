@@ -307,10 +307,14 @@ export const COMMERCIAL_LANDING_PAGES: readonly CommercialLandingPage[] = [
         ],
       },
       {
-        heading: "How to order fabric wholesale through inquiry",
+        heading: "What a bulk brief should name",
         body: [
-          "Open the fabric page, confirm published specs, then inquire with fabric name, quantity band, garment and any sample needs. That is how to order fabric wholesale on FabStitch without inventing MOQs or prices in markup.",
-          "Continue in the marketplace for filtered discovery across the catalog, or return to fabric sourcing when the brief is still educational rather than commercial-quantity led.",
+          "A wholesale inquiry is more useful when it names the fabric URL, construction, published weight if any, garment, and metres or kilograms you actually need. “Price per kilogram” and “by the roll” are questions to ask. They are not figures this page can print, because the catalog does not publish a rate or a roll length.",
+          "Width, shrinkage, and finish stay off the brief until the fabric page states them or the reply does. Cotton, denim, jersey, and wool programmes still resolve to those collection and Best For pages. This page only explains the commercial step.",
+        ],
+        keyPoints: [
+          "Quantity is yours to state. MOQ is asked, not assumed.",
+          "Synonyms such as bulk fabric still point at one named cloth.",
         ],
       },
     ],

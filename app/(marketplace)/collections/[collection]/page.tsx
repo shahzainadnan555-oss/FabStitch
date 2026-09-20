@@ -186,7 +186,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
             id="collection-introduction"
             className="text-h2 font-semibold text-ink"
           >
-            Inside this collection
+            How to read {collection.name}
           </h2>
           <p className="mt-4 text-body leading-relaxed text-ink-2 text-pretty">
             {bodyIntro}

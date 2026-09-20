@@ -21,6 +21,7 @@ export const SEO_USE_CASES = [
     introduction: [
       "Shirt fabric changes with season and purpose. The FabStitch 2027 collection includes lightweight linen and cotton for warm-weather shirting, fluid crepe de chine, and more substantial brushed flannel or fine-wale corduroy for cooler conditions.",
       "Use composition, construction and stated weight together. A fibre name alone does not explain whether a fabric is crisp, sheer, fluid or brushed, so each product page keeps those documented properties beside its intended applications.",
+      "For a shirt, the useful split is crisp woven cotton or linen against a knit. Poplin and oxford hold a collar. Voile is more open. Jersey and piqué stretch and usually need a different pattern. Write the construction you read, and leave GSM blank when the fabric page does not publish it.",
     ],
     applicationSlugs: ["shirting"],
     related: ["trousers", "womens-clothing", "tailoring"],
@@ -53,6 +54,7 @@ export const SEO_USE_CASES = [
     introduction: [
       "The dress fabrics in this collection cover very different structures: breathable linen, fluid linen-silk, floating chiffon and crinkled georgette. Their product records show the stated composition, construction, weight and character where the reference provides them.",
       "For a dress that needs body, compare these materials with the related occasionwear edit. For a softer silhouette, start with the fabrics described as fluid or draped and account for lining where the cloth is sheer.",
+      "Chiffon and organza are usually too open to wear alone. Georgette moves more and clings less than a smooth satin. Linen and linen-silk crease and drape instead of floating. Choose the cloth for the silhouette, then open that fabric page rather than treating “dress fabric” as one material.",
     ],
     applicationSlugs: ["dresses"],
     related: ["womens-clothing", "occasionwear", "resortwear"],
@@ -92,6 +94,7 @@ export const SEO_USE_CASES = [
     introduction: [
       "The performance selection follows documented SS 27 directions rather than an invented popularity ranking. It includes stretch-woven compression, cooling constructions, crossover swim materials, ultra-light lounge knits and retro sportif structures.",
       "Choose from the intended use first: compression for next-to-skin baselayers, cooling construction for active apparel, crossover cloth for swim and city use, or piqué, mesh, tricot and ribs for a retro-sport direction.",
+      "Moisture-wicking, four-way stretch, and chlorine resistance are not implied by this edit. Use those words only when the fabric page states them. A cotton jersey from the cotton collection can be a tee cloth and still be the wrong choice for a compression or swim brief.",
     ],
     applicationSlugs: [
       "performance-apparel",
@@ -192,6 +195,7 @@ export const SEO_USE_CASES = [
     introduction: [
       "The upholstery edit follows four documented 2027 directions: tactile bouclé, heavy linen, wool felt and performance weave. They offer different surface, fibre and durability propositions rather than cosmetic variants of one fabric.",
       "Use the product record to distinguish construction and stated performance. Final suitability still depends on the commercial specification that accompanies the sellable fabric.",
+      "A sofa cloth needs a face that can take abrasion. Bouclé traps texture and lint differently from a flat weave. Heavy linen creases and shows wear as a patina. Wool felt is dense. A performance weave is only as technical as that page states. Do not copy a Martindale number, an FR claim, or a roll width from one upholstery cloth onto another.",
     ],
     applicationSlugs: ["upholstery"],
     related: ["home-textiles", "bedding", "outerwear"],
@@ -205,6 +209,7 @@ export const SEO_USE_CASES = [
     introduction: [
       "FabStitch's bedding edit contains four constructions named by the home-textile reference: long-staple cotton percale, long-staple cotton sateen, washed linen and lyocell blends.",
       "These names identify different fibre and construction choices. Compare the product records directly instead of treating bedding as one generic cotton category, and leave unstated performance or care values open.",
+      "Percale is usually a matte plain weave. Sateen uses a float weave and looks smoother. Washed linen will crease. A lyocell blend is not linen and not cotton unless the composition says so. Width and thread count are not invented on this page. Hotel or contract use is a separate question from a fashion shirting cotton.",
     ],
     applicationSlugs: ["bedding"],
     related: ["home-textiles", "upholstery", "shirts"],

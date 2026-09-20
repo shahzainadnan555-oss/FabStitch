@@ -1,11 +1,11 @@
 {
   "totalPages": 2471,
   "publicPages": 2471,
-  "indexablePages": 2266,
+  "indexablePages": 2267,
   "title": {
     "min": 45,
     "max": 61,
-    "withinRange": 2266,
+    "withinRange": 2267,
     "tooShort": 0,
     "tooLong": 0,
     "missing": 0,
@@ -14,15 +14,15 @@
   "description": {
     "min": 120,
     "max": 151,
-    "withinRange": 2266,
+    "withinRange": 2267,
     "tooShort": 0,
     "tooLong": 0,
     "missing": 0,
     "duplicate": 0
   },
   "content": {
-    "eligible": 2249,
-    "atLeast80": 2249,
+    "eligible": 2250,
+    "atLeast80": 2250,
     "under80": 0,
     "excludedUtility": 17
   }

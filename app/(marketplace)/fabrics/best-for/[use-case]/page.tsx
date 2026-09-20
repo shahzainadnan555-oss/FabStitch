@@ -158,7 +158,7 @@ export default async function BestForPage({ params, searchParams }: Props) {
               id="use-case-products"
               className="text-h2 font-semibold text-ink"
             >
-              Best-fit FabStitch fabrics
+              Named fabrics for {useCase.name.toLowerCase()}
             </h2>
             <Link
               href={`/marketplace/?best_for=${encodeURIComponent(useCase.slug)}`}
