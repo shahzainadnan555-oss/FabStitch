@@ -86,7 +86,7 @@ export function Dialog({
       // unconditional display utility outranks it - which paints the modal on
       // every page while `dialog.open` still reports false.
       className={cn(
-        "m-auto hidden w-full rounded-lg border border-rule-2 bg-paper-raised p-0 open:flex",
+        "m-auto hidden w-full rounded-lg border border-rule-2 bg-paper-raised p-0 open:flex open:flex-col",
         "backdrop:bg-ink-surface/60 max-h-[100dvh] overflow-hidden sm:max-h-[92dvh]",
         className,
       )}

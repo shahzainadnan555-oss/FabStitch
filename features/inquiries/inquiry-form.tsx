@@ -152,15 +152,15 @@ export function InquiryDialog({
       onClose={resetAndClose}
       label={`Inquire about ${fabric.name}`}
       dismissOnBackdrop={!submitting}
-      className="max-w-[56rem]"
+      className="h-[100dvh] max-w-[56rem] rounded-none sm:h-auto sm:rounded-lg"
     >
-      <div className="w-full">
-        <div className="flex items-start justify-between gap-5 border-b border-rule px-5 py-4 sm:px-6">
-          <div>
+      <div className="flex min-h-0 w-full flex-1 flex-col">
+        <div className="flex shrink-0 items-start justify-between gap-5 border-b border-rule px-5 py-4 sm:px-6">
+          <div className="min-w-0">
             <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
               Fabric inquiry
             </p>
-            <h2 className="mt-1 text-h2 font-semibold text-ink">
+            <h2 className="mt-1 text-h2 font-semibold text-balance text-ink">
               {success ? "Inquiry sent successfully" : "Your inquiry"}
             </h2>
           </div>
@@ -168,7 +168,7 @@ export function InquiryDialog({
             type="button"
             onClick={resetAndClose}
             disabled={submitting}
-            className="grid size-9 shrink-0 place-items-center rounded-sm text-ink-3 hover:bg-paper-sunk hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo disabled:cursor-wait"
+            className="grid size-11 shrink-0 place-items-center rounded-sm text-ink-3 hover:bg-paper-sunk hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo disabled:cursor-wait"
           >
             <span className="sr-only">Close inquiry form</span>
             <IconClose width={17} height={17} aria-hidden />
@@ -176,7 +176,11 @@ export function InquiryDialog({
         </div>
 
         {success ? (
-          <div className="px-5 py-6 sm:px-6" role="status" aria-live="polite">
+          <div
+            className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-5 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6"
+            role="status"
+            aria-live="polite"
+          >
             <p className="text-body leading-relaxed text-ink-2">
               Your inquiry has been sent. Our FabStitch team will contact you as
               soon as possible.
@@ -220,13 +224,13 @@ export function InquiryDialog({
             <div className="mt-5 flex flex-wrap gap-2">
               <Link
                 href={`/inquiries/${success.inquiry.id}/`}
-                className="inline-flex h-10 items-center rounded-sm bg-indigo px-4 text-sm font-semibold text-white hover:bg-indigo-hover"
+                className="inline-flex h-11 items-center rounded-sm bg-indigo px-4 text-sm font-semibold text-white hover:bg-indigo-hover"
               >
                 View My Inquiry
               </Link>
               <Link
                 href="/marketplace/"
-                className="inline-flex h-10 items-center rounded-sm border border-rule-2 px-4 text-sm font-semibold text-ink-2 hover:border-indigo hover:text-indigo"
+                className="inline-flex h-11 items-center rounded-sm border border-rule-2 px-4 text-sm font-semibold text-ink-2 hover:border-indigo hover:text-indigo"
               >
                 Continue browsing fabrics
               </Link>
@@ -241,7 +245,7 @@ export function InquiryDialog({
             <p className="text-body text-ink-2">Checking your account…</p>
           </div>
         ) : needsSignIn ? (
-          <div className="px-5 py-8 sm:px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6">
             <p className="text-body text-ink-2">
               Sign in to send a fabric inquiry. FabStitch uses your account
               email, country and phone for the request.
@@ -322,6 +326,8 @@ function InquiryComposeForm({
   const [note, setNote] = useState("");
   const [fieldErrors, setFieldErrors] = useState<InquiryFieldErrors>({});
   const idempotencyKey = useRef<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const nameRequired = !storedName;
   const quantityUnit = fabric.quantityUnit ?? "meters";
   const asset = fabric.imageSrc
@@ -360,6 +366,16 @@ function InquiryComposeForm({
     idempotencyKey.current = null;
   }
 
+  function focusFirstInvalid() {
+    requestAnimationFrame(() => {
+      const invalid = formRef.current?.querySelector<HTMLElement>(
+        '[aria-invalid="true"]',
+      );
+      invalid?.focus();
+      invalid?.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+  }
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting) return;
@@ -373,7 +389,10 @@ function InquiryComposeForm({
       nameRequired,
     });
     setFieldErrors(errors);
-    if (Object.keys(errors).length) return;
+    if (Object.keys(errors).length) {
+      focusFirstInvalid();
+      return;
+    }
 
     onSubmitting(true);
     onError(null);
@@ -432,244 +451,273 @@ function InquiryComposeForm({
         email: fieldError(next, "email"),
         name: fieldError(next, "full_name"),
       });
+      focusFirstInvalid();
+      scrollRef.current
+        ?.querySelector<HTMLElement>('[role="alert"]')
+        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
     } finally {
       onSubmitting(false);
     }
   }
 
   return (
-    <form noValidate onSubmit={submit}>
-      <div className="grid gap-8 px-5 py-5 sm:px-6 lg:grid-cols-2 lg:gap-10">
-        <section>
-          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
-            Your inquiry
-          </p>
-          <div className="mt-4 grid grid-cols-[5.75rem_1fr] gap-4 rounded-sm border border-rule bg-paper-sunk p-3">
-            <FabricMedia
-              listing={fabric.mediaSubject}
-              asset={asset}
-              aspect="4/3"
-              showLabel={false}
-              sizes="92px"
-              className="overflow-hidden rounded-xs"
-            />
-            <div className="min-w-0 self-center">
-              <p className="font-mono text-label text-ink-4 uppercase">
-                Fabric
-              </p>
-              <p className="mt-1 font-semibold text-ink">{fabric.name}</p>
-              {fabric.variantLabel ? (
-                <p className="mt-1 text-sm text-ink-3">{fabric.variantLabel}</p>
-              ) : null}
+    <form
+      ref={formRef}
+      noValidate
+      onSubmit={submit}
+      className="flex min-h-0 flex-1 flex-col"
+    >
+      <div
+        ref={scrollRef}
+        className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-5 py-5 sm:px-6"
+      >
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
+          <section>
+            <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+              Your inquiry
+            </p>
+            <div className="mt-4 grid grid-cols-[5.75rem_1fr] gap-4 rounded-sm border border-rule bg-paper-sunk p-3">
+              <FabricMedia
+                listing={fabric.mediaSubject}
+                asset={asset}
+                aspect="4/3"
+                showLabel={false}
+                sizes="92px"
+                className="overflow-hidden rounded-xs"
+              />
+              <div className="min-w-0 self-center">
+                <p className="font-mono text-label text-ink-4 uppercase">
+                  Fabric
+                </p>
+                <p className="mt-1 font-semibold text-ink">{fabric.name}</p>
+                {fabric.variantLabel ? (
+                  <p className="mt-1 text-sm text-ink-3">
+                    {fabric.variantLabel}
+                  </p>
+                ) : null}
+              </div>
             </div>
-          </div>
 
-          <div className="mt-5 grid gap-4">
-            <Field
-              label="Quantity"
-              error={fieldErrors.quantity}
-              hint="Inquiry quantities are submitted in metres."
-            >
-              {({ id, describedBy, invalid }) => (
-                <div className="grid grid-cols-[1fr_auto] gap-2">
+            <div className="mt-5 grid gap-4">
+              <Field
+                label="Quantity"
+                error={fieldErrors.quantity}
+                hint="Inquiry quantities are submitted in metres."
+              >
+                {({ id, describedBy, invalid }) => (
+                  <div className="grid grid-cols-[1fr_auto] gap-2">
+                    <Input
+                      id={id}
+                      name="quantity"
+                      type="number"
+                      inputMode="decimal"
+                      min="0.01"
+                      max="1000000"
+                      step="any"
+                      required
+                      size="lg"
+                      value={quantity}
+                      className="scroll-mt-24"
+                      onChange={(event) => {
+                        setQuantity(event.target.value);
+                        setFieldErrors((current) => ({
+                          ...current,
+                          quantity: undefined,
+                        }));
+                        markDirty();
+                      }}
+                      aria-describedby={describedBy}
+                      invalid={invalid}
+                    />
+                    <span className="grid min-h-12 min-w-24 place-items-center rounded-sm border border-rule bg-paper-sunk px-3 text-sm text-ink-2">
+                      {quantityUnit}
+                    </span>
+                  </div>
+                )}
+              </Field>
+
+              <Field
+                label="Note (optional)"
+                hint="Add only details relevant to this fabric inquiry."
+              >
+                {({ id, describedBy }) => (
+                  <textarea
+                    id={id}
+                    name="customerNote"
+                    rows={4}
+                    maxLength={2000}
+                    value={note}
+                    onChange={(event) => {
+                      setNote(event.target.value);
+                      markDirty();
+                    }}
+                    aria-describedby={describedBy}
+                    className="min-h-28 w-full scroll-mt-24 resize-y rounded-sm border border-border bg-paper-raised px-3 py-3 text-base text-ink placeholder:text-ink-4 focus:border-indigo focus:outline-none sm:text-sm"
+                  />
+                )}
+              </Field>
+            </div>
+          </section>
+
+          <section>
+            <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+              Your contact details
+            </p>
+            <div className="mt-4 grid gap-4">
+              <Field
+                label="Full name"
+                error={fieldErrors.name}
+                hint={
+                  storedName ? "Taken from your FabStitch account." : undefined
+                }
+              >
+                {({ id, describedBy, invalid }) => (
                   <Input
                     id={id}
-                    name="quantity"
-                    type="number"
-                    inputMode="decimal"
-                    min="0.01"
-                    max="1000000"
-                    step="any"
-                    required
-                    value={quantity}
+                    name="full_name"
+                    autoComplete="name"
+                    required={nameRequired}
+                    readOnly={Boolean(storedName)}
+                    size="lg"
+                    value={storedName || name}
+                    className="scroll-mt-24"
                     onChange={(event) => {
-                      setQuantity(event.target.value);
+                      setName(event.target.value);
                       setFieldErrors((current) => ({
                         ...current,
-                        quantity: undefined,
+                        name: undefined,
                       }));
                       markDirty();
                     }}
                     aria-describedby={describedBy}
                     invalid={invalid}
                   />
-                  <span className="grid min-w-24 place-items-center rounded-sm border border-rule bg-paper-sunk px-3 text-sm text-ink-2">
-                    {quantityUnit}
-                  </span>
-                </div>
-              )}
-            </Field>
+                )}
+              </Field>
 
-            <Field
-              label="Note (optional)"
-              hint="Add only details relevant to this fabric inquiry."
-            >
-              {({ id, describedBy }) => (
-                <textarea
-                  id={id}
-                  name="customerNote"
-                  rows={4}
-                  maxLength={2000}
-                  value={note}
-                  onChange={(event) => {
-                    setNote(event.target.value);
-                    markDirty();
-                  }}
-                  aria-describedby={describedBy}
-                  className="w-full resize-y rounded-sm border border-border bg-paper-raised px-3 py-2 text-sm text-ink placeholder:text-ink-4 focus:border-indigo focus:outline-none"
-                />
-              )}
-            </Field>
+              <Field
+                label="Email address"
+                error={fieldErrors.email}
+                hint="FabStitch contacts you at your registered account email."
+              >
+                {({ id, describedBy, invalid }) => (
+                  <Input
+                    id={id}
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    readOnly
+                    size="lg"
+                    value={accountEmail}
+                    className="scroll-mt-24"
+                    aria-describedby={describedBy}
+                    invalid={invalid}
+                  />
+                )}
+              </Field>
+
+              <Field label="Country" error={fieldErrors.country}>
+                {({ id, describedBy, invalid }) => (
+                  <Select
+                    id={id}
+                    name="country"
+                    required
+                    size="lg"
+                    value={country}
+                    className="scroll-mt-24"
+                    onChange={(event) => {
+                      setCountry(event.target.value);
+                      setFieldErrors((current) => ({
+                        ...current,
+                        country: undefined,
+                      }));
+                      markDirty();
+                    }}
+                    aria-describedby={describedBy}
+                    invalid={invalid}
+                  >
+                    <option value="">Select your country</option>
+                    {country &&
+                    !countries.some((item) => item.code === country) &&
+                    isCountryCode(country) ? (
+                      <option value={country}>
+                        {marketForCountry(country).countryName}
+                      </option>
+                    ) : null}
+                    {countries.map((item) => (
+                      <option key={item.code} value={item.code}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+              </Field>
+
+              <Field
+                label="Phone number"
+                error={fieldErrors.phone}
+                hint={
+                  isCountryCode(country)
+                    ? `Include the country code, for example ${marketForCountry(country).dialCode}.`
+                    : "Include the country code."
+                }
+              >
+                {({ id, describedBy, invalid }) => (
+                  <Input
+                    id={id}
+                    name="phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    required
+                    size="lg"
+                    value={phone}
+                    className="scroll-mt-24"
+                    onChange={(event) => {
+                      setPhone(event.target.value);
+                      setFieldErrors((current) => ({
+                        ...current,
+                        phone: undefined,
+                      }));
+                      markDirty();
+                    }}
+                    aria-describedby={describedBy}
+                    invalid={invalid}
+                  />
+                )}
+              </Field>
+            </div>
+          </section>
+        </div>
+
+        {error ? (
+          <div
+            className="mt-5 rounded-sm border border-alert/25 bg-alert-soft px-3 py-2.5 text-sm text-alert"
+            role="alert"
+          >
+            <p>{error.message}</p>
+            {error.requestId ? (
+              <p className="mt-1 font-mono text-label">
+                Request {error.requestId}
+              </p>
+            ) : null}
+            {error.status === 401 ? (
+              <Link
+                href={loginHref(`/fabrics/${fabric.slug}/`)}
+                className="mt-2 inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
+              >
+                Sign in to continue
+              </Link>
+            ) : null}
           </div>
-        </section>
+        ) : null}
 
-        <section>
-          <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
-            Your contact details
-          </p>
-          <div className="mt-4 grid gap-4">
-            <Field
-              label="Full name"
-              error={fieldErrors.name}
-              hint={
-                storedName ? "Taken from your FabStitch account." : undefined
-              }
-            >
-              {({ id, describedBy, invalid }) => (
-                <Input
-                  id={id}
-                  name="full_name"
-                  autoComplete="name"
-                  required={nameRequired}
-                  readOnly={Boolean(storedName)}
-                  value={storedName || name}
-                  onChange={(event) => {
-                    setName(event.target.value);
-                    setFieldErrors((current) => ({
-                      ...current,
-                      name: undefined,
-                    }));
-                    markDirty();
-                  }}
-                  aria-describedby={describedBy}
-                  invalid={invalid}
-                />
-              )}
-            </Field>
-
-            <Field
-              label="Email address"
-              error={fieldErrors.email}
-              hint="FabStitch contacts you at your registered account email."
-            >
-              {({ id, describedBy, invalid }) => (
-                <Input
-                  id={id}
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  readOnly
-                  value={accountEmail}
-                  aria-describedby={describedBy}
-                  invalid={invalid}
-                />
-              )}
-            </Field>
-
-            <Field label="Country" error={fieldErrors.country}>
-              {({ id, describedBy, invalid }) => (
-                <Select
-                  id={id}
-                  name="country"
-                  required
-                  value={country}
-                  onChange={(event) => {
-                    setCountry(event.target.value);
-                    setFieldErrors((current) => ({
-                      ...current,
-                      country: undefined,
-                    }));
-                    markDirty();
-                  }}
-                  aria-describedby={describedBy}
-                  invalid={invalid}
-                >
-                  <option value="">Select your country</option>
-                  {country &&
-                  !countries.some((item) => item.code === country) &&
-                  isCountryCode(country) ? (
-                    <option value={country}>
-                      {marketForCountry(country).countryName}
-                    </option>
-                  ) : null}
-                  {countries.map((item) => (
-                    <option key={item.code} value={item.code}>
-                      {item.name}
-                    </option>
-                  ))}
-                </Select>
-              )}
-            </Field>
-
-            <Field
-              label="Phone number"
-              error={fieldErrors.phone}
-              hint={
-                isCountryCode(country)
-                  ? `Include the country code, for example ${marketForCountry(country).dialCode}.`
-                  : "Include the country code."
-              }
-            >
-              {({ id, describedBy, invalid }) => (
-                <Input
-                  id={id}
-                  name="phone"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  required
-                  value={phone}
-                  onChange={(event) => {
-                    setPhone(event.target.value);
-                    setFieldErrors((current) => ({
-                      ...current,
-                      phone: undefined,
-                    }));
-                    markDirty();
-                  }}
-                  aria-describedby={describedBy}
-                  invalid={invalid}
-                />
-              )}
-            </Field>
-          </div>
-        </section>
+        {/* Spacer so the last field clears the sticky submit footer when scrolled. */}
+        <div className="h-2" aria-hidden />
       </div>
 
-      {error ? (
-        <div
-          className="mx-5 mb-2 rounded-sm border border-alert/25 bg-alert-soft px-3 py-2.5 text-sm text-alert sm:mx-6"
-          role="alert"
-        >
-          <p>{error.message}</p>
-          {error.requestId ? (
-            <p className="mt-1 font-mono text-label">
-              Request {error.requestId}
-            </p>
-          ) : null}
-          {error.status === 401 ? (
-            <Link
-              href={loginHref(`/fabrics/${fabric.slug}/`)}
-              className="mt-2 inline-flex font-semibold underline underline-offset-4"
-            >
-              Sign in to continue
-            </Link>
-          ) : null}
-        </div>
-      ) : null}
-
-      <div className="border-t border-rule bg-paper-raised px-5 py-4 sm:px-6">
+      <div className="shrink-0 border-t border-rule bg-paper-raised px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
         <button
           type="submit"
           disabled={submitting || !canSubmit}
