@@ -1,0 +1,137 @@
+[
+  {
+    "seo_slug": "shirts",
+    "api_candidates": [
+      "shirts",
+      "shirting"
+    ],
+    "local_fabrics": 47,
+    "was_broken_in_prod": true
+  },
+  {
+    "seo_slug": "womens-clothing",
+    "api_candidates": [
+      "womens-clothing",
+      "dresses",
+      "blouses",
+      "full-skirts",
+      "slip-dresses",
+      "occasionwear"
+    ],
+    "local_fabrics": 71,
+    "was_broken_in_prod": true
+  },
+  {
+    "seo_slug": "dresses",
+    "api_candidates": [
+      "dresses"
+    ],
+    "local_fabrics": 51,
+    "was_broken_in_prod": false
+  },
+  {
+    "seo_slug": "trousers",
+    "api_candidates": [
+      "trousers",
+      "bottoms",
+      "workwear-trousers"
+    ],
+    "local_fabrics": 27,
+    "was_broken_in_prod": false
+  },
+  {
+    "seo_slug": "tailoring",
+    "api_candidates": [
+      "tailoring",
+      "suiting",
+      "soft-tailoring",
+      "unstructured-jackets"
+    ],
+    "local_fabrics": 17,
+    "was_broken_in_prod": true
+  },
+  {
+    "seo_slug": "activewear",
+    "api_candidates": [
+      "activewear",
+      "performance-apparel",
+      "baselayers",
+      "swimwear",
+      "loungewear",
+      "citywear"
+    ],
+    "local_fabrics": 32,
+    "was_broken_in_prod": true
+  },
+  {
+    "seo_slug": "knitwear",
+    "api_candidates": [
+      "knitwear",
+      "statement-knits",
+      "layering-pieces"
+    ],
+    "local_fabrics": 36,
+    "was_broken_in_prod": false
+  },
+  {
+    "seo_slug": "resortwear",
+    "api_candidates": [
+      "resortwear"
+    ],
+    "local_fabrics": 8,
+    "was_broken_in_prod": false
+  },
+  {
+    "seo_slug": "occasionwear",
+    "api_candidates": [
+      "occasionwear"
+    ],
+    "local_fabrics": 7,
+    "was_broken_in_prod": false
+  },
+  {
+    "seo_slug": "outerwear",
+    "api_candidates": [
+      "outerwear",
+      "coats",
+      "unlined-coats",
+      "lightweight-outerwear",
+      "city-outerwear"
+    ],
+    "local_fabrics": 17,
+    "was_broken_in_prod": false
+  },
+  {
+    "seo_slug": "home-textiles",
+    "api_candidates": [
+      "home-textiles",
+      "home-decor",
+      "interiors",
+      "upholstery",
+      "curtains",
+      "sheers",
+      "acoustic-drapes",
+      "bedding",
+      "rugs",
+      "contract-textiles"
+    ],
+    "local_fabrics": 22,
+    "was_broken_in_prod": true
+  },
+  {
+    "seo_slug": "upholstery",
+    "api_candidates": [
+      "upholstery"
+    ],
+    "local_fabrics": 4,
+    "was_broken_in_prod": false
+  },
+  {
+    "seo_slug": "bedding",
+    "api_candidates": [
+      "bedding"
+    ],
+    "local_fabrics": 7,
+    "was_broken_in_prod": false
+  }
+]

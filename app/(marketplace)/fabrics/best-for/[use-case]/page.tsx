@@ -9,19 +9,18 @@ import {
 import { PageHeader } from "@/components/marketplace/page-header";
 import { Container } from "@/components/ui/layout";
 import { IconArrowRight } from "@/components/ui/icon";
-import {
-  getCustomerBestForDetail,
-  isCustomerCatalogSort,
-} from "@/repositories/customer-catalog";
+import { isCustomerCatalogSort } from "@/repositories/customer-catalog";
 import {
   hasSeoQueryState,
   registeredStorefrontMetadata,
 } from "@/lib/storefront-metadata";
 import { numericParam } from "@/lib/query-params";
 import { CollectionPageJsonLd } from "@/components/seo/structured-data";
-import { SEO_USE_CASE_BY_SLUG, fabricsForUseCase } from "@/catalog";
+import { fabricsForUseCase } from "@/catalog";
 import { bestForNotes } from "@/domain/seo/visible-reading";
 import { VisibleReading } from "@/components/seo/visible-reading";
+import { resolveBestForPage } from "@/lib/best-for-page";
+import { seoPage } from "@/domain/seo/storefront-registry";
 
 type Props = {
   params: Promise<{ "use-case": string }>;
@@ -41,18 +40,29 @@ export async function generateMetadata({
     params,
     searchParams,
   ]);
-  const useCase = await getCustomerBestForDetail(slug, { limit: 1 });
-  if (!useCase) {
+  const path = `/fabrics/best-for/${slug}/`;
+  const registered = seoPage(path);
+  // Known SEO registry pages must stay indexable even when the catalog API
+  // uses a different application slug (shirts → shirting, etc.).
+  if (registered?.indexable) {
+    return registeredStorefrontMetadata(path, {
+      image: registered.image,
+      index: !hasSeoQueryState(query),
+    });
+  }
+
+  const resolved = await resolveBestForPage(slug, { limit: 1 });
+  if (!resolved) {
     return {
       title: "Best For page not found",
       robots: { index: false, follow: true },
     };
   }
-  return registeredStorefrontMetadata(`/fabrics/best-for/${useCase.slug}/`, {
-    title: `${useCase.name} fabrics`,
+  return registeredStorefrontMetadata(path, {
+    title: `${resolved.name} fabrics`,
     description:
-      useCase.description ??
-      `Explore fabrics selected for ${useCase.name.toLowerCase()}.`,
+      resolved.description ||
+      `Explore fabrics selected for ${resolved.name.toLowerCase()}.`,
     index: !hasSeoQueryState(query),
   });
 }
@@ -68,7 +78,7 @@ export default async function BestForPage({ params, searchParams }: Props) {
     : "editorial";
   const limit =
     numericParam(single(query.page_size), { min: 1, max: 48 }) ?? PAGE_SIZE;
-  const useCase = await getCustomerBestForDetail(slug, {
+  const useCase = await resolveBestForPage(slug, {
     cursor: single(query.cursor),
     limit,
     sort,
@@ -76,10 +86,9 @@ export default async function BestForPage({ params, searchParams }: Props) {
   if (!useCase) notFound();
 
   const description =
-    useCase.description ??
+    useCase.description ||
     `Explore fabrics selected for ${useCase.name.toLowerCase()}.`;
-  const editorial =
-    SEO_USE_CASE_BY_SLUG[useCase.slug as keyof typeof SEO_USE_CASE_BY_SLUG];
+  const editorial = useCase.editorial;
   const products = editorial ? fabricsForUseCase(editorial) : [];
   const reading = editorial
     ? bestForNotes({
@@ -161,7 +170,7 @@ export default async function BestForPage({ params, searchParams }: Props) {
               Named fabrics for {useCase.name.toLowerCase()}
             </h2>
             <Link
-              href={`/marketplace/?best_for=${encodeURIComponent(useCase.slug)}`}
+              href={`/marketplace/?best_for=${encodeURIComponent(useCase.marketplaceBestForSlug)}`}
               className="inline-flex items-center gap-2 text-sm font-semibold text-indigo"
             >
               Refine in search
@@ -179,15 +188,17 @@ export default async function BestForPage({ params, searchParams }: Props) {
                   />
                 ))}
               </div>
-              <CatalogCursorPagination
-                currentCursor={single(query.cursor)}
-                nextCursor={useCase.nextCursor}
-                hasMore={useCase.hasMore}
-                pageSize={useCase.pageSize}
-                defaultPageSize={PAGE_SIZE}
-                basePath={`/fabrics/best-for/${useCase.slug}/`}
-                searchParams={query}
-              />
+              {useCase.source === "api" ? (
+                <CatalogCursorPagination
+                  currentCursor={single(query.cursor)}
+                  nextCursor={useCase.nextCursor}
+                  hasMore={useCase.hasMore}
+                  pageSize={useCase.pageSize}
+                  defaultPageSize={PAGE_SIZE}
+                  basePath={`/fabrics/best-for/${useCase.slug}/`}
+                  searchParams={query}
+                />
+              ) : null}
             </>
           ) : (
             <NoResults
