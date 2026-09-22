@@ -227,6 +227,15 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  @media (max-width: 359px) {
+    :root {
+      --text-body: 0.9rem;
+      --text-lead: 0.9rem;
+      --text-h3: 1rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

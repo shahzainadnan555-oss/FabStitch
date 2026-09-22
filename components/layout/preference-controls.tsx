@@ -107,8 +107,10 @@ function PreferenceMenu<T extends string>({
             }
           }}
           className={cn(
-            "absolute z-50 mt-1 min-w-56 overflow-hidden rounded-sm border border-rule-2 bg-paper-raised p-1.5 shadow-card",
-            mobile ? "right-0 left-0" : "right-0",
+            "absolute z-50 min-w-56 overflow-hidden rounded-sm border border-rule-2 bg-paper-raised p-1.5 shadow-card",
+            mobile
+              ? "right-0 bottom-[calc(100%+0.25rem)] left-0"
+              : "right-0 mt-1",
           )}
         >
           {options.map((option, index) => (

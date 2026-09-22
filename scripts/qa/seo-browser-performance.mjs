@@ -178,12 +178,35 @@ preferenceChecks.deliberateCurrencyPreserved = (
 
 await preferencePage.setViewportSize({ width: 375, height: 844 });
 await preferencePage.getByRole("button", { name: /Open navigation/ }).click();
+const mobileDrawer = preferencePage.getByRole("dialog", {
+  name: /Site navigation/i,
+});
+await mobileDrawer.waitFor({ state: "visible" });
 preferenceChecks.mobileControlsVisible =
-  (await preferencePage.getByRole("button", { name: /Country/ }).count()) ===
+  (await mobileDrawer.getByRole("button", { name: /Country/ }).count()) === 1 &&
+  (await mobileDrawer.getByRole("button", { name: /Currency/ }).count()) ===
     1 &&
-  (await preferencePage.getByRole("button", { name: /Currency/ }).count()) ===
-    1 &&
-  (await preferencePage.getByRole("link", { name: "Account" }).count()) === 1;
+  ((await mobileDrawer.getByRole("button", { name: /^Account$/i }).count()) ===
+    1 ||
+    (await mobileDrawer.getByRole("link", { name: /Join Free/i }).count()) ===
+      1);
+preferenceChecks.mobileAuthCtaInViewport = await mobileDrawer.evaluate(
+  (node) => {
+    const cta = node.querySelector(
+      "a[href='/signup/'], a[href='/login/'], button",
+    );
+    // Prefer the Join Free / Account control near the footer.
+    const candidates = [
+      ...node.querySelectorAll("a[href='/signup/'], button"),
+    ].filter((el) => /Join Free|Account/i.test(el.textContent ?? ""));
+    const target = candidates.at(-1);
+    if (!(target instanceof HTMLElement)) return false;
+    const rect = target.getBoundingClientRect();
+    return rect.bottom <= window.innerHeight + 1 && rect.height >= 44;
+  },
+);
+await preferencePage.keyboard.press("Escape");
+await mobileDrawer.waitFor({ state: "hidden" });
 await preferencePage.close();
 
 if (preferenceChecks.countryOptionCount !== 7)
@@ -197,7 +220,13 @@ if (!preferenceChecks.countryDefaultedCurrency)
 if (!preferenceChecks.deliberateCurrencyPreserved)
   failures.push("Country change overwrote a deliberate currency selection");
 if (!preferenceChecks.mobileControlsVisible)
-  failures.push("Mobile Country, Currency, or Account control is unavailable");
+  failures.push(
+    "Mobile Country, Currency, or Account/Join Free control is unavailable",
+  );
+if (!preferenceChecks.mobileAuthCtaInViewport)
+  failures.push(
+    "Mobile Account/Join Free CTA is not fully visible in the viewport",
+  );
 
 const reducedMotionPage = await context.newPage();
 await reducedMotionPage.emulateMedia({ reducedMotion: "reduce" });

@@ -1,3 +1,4 @@
+import { applyCuratedAttributeHub } from "./curated-attributes";
 import type {
   SemanticFaq,
   SemanticPage,
@@ -609,7 +610,7 @@ function composeTitle(topic: SemanticTopic, seed: number): string {
     return `${use.garmentLabel[0]!.toUpperCase()}${use.garmentLabel.slice(1)} Fabric Guide`;
   }
   if (topic.pageType === "education" && attribute) {
-    return `What Is ${attribute[0]!.toUpperCase()}${attribute.slice(1)} Fabric?`;
+    return `Understanding ${attribute[0]!.toUpperCase()}${attribute.slice(1)} Fabric`;
   }
   if (material) {
     return `${material} Fabric: Properties, Uses & Selection`;
@@ -789,7 +790,7 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
     constructionId: topic.construction?.id,
   });
 
-  return {
+  const composed: SemanticPage = {
     ...topic,
     title,
     h1,
@@ -823,4 +824,6 @@ export function composeSemanticPage(topic: SemanticTopic): SemanticPage {
     imagePath: picture.path,
     imageAlt: picture.alt,
   };
+
+  return applyCuratedAttributeHub(composed);
 }

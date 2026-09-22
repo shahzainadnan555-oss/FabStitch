@@ -1122,24 +1122,29 @@ export const ATTRIBUTES: readonly AttributeEntity[] = [
     id: "sheer",
     label: "sheer",
     definition:
-      "Sheer fabric transmits light and usually needs lining or layering strategies for opacity-critical garments.",
+      "Sheer fabric transmits light and silhouette. It is a design choice that usually needs lining, layering or opacity mapping when coverage is required.",
     whyItMatters:
-      "Opacity failures are expensive late discoveries in production.",
-    howToJudge: "Hold against light, check colour, and plan lining early.",
-    tradeoffs: "Sheer is a design feature — not a defect — when intentional.",
-    relatedAttributes: ["lightweight", "flowy"],
+      "Opacity failures are expensive late discoveries. Sheer cloth succeeds when the brief plans for transparency instead of discovering it in a fitting.",
+    howToJudge:
+      "Hold the colourway against light, stretch knits as they will fit, and decide lining before you lock the pattern.",
+    tradeoffs:
+      "Sheer movement and airiness trade away single-layer cover. Do not treat sheer as a defect when it is intentional.",
+    relatedAttributes: ["lightweight", "flowy", "opaque"],
+    guidePath: "/discover/sheer-fabric/",
   },
   {
     id: "opaque",
     label: "opaque",
     definition:
-      "Opaque fabric blocks light sufficiently for the garment’s modesty and colour needs without extra lining.",
+      "Opaque fabric blocks enough light and skin show-through for the garment, usually without needing a lining for modesty or colour fidelity.",
     whyItMatters:
-      "Trousers, uniforms and many dresses require reliable opacity.",
+      "Trousers, uniforms, pale shirtings and many dresses fail late when opacity was judged only on a dark sample or a fibre name.",
     howToJudge:
-      "Test in intended colourways. Pale dyes reveal opacity issues denser colours hide.",
-    tradeoffs: "Higher opacity can add weight or reduce breathability.",
-    relatedAttributes: ["structured", "durable"],
+      "Test the intended colourway against light, seated and stretched where the garment will strain. Pale dyes reveal gaps denser colours hide.",
+    tradeoffs:
+      "Higher opacity can add weight, reduce breathability or change drape — verify the full brief, not cover alone.",
+    relatedAttributes: ["structured", "durable", "sheer"],
+    guidePath: "/discover/opaque-fabric/",
   },
   {
     id: "performance",

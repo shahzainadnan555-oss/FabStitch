@@ -42,7 +42,14 @@ const signInClass = (mobile: boolean) =>
     mobile ? "h-11 w-full px-5" : "h-9 min-w-max px-3.5",
   );
 
-export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
+export function AccountMenu({
+  mobile = false,
+  onNavigate,
+}: {
+  mobile?: boolean;
+  /** Close parent chrome (mobile drawer) after a navigation intent. */
+  onNavigate?: () => void;
+}) {
   const router = useRouter();
   const { hydrated, authenticated, user, profile, signOut } = useSession();
   const [open, setOpen] = useState(false);
@@ -68,34 +75,28 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
     };
   }, [open]);
 
-  if (!hydrated) {
-    return (
-      <span
-        aria-busy="true"
-        aria-live="polite"
-        className={
-          mobile
-            ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-rule-2 bg-paper-raised text-sm text-ink-3"
-            : "inline-flex h-9 items-center rounded-sm px-4 text-sm text-ink-3"
-        }
-      >
-        Checking account
-      </span>
-    );
-  }
-
-  if (!authenticated) {
+  if (!hydrated || !authenticated) {
     return (
       <div
         className={cn(
           "flex shrink-0 items-center",
           mobile ? "w-full flex-col-reverse gap-2" : "flex-nowrap gap-1.5",
         )}
+        aria-busy={!hydrated}
       >
-        <Link href="/login/" className={signInClass(mobile)}>
+        {!hydrated ? <span className="sr-only">Checking account</span> : null}
+        <Link
+          href="/login/"
+          className={signInClass(mobile)}
+          onClick={onNavigate}
+        >
           Sign In
         </Link>
-        <Link href="/signup/" className={joinFreeClass(mobile)}>
+        <Link
+          href="/signup/"
+          className={joinFreeClass(mobile)}
+          onClick={onNavigate}
+        >
           Join Free
         </Link>
       </div>
@@ -112,7 +113,7 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
         onClick={() => setOpen((current) => !current)}
         className={
           mobile
-            ? "inline-flex h-11 w-full items-center justify-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold text-white"
+            ? "inline-flex min-h-11 w-full items-center justify-center rounded-sm border border-indigo bg-indigo px-4 py-3 text-sm font-semibold text-white touch-manipulation"
             : "inline-flex h-9 items-center rounded-sm border border-indigo bg-indigo px-4 text-sm font-semibold tracking-[0.01em] text-white hover:border-indigo-hover hover:bg-indigo-hover"
         }
       >
@@ -124,7 +125,9 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
           role="menu"
           className={cn(
             "z-50 rounded-md border border-rule-2 bg-paper-raised p-1.5 shadow-card",
-            mobile ? "relative mt-2 w-full" : "absolute right-0 mt-2 w-56",
+            mobile
+              ? "absolute inset-x-0 bottom-[calc(100%+0.5rem)] w-full"
+              : "absolute right-0 mt-2 w-56",
           )}
         >
           <div className="px-3 py-2">
@@ -144,8 +147,11 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
               key={item.href}
               href={item.href}
               role="menuitem"
-              onClick={() => setOpen(false)}
-              className="block rounded-sm px-3 py-2 text-sm text-ink-2 hover:bg-indigo-wash hover:text-indigo"
+              onClick={() => {
+                setOpen(false);
+                onNavigate?.();
+              }}
+              className="block min-h-11 rounded-sm px-3 py-3 text-sm text-ink-2 hover:bg-indigo-wash hover:text-indigo"
             >
               {item.label}
             </Link>
@@ -159,12 +165,13 @@ export function AccountMenu({ mobile = false }: { mobile?: boolean }) {
               void signOut()
                 .then(() => {
                   setOpen(false);
+                  onNavigate?.();
                   router.push("/marketplace/");
                   router.refresh();
                 })
                 .finally(() => setPending(false));
             }}
-            className="mt-1 block w-full rounded-sm px-3 py-2 text-left text-sm text-ink-2 hover:bg-paper-sunk hover:text-ink disabled:opacity-60"
+            className="mt-1 block min-h-11 w-full rounded-sm px-3 py-3 text-left text-sm text-ink-2 hover:bg-paper-sunk hover:text-ink disabled:opacity-60"
           >
             {pending ? "Signing out…" : "Logout"}
           </button>

@@ -16,10 +16,10 @@ export function HeaderSearch({ mobile = false }: { mobile?: boolean }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label={mobile ? undefined : "Search fabrics"}
+        aria-label="Search fabrics"
         className={
           mobile
-            ? "mt-1 inline-flex w-full items-center gap-2 border-t border-rule px-3 py-3 text-left text-base font-medium text-ink"
+            ? "mt-1 inline-flex min-h-11 w-full items-center gap-2 border-t border-rule px-3 py-3 text-left text-base font-medium text-ink"
             : "inline-flex h-9 shrink-0 items-center gap-2 rounded-xs px-2.5 text-sm font-medium text-ink-2 transition-colors hover:text-indigo"
         }
       >

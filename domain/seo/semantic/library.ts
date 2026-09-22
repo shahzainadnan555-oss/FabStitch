@@ -258,30 +258,43 @@ const SPECS: readonly LibrarySpec[] = [
     slug: "fabric-opacity-for-garments",
     family: "glossary",
     title: "Fabric Opacity for Garments",
-    h1: "How to judge fabric opacity",
+    h1: "How to judge fabric opacity on a garment brief",
     description:
-      "Opacity decides whether a cloth covers or reads as sheer. Learn how colour, layers and construction change that judgement.",
+      "Judge fabric opacity for shirts, dresses and trousers by colour, construction and light — not by fibre name or GSM alone.",
     keyword: "fabric opacity",
     imagePath: SILK,
-    imageAlt: "Light silk cloth where coverage depends on layers",
+    imageAlt: "Light silk cloth where coverage depends on layers and colour",
     relatedPaths: [
+      "/discover/opaque-fabric/",
+      "/discover/sheer-fabric/",
+      "/guides/fabric-weight-and-gsm/",
       "/collections/silk-sheer/",
       "/fabrics/",
       "/fabrics/best-for/dresses/",
       "/marketplace/",
     ],
-    what: "Opacity is how much light and skin a cloth hides. Sheer, semi-opaque and opaque are practical labels, not moral ones. A cloth can be opaque in navy and revealing in white because dye and yarn cover differ.",
-    why: "Shirting, dresses and linings fail in wear when opacity was judged only on a dark sample. Buyers need to know whether the cloth is the outer layer or a layer in a stack.",
-    how: "Read sheer or coverage notes where FabStitch publishes them, and look at the photograph against a light ground. For pale colours, assume you may need a lining or a second layer unless the page says the cloth is opaque.",
+    what: "Fabric opacity is the practical question of whether a cloth covers or reads as sheer in the garment you will cut. Sheer, semi-opaque and opaque are working labels. A cloth can look solid in navy and revealing in white because dye and yarn cover differ.",
+    why: "Shirting, dresses, trousers and linings fail in wear when opacity was judged only on a dark sample or a marketing adjective. Buyers need to know whether the cloth is the only layer or one layer in a stack.",
+    how: "Start from the garment brief, then read construction and weight on the fabric page. Hold pale colourways against light. For a fuller definition of opaque cloth and how weave, knit and GSM interact, use the opaque fabric topic, then return here to apply the checks to a specific make.",
     watch:
-      "Stretch can open a knit and reduce cover. A weave that looks dense in the photo can still flash at a seam if the cloth is light.",
+      "Stretch can open a knit and reduce cover. A weave that looks dense in a photo can still flash at a seam if the cloth is light. Wetting and store lighting can change a borderline sample.",
     choose:
-      "Choose an opaque cloth for a single-layer shirt or trouser, and a deliberately sheer cloth when the design uses lining, layering or evening coverage.",
+      "Choose an opaque face cloth when the garment is single-layer, and choose a sheer face deliberately when lining or layering is part of the design. Write that decision into the inquiry with the fabric URL.",
     faqs: [
       {
         question: "Does a heavier GSM guarantee opacity?",
         answer:
-          "Not always. Colour, yarn and construction still change how much the cloth covers.",
+          "Not always. Colour, yarn and construction still change how much the cloth covers within the same GSM band.",
+      },
+      {
+        question: "Where should I learn what opaque fabric means?",
+        answer:
+          "Use the opaque fabric discovery topic for the definition and construction factors, then apply the garment checks on this page.",
+      },
+      {
+        question: "Should I sample pale colours differently?",
+        answer:
+          "Yes. Pale and undyed colourways are the usual opacity failures. Test the colour you will manufacture.",
       },
     ],
   },
