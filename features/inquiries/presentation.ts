@@ -45,3 +45,14 @@ export function inquiryDateTime(value: string | null | undefined): string {
         minute: "2-digit",
       });
 }
+
+export function inquiryTime(value: string | null | undefined): string {
+  if (!value) return "—";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "—"
+    : date.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+}

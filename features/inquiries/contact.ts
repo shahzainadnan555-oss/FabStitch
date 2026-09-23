@@ -1,8 +1,22 @@
+/**
+ * Inquiry contact and quantity validation.
+ *
+ * Quantity ceiling is inclusive: 500,000 meters is valid; 500,001 is not.
+ */
+
 import { isCountryCode, type CountryCode } from "@/features/preferences/market";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^\+?[\d\s().-]{7,22}$/;
-const QUANTITY_MAX = 1_000_000;
+
+/** Inclusive maximum metres per inquiry (frontend + product rule). */
+export const INQUIRY_QUANTITY_MAX_METERS = 500_000;
+
+export const INQUIRY_QUANTITY_MAX_HINT =
+  "Maximum inquiry quantity: 500,000 meters.";
+
+export const INQUIRY_QUANTITY_MAX_ERROR =
+  "Maximum inquiry quantity is 500,000 meters.";
 
 export function trimmed(value: string): string {
   return value.trim();
@@ -19,14 +33,33 @@ export function isValidPhone(value: string): boolean {
   return digits.length >= 7 && digits.length <= 15;
 }
 
+/**
+ * Parse a quantity string for inquiry submission.
+ * Returns null when empty, non-numeric, ≤ 0, or above the inclusive maximum.
+ */
 export function parseQuantity(value: string): number | null {
   const next = trimmed(value);
   if (!next) return null;
+  // Reject locale grouping characters so "500,000" is not silently misread.
+  if (/[^\d.]/.test(next)) return null;
   const quantity = Number(next);
-  if (!Number.isFinite(quantity) || quantity <= 0 || quantity > QUANTITY_MAX) {
-    return null;
-  }
+  if (!Number.isFinite(quantity) || quantity <= 0) return null;
+  if (quantity > INQUIRY_QUANTITY_MAX_METERS) return null;
   return quantity;
+}
+
+export function quantityFieldError(value: string): string | undefined {
+  const next = trimmed(value);
+  if (!next) return "Enter a valid quantity.";
+  if (/[^\d.]/.test(next)) return "Enter a valid quantity.";
+  const quantity = Number(next);
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    return "Enter a valid quantity.";
+  }
+  if (quantity > INQUIRY_QUANTITY_MAX_METERS) {
+    return INQUIRY_QUANTITY_MAX_ERROR;
+  }
+  return undefined;
 }
 
 export function isSupportedCountry(value: string): value is CountryCode {
@@ -50,9 +83,8 @@ export function validateInquiryContact(input: {
   nameRequired: boolean;
 }): InquiryFieldErrors {
   const errors: InquiryFieldErrors = {};
-  if (parseQuantity(input.quantity) === null) {
-    errors.quantity = "Enter a valid quantity.";
-  }
+  const quantityError = quantityFieldError(input.quantity);
+  if (quantityError) errors.quantity = quantityError;
   if (!trimmed(input.email)) {
     errors.email = "Email address is required.";
   } else if (!isValidEmail(input.email)) {

@@ -18,11 +18,13 @@ import { inquirySubmitErrorMessage } from "@/features/auth/messages";
 import { useMarketPreferences } from "@/features/preferences/market-preferences";
 import { isCountryCode, marketForCountry } from "@/features/preferences/market";
 import {
+  INQUIRY_QUANTITY_MAX_HINT,
+  INQUIRY_QUANTITY_MAX_METERS,
   trimmed,
   validateInquiryContact,
   type InquiryFieldErrors,
 } from "./contact";
-import { inquiryDateTime } from "./presentation";
+import { inquiryDate, inquiryDateTime, inquiryTime } from "./presentation";
 import type { InquiryFlowFabric } from "./types";
 
 type InquiryCreateResponse = components["schemas"]["InquiryCreateResponse"];
@@ -80,6 +82,8 @@ export function InquiryDialog({
     email: string;
     country: string;
     phone: string;
+    name: string;
+    note: string;
   } | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -182,16 +186,36 @@ export function InquiryDialog({
             aria-live="polite"
           >
             <p className="text-body leading-relaxed text-ink-2">
-              Your inquiry has been sent. Our FabStitch team will contact you as
-              soon as possible.
+              Your inquiry has been received successfully.
             </p>
+            <div className="mt-4 rounded-sm border border-rule-2 bg-chrome px-4 py-3">
+              <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
+                Next step
+              </p>
+              <p className="mt-1 text-sm font-semibold text-ink">
+                Our team will contact you within 24 hours.
+              </p>
+            </div>
             <p className="mt-5 font-mono text-h3 tracking-[0.04em] text-ink">
               Inquiry #{success.inquiry.inquiry_number}
             </p>
             <dl className="mt-5 grid gap-3 rounded-sm border border-rule bg-paper-sunk p-4 sm:grid-cols-2">
               <SummaryItem
-                label="Inquiry number"
+                label="Inquiry reference"
                 value={success.inquiry.inquiry_number}
+              />
+              <SummaryItem label="Inquiry ID" value={success.inquiry.id} />
+              <SummaryItem
+                label="Date"
+                value={inquiryDate(success.inquiry.created_at)}
+              />
+              <SummaryItem
+                label="Time"
+                value={inquiryTime(success.inquiry.created_at)}
+              />
+              <SummaryItem
+                label="Submitted"
+                value={inquiryDateTime(success.inquiry.created_at)}
               />
               <SummaryItem label="Fabric" value={success.inquiry.fabric.name} />
               <SummaryItem
@@ -202,12 +226,14 @@ export function InquiryDialog({
                 label="Status"
                 value={success.inquiry.status.replaceAll("_", " ")}
               />
-              <SummaryItem
-                label="Submitted"
-                value={inquiryDateTime(success.inquiry.created_at)}
-              />
+              {confirmedContact?.name ? (
+                <SummaryItem label="Full name" value={confirmedContact.name} />
+              ) : null}
               {confirmedContact?.email ? (
                 <SummaryItem label="Email" value={confirmedContact.email} />
+              ) : null}
+              {confirmedContact?.phone ? (
+                <SummaryItem label="Phone" value={confirmedContact.phone} />
               ) : null}
               {confirmedContact?.country ? (
                 <SummaryItem label="Country" value={confirmedContact.country} />
@@ -217,8 +243,10 @@ export function InquiryDialog({
               ) : profile?.currency ? (
                 <SummaryItem label="Currency" value={profile.currency} />
               ) : null}
-              {confirmedContact?.phone ? (
-                <SummaryItem label="Phone" value={confirmedContact.phone} />
+              {confirmedContact?.note ? (
+                <div className="sm:col-span-2">
+                  <SummaryItem label="Note" value={confirmedContact.note} />
+                </div>
               ) : null}
             </dl>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -226,7 +254,7 @@ export function InquiryDialog({
                 href={`/inquiries/${success.inquiry.id}/`}
                 className="inline-flex h-11 items-center rounded-sm bg-indigo px-4 text-sm font-semibold text-white hover:bg-indigo-hover"
               >
-                View My Inquiry
+                View your inquiry
               </Link>
               <Link
                 href="/marketplace/"
@@ -311,7 +339,13 @@ function InquiryComposeForm({
   onError: (error: ApiError | null) => void;
   onSuccess: (
     response: InquiryCreateResponse,
-    contact: { email: string; country: string; phone: string },
+    contact: {
+      email: string;
+      country: string;
+      phone: string;
+      name: string;
+      note: string;
+    },
   ) => void;
   persistContact: (input: {
     name: string;
@@ -425,6 +459,8 @@ function InquiryComposeForm({
         email: accountEmail,
         country: countryName(country, countries),
         phone: trimmed(phone),
+        name: storedName || trimmed(name),
+        note: trimmed(note),
       });
     } catch (caught) {
       const message = inquirySubmitErrorMessage(caught);
@@ -502,7 +538,7 @@ function InquiryComposeForm({
               <Field
                 label="Quantity"
                 error={fieldErrors.quantity}
-                hint="Inquiry quantities are submitted in metres."
+                hint={`${INQUIRY_QUANTITY_MAX_HINT} Inquiry quantities are submitted in metres.`}
               >
                 {({ id, describedBy, invalid }) => (
                   <div className="grid grid-cols-[1fr_auto] gap-2">
@@ -512,7 +548,7 @@ function InquiryComposeForm({
                       type="number"
                       inputMode="decimal"
                       min="0.01"
-                      max="1000000"
+                      max={String(INQUIRY_QUANTITY_MAX_METERS)}
                       step="any"
                       required
                       size="lg"
@@ -730,8 +766,8 @@ function InquiryComposeForm({
           {submitting ? "Sending inquiry…" : "Send Inquiry"}
         </button>
         <p className="mt-2 text-center text-xs text-ink-3">
-          Quantity, email, country and phone are required. No payment is
-          collected.
+          Quantity, email, country and phone are required. Maximum inquiry
+          quantity is 500,000 meters. No payment is collected.
         </p>
       </div>
     </form>

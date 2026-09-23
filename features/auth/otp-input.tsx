@@ -130,7 +130,7 @@ export function OtpInput({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2.5">
       <p id={labelId} className="text-sm font-medium text-ink-2">
         Verification code
       </p>
@@ -159,14 +159,19 @@ export function OtpInput({
             onPaste={handlePaste}
             onFocus={(event) => event.currentTarget.select()}
             className={cn(
-              "h-12 w-[2.65rem] rounded-md border bg-paper text-center font-mono text-xl font-semibold text-ink tabular-nums transition-[border-color,box-shadow] duration-150 sm:h-14 sm:w-12",
+              "h-14 min-h-14 w-[2.75rem] rounded-sm border-2 bg-paper-raised text-center font-mono text-2xl font-semibold tracking-widest text-ink tabular-nums transition-[border-color,box-shadow,background-color] duration-150 sm:w-12",
               "hover:border-ink-3 focus:border-indigo focus:outline-none focus:shadow-[0_0_0_3px_rgba(67,56,202,0.16)]",
               "disabled:cursor-not-allowed disabled:opacity-60",
+              digit && !invalid ? "border-navy-surface/25" : null,
               invalid ? "border-alert" : "border-border",
             )}
           />
         ))}
       </div>
+      <p className="text-xs text-ink-4">
+        Enter the 6-digit code from your email. You can paste the full code into
+        the first box.
+      </p>
     </div>
   );
 }

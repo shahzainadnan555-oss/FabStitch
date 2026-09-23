@@ -155,19 +155,39 @@ export function EmailOtpForm({
                 </span>
               </>
             ) : null}
-            . We&apos;ve also sent a welcome email to your registered email
-            address.
+            . Discover fabrics, compare materials, and submit inquiries for your
+            next make.
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-ink-4">
+            FabStitch also sends a welcome email to your registered address when
+            delivery is configured. Account access does not wait on that email.
           </p>
         </div>
-        <AuthSubmitButton
-          type="button"
-          busy={false}
-          onClick={() => {
-            void finalizeAuthentication(welcome.user, session, router, next);
-          }}
-        >
-          Continue
-        </AuthSubmitButton>
+        <div className="grid gap-2">
+          <AuthSubmitButton
+            type="button"
+            busy={false}
+            onClick={() => {
+              void finalizeAuthentication(welcome.user, session, router, next);
+            }}
+          >
+            Continue
+          </AuthSubmitButton>
+          <button
+            type="button"
+            onClick={() => {
+              void finalizeAuthentication(
+                welcome.user,
+                session,
+                router,
+                "/marketplace/",
+              );
+            }}
+            className="inline-flex h-12 items-center justify-center rounded-md border border-rule-2 bg-paper text-sm font-semibold text-ink hover:border-indigo hover:text-indigo"
+          >
+            Explore fabrics
+          </button>
+        </div>
       </div>
     );
   }
@@ -175,21 +195,22 @@ export function EmailOtpForm({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-ink-4 uppercase">
-          Check your inbox
+        <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-gold-ink uppercase">
+          FabStitch verification
         </p>
         <h2 className="mt-2 text-[1.35rem] font-semibold tracking-[-0.02em] text-ink">
           Verify your email
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-ink-3 text-pretty">
-          We&apos;ve sent a 6-digit verification code to
+          Use the verification code we sent to complete your FabStitch account
+          setup.
         </p>
-        <p className="mt-1 break-all text-sm font-semibold text-ink">
+        <p className="mt-2 break-all text-sm font-semibold text-ink">
           {challenge.email}
         </p>
         {expiresIn > 0 ? (
           <p className="mt-2 text-xs text-ink-4">
-            Code expires in {formatCountdown(expiresIn)}
+            This code expires in {formatCountdown(expiresIn)}.
           </p>
         ) : (
           <p className="mt-2 text-xs font-medium text-alert">
@@ -229,6 +250,10 @@ export function EmailOtpForm({
       </form>
 
       <div className="flex flex-col gap-3 border-t border-rule pt-4 text-sm">
+        <p className="text-xs text-ink-4">
+          If you did not request this verification email, you can safely ignore
+          it and request a new code only when you intend to continue.
+        </p>
         <button
           type="button"
           onClick={() => void resend()}

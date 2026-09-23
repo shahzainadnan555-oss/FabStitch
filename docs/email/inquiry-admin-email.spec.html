@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FabStitch admin inquiry email — design spec</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background: #ece7db;
+      font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+        sans-serif;
+    "
+  >
+    <!-- DESIGN SPEC ONLY — implement in fabstitch_backend email/templates.py -->
+    <!-- Subject: New Fabric Inquiry — {{fabric_name}} — #{{inquiry_number}} -->
+    <!-- Recipient: ADMIN_EMAIL (server env). Never hardcode in frontend JS. -->
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      style="background: #ece7db; padding: 32px 16px"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="100%"
+            style="
+              max-width: 600px;
+              background: #ffffff;
+              border: 1px solid #c6bfb1;
+              border-radius: 8px;
+            "
+          >
+            <tr>
+              <td style="padding: 28px 28px 12px">
+                <p
+                  style="
+                    margin: 0;
+                    font-size: 11px;
+                    letter-spacing: 0.14em;
+                    text-transform: uppercase;
+                    color: #855c23;
+                    font-weight: 600;
+                  "
+                >
+                  FabStitch
+                </p>
+                <h1
+                  style="
+                    margin: 12px 0 0;
+                    font-size: 22px;
+                    line-height: 1.25;
+                    color: #14161a;
+                  "
+                >
+                  New fabric inquiry
+                </h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0 28px 12px">
+                <p
+                  style="
+                    margin: 0 0 6px;
+                    font-size: 11px;
+                    letter-spacing: 0.1em;
+                    text-transform: uppercase;
+                    color: #855c23;
+                  "
+                >
+                  Inquiry reference
+                </p>
+                <p style="margin: 0 0 4px; font-size: 15px; color: #14161a">
+                  <strong>{{inquiry_number}}</strong>
+                </p>
+                <p style="margin: 0 0 4px; font-size: 14px; color: #3b4048">
+                  Inquiry ID: {{inquiry_id}}
+                </p>
+                <p style="margin: 0; font-size: 14px; color: #3b4048">
+                  Created: {{created_date}} · {{created_time}}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 28px">
+                <table
+                  role="presentation"
+                  width="100%"
+                  style="
+                    background: #f8f6f1;
+                    border: 1px solid #ded8cd;
+                    border-radius: 6px;
+                  "
+                >
+                  <tr>
+                    <td style="padding: 16px">
+                      <p
+                        style="
+                          margin: 0 0 10px;
+                          font-size: 11px;
+                          letter-spacing: 0.1em;
+                          text-transform: uppercase;
+                          color: #855c23;
+                        "
+                      >
+                        Customer details
+                      </p>
+                      <p style="margin: 0 0 6px; font-size: 14px; color: #14161a">
+                        Full name: {{customer_name}}
+                      </p>
+                      <p style="margin: 0 0 6px; font-size: 14px; color: #14161a">
+                        Email: {{customer_email}}
+                      </p>
+                      <p style="margin: 0; font-size: 14px; color: #14161a">
+                        Customer phone: {{customer_phone}}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0 28px 12px">
+                <table
+                  role="presentation"
+                  width="100%"
+                  style="
+                    background: #f8f6f1;
+                    border: 1px solid #ded8cd;
+                    border-radius: 6px;
+                  "
+                >
+                  <tr>
+                    <td style="padding: 16px">
+                      <p
+                        style="
+                          margin: 0 0 10px;
+                          font-size: 11px;
+                          letter-spacing: 0.1em;
+                          text-transform: uppercase;
+                          color: #855c23;
+                        "
+                      >
+                        Fabric requirement
+                      </p>
+                      <p style="margin: 0 0 6px; font-size: 14px; color: #14161a">
+                        Fabric: {{fabric_name}}
+                      </p>
+                      <p style="margin: 0 0 6px; font-size: 14px; color: #14161a">
+                        Quantity: {{quantity}}
+                      </p>
+                      <p style="margin: 0; font-size: 14px; color: #14161a">
+                        Unit: meters
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0 28px 28px">
+                <p
+                  style="
+                    margin: 0 0 8px;
+                    font-size: 11px;
+                    letter-spacing: 0.1em;
+                    text-transform: uppercase;
+                    color: #855c23;
+                  "
+                >
+                  Customer note
+                </p>
+                <p
+                  style="
+                    margin: 0 0 18px;
+                    font-size: 14px;
+                    line-height: 1.55;
+                    color: #14161a;
+                    white-space: pre-wrap;
+                  "
+                >
+                  {{customer_note}}
+                </p>
+                <p
+                  style="
+                    margin: 0 0 8px;
+                    font-size: 11px;
+                    letter-spacing: 0.1em;
+                    text-transform: uppercase;
+                    color: #855c23;
+                  "
+                >
+                  Customer request summary
+                </p>
+                <p
+                  style="
+                    margin: 0;
+                    font-size: 14px;
+                    line-height: 1.55;
+                    color: #3b4048;
+                  "
+                >
+                  {{customer_name}} ({{customer_email}}, {{customer_phone}})
+                  requested {{quantity}} meters of {{fabric_name}}. Inquiry
+                  {{inquiry_number}} created {{created_date}} {{created_time}}.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
