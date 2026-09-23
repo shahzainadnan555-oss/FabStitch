@@ -1,34 +1,33 @@
-# FabStitch transactional email design specs
+# FabStitch transactional email design package
 
-**Status:** Design reference for backend email templates  
-**Not live delivery.** The FabStitch frontend repository does **not** render or send OTP, welcome, or inquiry emails. Production HTML is owned by:
+**Live delivery is backend-owned.**  
+Production OTP / welcome / inquiry emails are rendered by
+`fabstitch_backend/src/fabstitch/email/templates.py` and sent through the
+server email factory / inquiry outbox.
 
-`fabstitch_backend/src/fabstitch/email/templates.py`
+This frontend package is the **premium design source of truth**:
 
-Admin notification recipient is controlled by backend env (`ADMIN_EMAIL` / `ADMIN_GOOGLE_EMAIL`).  
-**Never** put that address in `NEXT_PUBLIC_*` or browser JavaScript.
+- TypeScript renderers: `lib/transactional-email/`
+- Generated samples: `docs/email/generated/` (from `npm run qa:transactional-emails`)
+- Older static specs: `*.spec.html` (kept for reference)
 
-These HTML files are visual/copy specs for backend engineers to port into `templates.py` (or an equivalent email-safe renderer) without inventing a second frontend email system.
+## Renderers
 
-## Specs in this folder
+| Function                     | Subject (example)                                   |
+| ---------------------------- | --------------------------------------------------- |
+| `renderOtpEmail`             | Verify your FabStitch email                         |
+| `renderWelcomeEmail`         | Welcome to FabStitch                                |
+| `renderInquiryCustomerEmail` | Your FabStitch inquiry has been received            |
+| `renderInquiryAdminEmail`    | New Fabric Inquiry — Egyptian Cotton Poplin — INQ-… |
 
-| File                               | Purpose                                 |
-| ---------------------------------- | --------------------------------------- |
-| `otp-email.spec.html`              | Premium OTP / verify-email layout       |
-| `welcome-email.spec.html`          | Welcome after signup verification       |
-| `inquiry-customer-email.spec.html` | Customer inquiry confirmation           |
-| `inquiry-admin-email.spec.html`    | Internal FabStitch inquiry notification |
+## Backend adoption (required for live mail)
 
-## Required data (backend already has most)
+Port the generated HTML/text into the backend template module. Keep recipient
+routing on server env (`ADMIN_EMAIL`). Do **not** hardcode the admin address in
+the frontend bundle.
 
-Customer inquiry confirmation should include only fields that exist on the inquiry + session:
+## Assets
 
-- Inquiry reference / number
-- Inquiry ID
-- Created date + time (server timestamp)
-- Customer name, email, phone (from account profile)
-- Fabric name
-- Quantity + unit
-- Customer note when present
+Logo (production HTTPS):
 
-Admin notification should also include phone and note (current backend template omits them — frontend already persists phone/name to profile before `POST /inquiries` and sends `customerNote` in the payload).
+`https://fabstitch.net/media/fabstitch-mark.png`

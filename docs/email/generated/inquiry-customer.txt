@@ -1,0 +1,17 @@
+FabStitch
+Inquiry received
+Your fabric inquiry has been submitted successfully.
+Inquiry reference: INQ-AF203BE2
+Inquiry ID: fefd0bc2-2dd4-4bf9-bfba-3718f5abce49
+Date: 23 September 2026
+Time: 20:20
+Full name: Shahzain Ali
+Email: test@example.com
+Phone: +92XXXXXXXXXX
+Fabric: Egyptian Cotton Poplin
+Quantity: 50000 meters
+Note: Ghh
+Your inquiry has been received successfully. Our team will review your request and contact you within 24 hours.
+View your inquiry: https://fabstitch.net/inquiries/fefd0bc2-2dd4-4bf9-bfba-3718f5abce49/
+B2B Fabric Discovery & Sourcing
+https://fabstitch.net

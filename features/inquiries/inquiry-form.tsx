@@ -538,36 +538,41 @@ function InquiryComposeForm({
               <Field
                 label="Quantity"
                 error={fieldErrors.quantity}
-                hint={`${INQUIRY_QUANTITY_MAX_HINT} Inquiry quantities are submitted in metres.`}
+                hint="Inquiry quantities are submitted in metres."
               >
                 {({ id, describedBy, invalid }) => (
-                  <div className="grid grid-cols-[1fr_auto] gap-2">
-                    <Input
-                      id={id}
-                      name="quantity"
-                      type="number"
-                      inputMode="decimal"
-                      min="0.01"
-                      max={String(INQUIRY_QUANTITY_MAX_METERS)}
-                      step="any"
-                      required
-                      size="lg"
-                      value={quantity}
-                      className="scroll-mt-24"
-                      onChange={(event) => {
-                        setQuantity(event.target.value);
-                        setFieldErrors((current) => ({
-                          ...current,
-                          quantity: undefined,
-                        }));
-                        markDirty();
-                      }}
-                      aria-describedby={describedBy}
-                      invalid={invalid}
-                    />
-                    <span className="grid min-h-12 min-w-24 place-items-center rounded-sm border border-rule bg-paper-sunk px-3 text-sm text-ink-2">
-                      {quantityUnit}
-                    </span>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-[1fr_auto] gap-2">
+                      <Input
+                        id={id}
+                        name="quantity"
+                        type="number"
+                        inputMode="decimal"
+                        min="0.01"
+                        max={String(INQUIRY_QUANTITY_MAX_METERS)}
+                        step="any"
+                        required
+                        size="lg"
+                        value={quantity}
+                        className="scroll-mt-24"
+                        onChange={(event) => {
+                          setQuantity(event.target.value);
+                          setFieldErrors((current) => ({
+                            ...current,
+                            quantity: undefined,
+                          }));
+                          markDirty();
+                        }}
+                        aria-describedby={describedBy}
+                        invalid={invalid}
+                      />
+                      <span className="grid min-h-12 min-w-24 place-items-center rounded-sm border border-rule bg-paper-sunk px-3 text-sm text-ink-2">
+                        {quantityUnit}
+                      </span>
+                    </div>
+                    <p className="rounded-sm border border-rule bg-chrome px-3 py-2 text-xs font-medium text-ink-2">
+                      {INQUIRY_QUANTITY_MAX_HINT}
+                    </p>
                   </div>
                 )}
               </Field>

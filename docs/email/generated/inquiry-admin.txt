@@ -1,0 +1,21 @@
+FabStitch
+NEW FABRIC INQUIRY
+Inquiry reference: INQ-AF203BE2
+Inquiry ID: fefd0bc2-2dd4-4bf9-bfba-3718f5abce49
+Created: 23 September 2026 · 20:20
+CUSTOMER DETAILS
+Full name: Shahzain Ali
+Email: test@example.com
+Phone: +92XXXXXXXXXX
+FABRIC REQUIREMENT
+Fabric: Egyptian Cotton Poplin
+Quantity: 50000
+Unit: meters
+Composition: 100% cotton
+Construction: Plain weave
+GSM: 120
+CUSTOMER NOTE
+Need "soft" hand & <sample> ASAP
+CUSTOMER REQUEST SUMMARY
+Shahzain Ali (test@example.com, +92XXXXXXXXXX) requested 50000 meters of Egyptian Cotton Poplin. Inquiry INQ-AF203BE2 created 23 September 2026 20:20.
+B2B Fabric Discovery & Sourcing

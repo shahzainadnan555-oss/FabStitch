@@ -43,6 +43,7 @@
     "qa:mobile-nav": "node scripts/qa/mobile-nav.mjs",
     "qa:mobile-inquiry": "node scripts/qa/mobile-inquiry.mjs",
     "qa:inquiry-quantity": "node --import=./scripts/register-loader.mjs scripts/qa/inquiry-quantity.mts",
+    "qa:transactional-emails": "node --import=./scripts/register-loader.mjs scripts/qa/transactional-emails.mts",
     "qa:performance": "node scripts/qa/performance-budget.mjs",
     "qa:preferences": "node --import=./scripts/register-loader.mjs scripts/qa/market-preferences.mts",
     "report:catalog": "node --import=./scripts/register-loader.mjs scripts/generate-catalog-report.mts",
