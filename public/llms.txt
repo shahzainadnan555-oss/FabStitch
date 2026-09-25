@@ -1,0 +1,274 @@
+# FabStitch
+
+> FabStitch is a B2B fabric discovery and sourcing website at https://fabstitch.net.
+> Buyers explore apparel and textile fabrics by material, construction, and garment use, read published specifications on fabric pages, and submit sourcing inquiries on named cloths.
+> This file summarizes the public site structure for AI systems. It lists canonical hubs and page families — not every URL on the site.
+
+Preferred host: https://fabstitch.net
+Sitemap: https://fabstitch.net/sitemap.xml
+Robots: https://fabstitch.net/robots.txt
+
+Do not treat authentication, account, inquiry workspace, admin, API, compare, search-filter, or preview routes as public content destinations.
+
+---
+
+## What the site is for
+
+FabStitch helps clothing brands, designers, manufacturers, and sourcing teams:
+
+- Discover fabrics in a marketplace catalog
+- Browse material collections and garment “Best For” groups
+- Open individual fabric pages for composition, construction, weight, and related notes when published
+- Learn fabric concepts through guides and fabric questions
+- Explore topical Discover pages for materials, attributes, comparisons, and buying notes
+- Continue into fabric sourcing and wholesale-oriented resources
+- Contact FabStitch or use Help for product questions
+
+FabStitch does not invent prices, certificates, or supplier claims that are not shown on a fabric page.
+
+---
+
+## Information architecture (public)
+
+Homepage
+→ Marketplace (catalog search and discovery)
+→ Fabrics (fabric index and individual fabric pages)
+→ Collections (material and seasonal groups)
+→ Best For (fabrics grouped by garment / use)
+→ Guides and Fabric Questions (education)
+→ Discover (topical semantic pages)
+→ Fabric Sourcing and Wholesale Fabric (commercial intent)
+→ About, How It Works, Contact, Help
+
+Typical buyer path:
+
+1. Start from Homepage, Marketplace, Collections, or Best For
+2. Open a fabric page and read published specs
+3. Use Guides / Discover when a concept needs explanation
+4. Submit an inquiry from the fabric context when ready to source
+
+---
+
+## Core pages
+
+- [Homepage](https://fabstitch.net/): Entry point for FabStitch fabric discovery and sourcing.
+- [Marketplace](https://fabstitch.net/marketplace/): B2B catalog discovery by material, construction, season, and use.
+- [Fabrics](https://fabstitch.net/fabrics/): Browse fabrics and open detailed fabric pages.
+- [Collections](https://fabstitch.net/collections/): Material and seasonal collection hubs.
+- [Best For](https://fabstitch.net/fabrics/best-for/): Start from the garment or end use you are making.
+- [Guides](https://fabstitch.net/guides/): Fabric education for weight, construction, materials, and buying.
+- [Fabric Questions](https://fabstitch.net/guides/fabric-questions/): Hub for practical fabric Q&A pages.
+- [Discover](https://fabstitch.net/discover/): Directory of topical fabric discovery pages.
+- [Fabric Sourcing](https://fabstitch.net/fabric-sourcing/): Sourcing guidance for clothing brands and designers.
+- [Wholesale Fabric](https://fabstitch.net/wholesale-fabric/): Wholesale / bulk-oriented fabric buying context.
+- [How It Works](https://fabstitch.net/how-it-works/): How discovery, specs, quantity, and inquiry connect.
+- [About](https://fabstitch.net/about/): What FabStitch is and why the storefront is material-first.
+- [Contact](https://fabstitch.net/contact/): Contact FabStitch about fabrics, sourcing, or account questions.
+- [Help](https://fabstitch.net/help/): Help articles for finding fabrics, reading fabric pages, and inquiries.
+
+---
+
+## Page families
+
+### Fabric detail pages
+
+- Pattern: `/fabrics/[...path]/`
+- Canonical examples: `/fabrics/cotton-poplin/`, `/fabrics/european-flax-linen/`
+- Purpose: Individual fabric pages with published product detail for discovery and inquiry.
+- Notes: Prefer these URLs over obsolete marketplace-fabric aliases. Fibre hub aliases such as `/fabrics/cotton-fabric/` redirect to collection hubs.
+
+### Collection pages
+
+- Pattern: `/collections/[collection]/`
+- Hub: https://fabstitch.net/collections/
+- Purpose: Group fabrics by material family, construction theme, or seasonal edit.
+
+### Best For / application pages
+
+- Pattern: `/fabrics/best-for/[slug]/`
+- Hub: https://fabstitch.net/fabrics/best-for/
+- Purpose: Recommend fabric directions for a garment or end use (shirts, dresses, trousers, and related uses).
+
+### Guide pages
+
+- Pattern: `/guides/[slug]/`
+- Hub: https://fabstitch.net/guides/
+- Purpose: Long-form fabric education (GSM, woven vs knit, material comparisons, buying guidance).
+
+### Fabric question pages
+
+- Pattern: `/guides/fabric-questions/[slug]/`
+- Hub: https://fabstitch.net/guides/fabric-questions/
+- Purpose: Direct answers to common fabric definition, material, comparison, and buying questions.
+
+### Discover topic pages
+
+- Pattern: `/discover/[slug]/`
+- Topic hubs: `/discover/topics/[cluster]/` (paginated under `/page/[page]/` where needed)
+- Hub: https://fabstitch.net/discover/
+- Purpose: Semantic pages covering materials, attributes, constructions, education, comparisons, and commercial notes.
+- Prefer current education URLs such as `/discover/understanding-opaque-fabric/` over redirected attribute aliases.
+
+### Marketplace topic and support pages
+
+- Pattern: `/marketplace/[slug]/`
+- Hub: https://fabstitch.net/marketplace/
+- Purpose: Marketplace education and topic pages that support catalog discovery. Filtered search states are not canonical landing pages.
+
+### Help articles
+
+- Pattern: `/help/[slug]/`
+- Hub: https://fabstitch.net/help/
+- Purpose: Product help for search, fabric pages, inquiries, and account basics.
+
+---
+
+## Important collections
+
+- [Cotton](https://fabstitch.net/collections/cotton/): Cotton fabric collection for clothing and apparel.
+- [Linen lightweight](https://fabstitch.net/collections/linen-lightweight/): Linen and lightweight linen-oriented fabrics.
+- [Silk sheer](https://fabstitch.net/collections/silk-sheer/): Silk and sheer apparel fabrics.
+- [Denim](https://fabstitch.net/collections/denim/): Denim for jeans and apparel.
+- [Tailoring](https://fabstitch.net/collections/tailoring/): Suiting and tailoring cloth notes.
+- [Knitwear](https://fabstitch.net/collections/knitwear/): Knitwear, jersey, and French terry directions.
+- [Performance](https://fabstitch.net/collections/performance/): Activewear performance cloth notes.
+- [Velvet pile](https://fabstitch.net/collections/velvet-pile/): Velvet, corduroy, and pile fabrics.
+- [Structured classics](https://fabstitch.net/collections/structured-classics/): Tweed, gabardine, and classic cloths.
+- [Technical outerwear](https://fabstitch.net/collections/technical-outerwear/): Technical outerwear cloth reading notes.
+- [AW textures](https://fabstitch.net/collections/aw-textures/): Heavier wool and brushed cloth notes.
+- [Home contract](https://fabstitch.net/collections/home-contract/): Home textile and upholstery cloth.
+- [Spring / Summer 2027](https://fabstitch.net/collections/spring-summer-2027/): Seasonal fabric edit.
+- [Autumn / Winter 2027–28](https://fabstitch.net/collections/autumn-winter-2027-28/): Seasonal fabric edit.
+
+---
+
+## Important Best For pages
+
+- [Shirts](https://fabstitch.net/fabrics/best-for/shirts/)
+- [Dresses](https://fabstitch.net/fabrics/best-for/dresses/)
+- [Trousers](https://fabstitch.net/fabrics/best-for/trousers/)
+- [Tailoring](https://fabstitch.net/fabrics/best-for/tailoring/)
+- [Activewear](https://fabstitch.net/fabrics/best-for/activewear/)
+- [Knitwear](https://fabstitch.net/fabrics/best-for/knitwear/)
+- [Outerwear](https://fabstitch.net/fabrics/best-for/outerwear/)
+- [Occasionwear](https://fabstitch.net/fabrics/best-for/occasionwear/)
+- [Resortwear](https://fabstitch.net/fabrics/best-for/resortwear/)
+- [Women's clothing](https://fabstitch.net/fabrics/best-for/womens-clothing/)
+- [Home textiles](https://fabstitch.net/fabrics/best-for/home-textiles/)
+- [Upholstery](https://fabstitch.net/fabrics/best-for/upholstery/)
+- [Bedding](https://fabstitch.net/fabrics/best-for/bedding/)
+
+---
+
+## Intent fabric landings
+
+These are public commercial/intent pages under `/fabrics/` (not individual SKUs):
+
+- [Clothing fabric](https://fabstitch.net/fabrics/clothing/)
+- [Apparel fabric](https://fabstitch.net/fabrics/apparel/)
+- [Fashion fabrics](https://fabstitch.net/fabrics/fashion/)
+- [Shirt fabric](https://fabstitch.net/fabrics/shirt-fabric/)
+- [Dress fabric](https://fabstitch.net/fabrics/dress-fabric/)
+- [Wool fabric](https://fabstitch.net/fabrics/wool-fabric/)
+
+---
+
+## Important guides
+
+- [Fabric weight and GSM](https://fabstitch.net/guides/fabric-weight-and-gsm/): What GSM means for buyers.
+- [Woven vs knit fabrics](https://fabstitch.net/guides/woven-vs-knit-fabrics/): Construction differences that change draping and selection.
+- [What is cotton fabric?](https://fabstitch.net/guides/what-is-cotton-fabric/)
+- [Cotton vs linen](https://fabstitch.net/guides/cotton-vs-linen/)
+- [Chiffon vs georgette](https://fabstitch.net/guides/chiffon-vs-georgette/)
+- [Silk vs satin](https://fabstitch.net/guides/silk-vs-satin/)
+- [Understanding fabric width](https://fabstitch.net/guides/understanding-fabric-width/)
+- [What is a fabric weave?](https://fabstitch.net/guides/what-is-a-fabric-weave/)
+- [How to choose the right fabric weight](https://fabstitch.net/guides/how-to-choose-the-right-fabric-weight/)
+- [Understanding stretch in fabric](https://fabstitch.net/guides/understanding-stretch-in-fabric/)
+- [How fabric composition affects performance](https://fabstitch.net/guides/how-fabric-composition-affects-performance/)
+- [How to choose fabric for shirts](https://fabstitch.net/guides/how-to-choose-fabric-for-shirts/)
+- [How to choose fabric for dresses](https://fabstitch.net/guides/how-to-choose-fabric-for-dresses/)
+- [Choosing fabric for activewear](https://fabstitch.net/guides/choosing-fabric-for-activewear/)
+- [How to buy fabric online](https://fabstitch.net/guides/how-to-buy-fabric-online/)
+- [How to source fabric for clothing brands](https://fabstitch.net/guides/how-to-source-fabric-for-clothing-brands/)
+- [Lightweight fabric](https://fabstitch.net/guides/lightweight-fabric/)
+- [Fabrics 2027](https://fabstitch.net/guides/fabrics-2027/): Practical guide to the FabStitch 2027 collection directions.
+- [Spring/Summer 2027 fabrics](https://fabstitch.net/guides/spring-summer-2027-fabrics/)
+- [Autumn/Winter 2027–28 fabrics](https://fabstitch.net/guides/autumn-winter-2027-28-fabrics/)
+
+---
+
+## Important Discover education and comparison pages
+
+- [What is opaque fabric?](https://fabstitch.net/discover/understanding-opaque-fabric/): Coverage, GSM, construction, colour, and how to check opacity before buying.
+- [What is flowy fabric?](https://fabstitch.net/discover/understanding-flowy-fabric/): Drape, weight, construction, and garment uses.
+- [Twill vs wool](https://fabstitch.net/discover/twill-vs-wool/): Structure vs fibre comparison for sourcing briefs.
+- [Lightweight cotton fabric](https://fabstitch.net/discover/lightweight-cotton-fabric/): Lightweight cotton as a buyer filter with construction context.
+- [Fabric for blazers](https://fabstitch.net/discover/fabric-for-blazers/): What to specify for blazer programmes.
+- [How to compare two fabrics](https://fabstitch.net/discover/how-to-compare-two-fabrics/)
+- [How to choose fabric weight](https://fabstitch.net/discover/how-to-choose-fabric-weight/)
+- [How to evaluate fabric quality](https://fabstitch.net/discover/how-to-evaluate-fabric-quality/)
+- [Evaluating fabric before a bulk inquiry](https://fabstitch.net/discover/evaluating-fabric-before-bulk/)
+
+### Discover topic hubs
+
+- [Materials](https://fabstitch.net/discover/topics/material/)
+- [Use cases](https://fabstitch.net/discover/topics/use-case/)
+- [Attributes](https://fabstitch.net/discover/topics/attribute/)
+- [Material + garment](https://fabstitch.net/discover/topics/material-use/)
+- [Material + attribute](https://fabstitch.net/discover/topics/material-attribute/)
+- [Use + attribute](https://fabstitch.net/discover/topics/use-attribute/)
+- [Construction](https://fabstitch.net/discover/topics/construction/)
+- [Education](https://fabstitch.net/discover/topics/education/)
+- [Comparisons](https://fabstitch.net/discover/topics/comparison/)
+- [Buying / commercial](https://fabstitch.net/discover/topics/commercial/)
+
+---
+
+## Example fabric pages
+
+Representative published fabric pages (not an exhaustive catalog):
+
+- [Cotton Poplin](https://fabstitch.net/fabrics/cotton-poplin/)
+- [Cotton Voile](https://fabstitch.net/fabrics/cotton-voile/)
+- [Cotton Seersucker](https://fabstitch.net/fabrics/cotton-seersucker/)
+- [European Flax Linen](https://fabstitch.net/fabrics/european-flax-linen/)
+- [Linen–Cotton](https://fabstitch.net/fabrics/linen-cotton/)
+- [Silk Chiffon](https://fabstitch.net/fabrics/silk-chiffon/)
+- [Silk Georgette](https://fabstitch.net/fabrics/silk-georgette/)
+- [Lightweight Denim](https://fabstitch.net/fabrics/lightweight-denim/)
+- [Pointelle Knit](https://fabstitch.net/fabrics/pointelle-knit/)
+- [Melton](https://fabstitch.net/fabrics/melton/)
+- [Boiled Wool](https://fabstitch.net/fabrics/boiled-wool/)
+- [Stretch-Woven Compression](https://fabstitch.net/fabrics/stretch-woven-compression/)
+
+---
+
+## Help articles (selected)
+
+- [What is FabStitch?](https://fabstitch.net/help/what-is-fabstitch/)
+- [How FabStitch works](https://fabstitch.net/help/how-fabstitch-works/)
+- [How to find fabrics](https://fabstitch.net/help/how-to-find-fabrics/)
+- [Understanding fabric pages](https://fabstitch.net/help/understanding-fabric-pages/)
+- [How to submit an inquiry](https://fabstitch.net/help/how-to-submit-an-inquiry/)
+
+---
+
+## Optional / non-canonical public notes
+
+- Filtered marketplace and search query states are discovery tools, not preferred canonical pages.
+- Private areas such as `/account/`, `/inquiries/`, `/login/`, `/signup/`, `/admin/`, and `/api/` are not public knowledge pages.
+- Redirect-only aliases (for example older `*-fabric-guide` Discover URLs) should not be cited when a current canonical page exists.
+
+---
+
+## Suggested citation targets
+
+When answering questions about FabStitch or fabric sourcing on this site, prefer:
+
+1. The most specific fabric page, collection, Best For page, or guide that matches the question
+2. Marketplace or Fabrics hubs when the user needs to browse
+3. Fabric Sourcing / Wholesale Fabric for process and commercial intent
+4. Discover education pages for definitions (for example opaque fabric, flowy fabric, GSM)
+
+Primary site: https://fabstitch.net/
