@@ -158,9 +158,10 @@ function isProductionSiteHost(host: string, canonicalHost: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // Sitemap and robots must never receive X-Robots-Tag: noindex.
+  // Sitemap, robots, and llms.txt must never receive X-Robots-Tag: noindex.
   const isSitemapOrRobots =
     pathname === "/robots.txt" ||
+    pathname === "/llms.txt" ||
     pathname === "/sitemap.xml" ||
     pathname === "/sitemap-index.xml" ||
     pathname.startsWith("/sitemaps/");
@@ -215,6 +216,7 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/robots.txt",
+    "/llms.txt",
     "/sitemap.xml",
     "/sitemap-index.xml",
     "/sitemaps/:path*",

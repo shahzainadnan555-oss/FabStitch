@@ -54,6 +54,7 @@ export const ROBOTS_ALLOW_PREFIXES = [
   "/media/",
   "/sitemap.xml",
   "/sitemaps/",
+  "/llms.txt",
 ] as const;
 
 /** Representative public URLs that must never be robots-blocked. */
@@ -78,6 +79,7 @@ export const ROBOTS_MUST_ALLOW_URLS = [
   "/sitemaps/sitemap-core/",
   "/sitemaps/sitemap-discover-001/",
   "/media/hero-navy-jersey.jpg",
+  "/llms.txt",
 ] as const;
 
 /** Private URLs that must remain disallowed. */
