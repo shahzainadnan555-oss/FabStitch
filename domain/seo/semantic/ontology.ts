@@ -1117,6 +1117,7 @@ export const ATTRIBUTES: readonly AttributeEntity[] = [
     tradeoffs:
       "Flowy cloths may lack the body for tailored jackets or structured trousers.",
     relatedAttributes: ["soft", "lightweight", "sheer"],
+    guidePath: "/discover/understanding-flowy-fabric/",
   },
   {
     id: "sheer",
@@ -1144,7 +1145,7 @@ export const ATTRIBUTES: readonly AttributeEntity[] = [
     tradeoffs:
       "Higher opacity can add weight, reduce breathability or change drape — verify the full brief, not cover alone.",
     relatedAttributes: ["structured", "durable", "sheer"],
-    guidePath: "/discover/opaque-fabric/",
+    guidePath: "/discover/understanding-opaque-fabric/",
   },
   {
     id: "performance",

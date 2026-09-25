@@ -265,7 +265,7 @@ const SPECS: readonly LibrarySpec[] = [
     imagePath: SILK,
     imageAlt: "Light silk cloth where coverage depends on layers and colour",
     relatedPaths: [
-      "/discover/opaque-fabric/",
+      "/discover/understanding-opaque-fabric/",
       "/discover/sheer-fabric/",
       "/guides/fabric-weight-and-gsm/",
       "/collections/silk-sheer/",

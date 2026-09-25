@@ -545,7 +545,13 @@ function composeFaqs(topic: SemanticTopic, seed: number): SemanticFaq[] {
     });
   }
   faqs.push({
-    question: `Where does a ${topic.primaryKeyword} search go next?`,
+    question: material
+      ? `How should I continue after reading about ${material.label.toLowerCase()} fabric?`
+      : use
+        ? `How should I continue after reading about fabric for ${use.label}?`
+        : attribute
+          ? `How should I continue after learning about ${attribute.label} fabric?`
+          : `How should I continue after reading this fabric topic?`,
     answer: material
       ? `Open published ${material.label.toLowerCase()} fabrics and compare construction before weight. ${material.buyerNotes}`
       : use

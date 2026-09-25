@@ -16,12 +16,12 @@ const SEGMENT_MIN = TITLE_MIN - TITLE_SUFFIX.length;
 const SEGMENT_MAX = TITLE_MAX - TITLE_SUFFIX.length;
 
 const TITLE_TAILS = [
-  "Sourcing Notes",
   "for Apparel",
   "Buyer Guide",
   "Cloth Guide",
   "Use Notes",
   "Fabric Notes",
+  "Explained",
 ] as const;
 
 /** Hand-written snippets for the pages the public audit names first. */
@@ -90,6 +90,26 @@ const CURATED: Record<string, { title: string; description: string }> = {
     title: "FabStitch Help: Search, Inquiries, Account",
     description:
       "Find help on discovering fabrics, sending an inquiry, and managing an account. Support answers questions that need a person.",
+  },
+  "/discover/understanding-opaque-fabric/": {
+    title: "What Is Opaque Fabric? How to Check Before Buying",
+    description:
+      "Opaque fabric hides light and skin enough for the garment without relying on lining. Learn how GSM, weave, knit, colour and finish change coverage.",
+  },
+  "/discover/understanding-flowy-fabric/": {
+    title: "What Is Flowy Fabric? Drape, Weight & Uses",
+    description:
+      "Flowy fabric drapes and moves readily for dresses, blouses and overlays. Learn how drape, weight, fibre and construction create fluid cloth — then compare FabStitch fabrics.",
+  },
+  "/discover/twill-vs-wool/": {
+    title: "Twill vs Wool Fabric: Key Differences",
+    description:
+      "Twill is a weave structure; wool is a fibre family. Compare how each shapes hand, drape, GSM reading and garment choice before you shortlist FabStitch cloths.",
+  },
+  "/discover/lightweight-cotton-fabric/": {
+    title: "Lightweight Cotton Fabric for Apparel",
+    description:
+      "Lightweight cotton fabric suits shirts, dresses and soft layers when construction and GSM match the silhouette. Learn how to judge light cotton before you inquire on FabStitch.",
   },
 };
 

@@ -1,0 +1,17 @@
+issue_id,source,finding,affected_urls,severity,frontend_or_external,root_cause,verified,action,status
+RYZE-001,Ryze PDF,Site health 50/100,sitewide,P1,mixed,Demand+authority low; technicals mostly pass,yes,Frontend: content/canonical/sitemap; Off-page: links,partial
+RYZE-002,Ryze PDF,4475 URLs submitted,sitemap,P0,frontend,Stale vs current inventory,yes - current sitemap 2267,Document discrepancy; do not inflate sitemap,closed
+RYZE-003,Ryze PDF,Thin content / one sentence deep,semantic discover pages,P0,frontend,Template education/attribute bodies,yes,Curate ranking pages; global FAQ fix; no mass keyword swap,partial
+RYZE-004,Ryze PDF,Discover guide duplicates (crepe/jersey/poplin/georgette),/discover/*-fabric-guide/,P0,frontend,Already 308 redirected to canonical fabric pages,yes - verified production 308,Keep redirects; excluded from sitemap,closed
+RYZE-005,Ryze PDF,understanding-opaque-fabric thin + bad title/FAQ,/discover/understanding-opaque-fabric/,P0,frontend,Education template + title padding Sourcing Notes + malformed FAQ,yes,Deep curated rewrite; title/meta; FAQ; consolidate opaque-fabric,done
+RYZE-006,Ryze PDF,opaque vs understanding cannibalization,/discover/opaque-fabric/ + understanding,P0,frontend,Attribute hub + education page same intent,yes,301 opaque-fabric → understanding-opaque-fabric,done
+RYZE-007,Ryze PDF,twill vs wool weak CTR,/discover/twill-vs-wool/,P0,frontend,Comparison needed clearer structure-vs-fibre answer,yes,Curated rewrite + meta,done
+RYZE-008,Ryze PDF,flowy fabric thin,/discover/understanding-flowy-fabric/,P0,frontend,Education template + attribute twin,yes,Curated rewrite; 301 flowy-fabric,done
+RYZE-009,Ryze PDF,lightweight cotton weak CTR,/discover/lightweight-cotton-fabric/,P0,frontend,Template material-attribute copy,yes,Curated rewrite,done
+RYZE-010,Ryze PDF,72% branded clicks / low query capture,sitewide,P1,frontend,Thin non-brand pages,partial,Strengthen ranking+hub pages; no fake keywords,partial
+RYZE-011,Ryze PDF,0 US ranked keywords / PK-heavy clicks,off-page + content,P1,external,Authority + thin US-relevant content,yes,No fake US pages; strengthen B2B specs/sourcing copy,external
+RYZE-012,Ryze PDF,1 referring domain / authority 25,off-page,P1,external,No apparel press links,yes,Do not fake links in frontend,external
+RYZE-013,Production check,Sitemap reliability,/sitemap.xml,P0,frontend/infra,Prior 500 reports,"yes - HTTP 200 sitemapindex, 2267 URLs",Monitor; keep eligible-only inventory,verified_ok
+RYZE-014,Production check,robots.txt blocks,/robots.txt,P0,frontend,Allow public sections; disallow private,yes - Allow /discover etc.,No Disallow: /,verified_ok
+RYZE-015,Code audit,Malformed FAQ Where does a {keyword} search go next?,all semantic FAQs,P0,frontend,composeFaqs template paste,yes,Rewrite FAQ question globally,done
+RYZE-016,Code audit,Title pad Sourcing Notes,many short titles,P1,frontend,TITLE_TAILS padding,yes,Remove Sourcing Notes tail; curated titles for ranking pages,done

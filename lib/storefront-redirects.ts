@@ -81,6 +81,15 @@ const GUIDE_REDIRECTS: Record<string, string> = {
   "what-is-woven-fabric": "woven-vs-knit-fabrics",
 };
 
+/**
+ * Attribute hubs that duplicated the ranking education URL for the same intent.
+ * Keep the understanding-* page; redirect the thinner attribute twin.
+ */
+const ATTRIBUTE_EDUCATION_CONSOLIDATIONS: Record<string, string> = {
+  "/discover/opaque-fabric/": "/discover/understanding-opaque-fabric/",
+  "/discover/flowy-fabric/": "/discover/understanding-flowy-fabric/",
+};
+
 const MATERIAL_LANDING_REDIRECTS: Record<string, string> = {
   "/fabrics/cotton-fabric/": "/collections/cotton/",
   "/fabrics/linen-fabric/": "/collections/linen-lightweight/",
@@ -141,6 +150,12 @@ export const STOREFRONT_REDIRECT_FAMILIES: readonly StorefrontRedirect[] = [
     to: "the material, collection, or use page that already covers that topic",
     reason:
       "Guide aliases repeated the same fabric explanation and redirect to the canonical page",
+  },
+  {
+    from: "/discover/opaque-fabric/, /discover/flowy-fabric/",
+    to: "/discover/understanding-opaque-fabric/, /discover/understanding-flowy-fabric/",
+    reason:
+      "Attribute hubs cannibalized ranking education URLs for the same buyer question",
   },
 ];
 
@@ -204,6 +219,10 @@ export function storefrontRedirect(pathname: string): string | null {
     canonicalCase === "/support-centre/"
   ) {
     return "/support/";
+  }
+
+  if (ATTRIBUTE_EDUCATION_CONSOLIDATIONS[canonicalCase]) {
+    return ATTRIBUTE_EDUCATION_CONSOLIDATIONS[canonicalCase];
   }
 
   if (FABRIC_GUIDE_REDIRECTS.has(canonicalCase)) {

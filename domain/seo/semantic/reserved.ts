@@ -87,6 +87,9 @@ export function isReservedSemanticSlug(slug: string): boolean {
       "best-for",
       "topics",
       "discover",
+      // Consolidated onto understanding-* education URLs (Ryze ranking pages).
+      "opaque-fabric",
+      "flowy-fabric",
     ].includes(normalized)
   ) {
     return true;
