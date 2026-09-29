@@ -64,17 +64,12 @@ export function PhoneCountrySelector({
     };
     document.addEventListener("mousedown", onPointer);
     document.addEventListener("keydown", onKey);
+    const timer = window.setTimeout(() => searchRef.current?.focus(), 0);
     return () => {
       document.removeEventListener("mousedown", onPointer);
       document.removeEventListener("keydown", onKey);
+      window.clearTimeout(timer);
     };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    setActiveIndex(0);
-    const timer = window.setTimeout(() => searchRef.current?.focus(), 0);
-    return () => window.clearTimeout(timer);
   }, [open]);
 
   useEffect(() => {
@@ -85,6 +80,12 @@ export function PhoneCountrySelector({
     node?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, open, options]);
 
+  function openPicker() {
+    if (disabled) return;
+    setActiveIndex(0);
+    setOpen(true);
+  }
+
   function choose(country: PhoneCountry) {
     onChange(country.iso);
     setOpen(false);
@@ -93,9 +94,13 @@ export function PhoneCountrySelector({
 
   function onTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
     if (disabled) return;
-    if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+    if (
+      event.key === "ArrowDown" ||
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
       event.preventDefault();
-      setOpen(true);
+      openPicker();
     }
   }
 
@@ -130,7 +135,7 @@ export function PhoneCountrySelector({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
-        onClick={() => !disabled && setOpen((current) => !current)}
+        onClick={() => (open ? setOpen(false) : openPicker())}
         onKeyDown={onTriggerKeyDown}
         className={cn(
           "inline-flex h-11 min-w-[7.25rem] items-center gap-1.5 rounded-sm border border-border bg-paper-raised px-2.5 text-sm text-ink",
@@ -177,7 +182,9 @@ export function PhoneCountrySelector({
             className="max-h-64 overflow-y-auto overscroll-contain py-1"
           >
             {options.length === 0 ? (
-              <li className="px-3 py-3 text-sm text-ink-3">No countries found.</li>
+              <li className="px-3 py-3 text-sm text-ink-3">
+                No countries found.
+              </li>
             ) : (
               options.map((country, index) => {
                 const active = index === activeIndex;
@@ -196,7 +203,10 @@ export function PhoneCountrySelector({
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => choose(country)}
                     >
-                      <span aria-hidden className="mt-0.5 text-base leading-none">
+                      <span
+                        aria-hidden
+                        className="mt-0.5 text-base leading-none"
+                      >
                         {country.flag}
                       </span>
                       <span className="min-w-0 flex-1">
