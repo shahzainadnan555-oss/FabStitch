@@ -46,11 +46,13 @@
     "qa:inquiry-quantity": "node --import=./scripts/register-loader.mjs scripts/qa/inquiry-quantity.mts",
     "qa:transactional-emails": "node --import=./scripts/register-loader.mjs scripts/qa/transactional-emails.mts",
     "qa:performance": "node scripts/qa/performance-budget.mjs",
+    "qa:phone": "node --import=./scripts/register-loader.mjs scripts/qa/phone-verification.mts",
     "qa:preferences": "node --import=./scripts/register-loader.mjs scripts/qa/market-preferences.mts",
     "report:catalog": "node --import=./scripts/register-loader.mjs scripts/generate-catalog-report.mts",
     "report:catalog-images": "node --import=./scripts/register-loader.mjs scripts/generate-image-inventory.mts"
   },
   "dependencies": {
+    "libphonenumber-js": "^1.13.14",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",

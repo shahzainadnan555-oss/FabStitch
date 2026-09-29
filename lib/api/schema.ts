@@ -5102,6 +5102,13 @@ export interface components {
             full_name: string | null;
             /** Phone */
             phone?: string | null;
+            /**
+             * Phone Verified
+             * @default false
+             */
+            phone_verified?: boolean;
+            /** Phone Verified At */
+            phone_verified_at?: string | null;
             /** Avatar Url */
             avatar_url?: string | null;
             /** Country */

@@ -18,6 +18,14 @@ import { inquirySubmitErrorMessage } from "@/features/auth/messages";
 import { useMarketPreferences } from "@/features/preferences/market-preferences";
 import { isCountryCode, marketForCountry } from "@/features/preferences/market";
 import {
+  PhoneNumberInput,
+  PhoneVerificationForm,
+  defaultPhoneCountryIso,
+  isPhoneVerified,
+  splitE164,
+  toE164,
+} from "@/features/phone";
+import {
   INQUIRY_QUANTITY_MAX_HINT,
   INQUIRY_QUANTITY_MAX_METERS,
   trimmed,
@@ -287,7 +295,7 @@ export function InquiryDialog({
           </div>
         ) : open ? (
           <InquiryComposeForm
-            key={`${profile?.id ?? "guest"}-${accountEmail}-${profile?.phone ?? ""}-${initialCountry}`}
+            key={`${profile?.id ?? "guest"}-${accountEmail}`}
             fabric={fabric}
             authenticated={authenticated}
             accountEmail={accountEmail}
@@ -304,6 +312,10 @@ export function InquiryDialog({
               setSuccess(response);
             }}
             persistContact={persistContact}
+            phoneVerified={isPhoneVerified(profile)}
+            onPhoneVerified={(user) => {
+              setProfile(user);
+            }}
           />
         ) : null}
       </div>
@@ -325,6 +337,8 @@ function InquiryComposeForm({
   onError,
   onSuccess,
   persistContact,
+  phoneVerified,
+  onPhoneVerified,
 }: {
   fabric: InquiryFlowFabric;
   authenticated: boolean;
@@ -352,18 +366,29 @@ function InquiryComposeForm({
     phone: string;
     country: string;
   }) => Promise<UserPublic | null>;
+  phoneVerified: boolean;
+  onPhoneVerified: (user: UserPublic) => void;
 }) {
+  const initialSplit = splitE164(initialPhone, initialCountry);
   const [quantity, setQuantity] = useState("1");
   const [name, setName] = useState(storedName);
-  const [phone, setPhone] = useState(initialPhone);
+  const [phoneIso, setPhoneIso] = useState(
+    () => initialSplit.iso || defaultPhoneCountryIso(initialCountry),
+  );
+  const [phoneNational, setPhoneNational] = useState(
+    () => initialSplit.national,
+  );
   const [country, setCountry] = useState(initialCountry);
   const [note, setNote] = useState("");
   const [fieldErrors, setFieldErrors] = useState<InquiryFieldErrors>({});
+  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [resumeAfterVerify, setResumeAfterVerify] = useState(false);
   const idempotencyKey = useRef<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const nameRequired = !storedName;
   const quantityUnit = fabric.quantityUnit ?? "meters";
+  const phone = toE164(phoneNational, phoneIso) ?? "";
   const asset = fabric.imageSrc
     ? { src: fabric.imageSrc, alt: fabric.imageAlt }
     : undefined;
@@ -410,24 +435,7 @@ function InquiryComposeForm({
     });
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (submitting) return;
-
-    const errors = validateInquiryContact({
-      quantity,
-      email: accountEmail,
-      country,
-      phone,
-      name: storedName || name,
-      nameRequired,
-    });
-    setFieldErrors(errors);
-    if (Object.keys(errors).length) {
-      focusFirstInvalid();
-      return;
-    }
-
+  async function completeInquirySubmission() {
     onSubmitting(true);
     onError(null);
 
@@ -494,6 +502,82 @@ function InquiryComposeForm({
     } finally {
       onSubmitting(false);
     }
+  }
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (submitting) return;
+
+    const errors = validateInquiryContact({
+      quantity,
+      email: accountEmail,
+      country,
+      phone,
+      name: storedName || name,
+      nameRequired,
+    });
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) {
+      focusFirstInvalid();
+      return;
+    }
+
+    const e164 = toE164(phoneNational, phoneIso);
+    if (!e164) {
+      setFieldErrors((current) => ({
+        ...current,
+        phone: "Enter a valid phone number.",
+      }));
+      focusFirstInvalid();
+      return;
+    }
+
+    const numberMatchesVerified =
+      phoneVerified && initialPhone && e164 === trimmed(initialPhone);
+    if (!numberMatchesVerified) {
+      setResumeAfterVerify(true);
+      setVerifyOpen(true);
+      return;
+    }
+
+    await completeInquirySubmission();
+  }
+
+  if (verifyOpen) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6">
+          <PhoneVerificationForm
+            initialPhone={phone || null}
+            preferredCountry={phoneIso}
+            title={
+              phone
+                ? "Verify your phone number"
+                : "Add and verify your phone number"
+            }
+            description="Confirm ownership of this number by SMS. Your inquiry details stay saved on this page and will submit after verification."
+            onVerified={(user) => {
+              onPhoneVerified(user);
+              setVerifyOpen(false);
+              if (resumeAfterVerify) {
+                setResumeAfterVerify(false);
+                void completeInquirySubmission();
+              }
+            }}
+          />
+          <button
+            type="button"
+            className="mt-4 h-11 rounded-sm border border-border bg-paper px-5 text-sm font-semibold text-ink hover:border-indigo hover:text-indigo"
+            onClick={() => {
+              setVerifyOpen(false);
+              setResumeAfterVerify(false);
+            }}
+          >
+            Back to inquiry
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -698,34 +782,41 @@ function InquiryComposeForm({
               <Field
                 label="Phone number"
                 error={fieldErrors.phone}
-                hint={
-                  isCountryCode(country)
-                    ? `Include the country code, for example ${marketForCountry(country).dialCode}.`
-                    : "Include the country code."
-                }
+                hint="Select your country code, then enter the local number. We verify ownership by SMS before the inquiry is sent."
               >
                 {({ id, describedBy, invalid }) => (
-                  <Input
+                  <div
                     id={id}
-                    name="phone"
-                    type="tel"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    required
-                    size="lg"
-                    value={phone}
                     className="scroll-mt-24"
-                    onChange={(event) => {
-                      setPhone(event.target.value);
-                      setFieldErrors((current) => ({
-                        ...current,
-                        phone: undefined,
-                      }));
-                      markDirty();
-                    }}
                     aria-describedby={describedBy}
-                    invalid={invalid}
-                  />
+                    aria-invalid={invalid || undefined}
+                  >
+                    <PhoneNumberInput
+                      id={id}
+                      iso={phoneIso}
+                      national={phoneNational}
+                      showLabel={false}
+                      onIsoChange={(next) => {
+                        setPhoneIso(next);
+                        setPhoneNational("");
+                        setFieldErrors((current) => ({
+                          ...current,
+                          phone: undefined,
+                        }));
+                        markDirty();
+                      }}
+                      onNationalChange={(next) => {
+                        setPhoneNational(next);
+                        setFieldErrors((current) => ({
+                          ...current,
+                          phone: undefined,
+                        }));
+                        markDirty();
+                      }}
+                      required
+                      invalid={invalid}
+                    />
+                  </div>
                 )}
               </Field>
             </div>
@@ -775,6 +866,7 @@ function InquiryComposeForm({
           quantity is 500,000 meters. No payment is collected.
         </p>
       </div>
+
     </form>
   );
 }
