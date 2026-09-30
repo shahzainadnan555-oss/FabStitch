@@ -5,7 +5,6 @@ import { reservedPathSet } from "./reserved";
 import type { SemanticPage } from "./types";
 import { canonicalSeoPath } from "@/domain/seo/publication";
 import { SEO_USE_CASES } from "@/catalog";
-import { buildSeedExpansionPages } from "@/domain/seo/seed-expansion/compose";
 
 export type SemanticBuildReport = {
   candidates: number;
@@ -135,14 +134,11 @@ function buildSemanticCorpus(): {
   }
 
   const library = buildLibraryPages();
-  const expansion = buildSeedExpansionPages();
-  const expansionSlugs = new Set(expansion.map((page) => page.slug));
   let additionalPublished = 0;
   let additionalRejected = library.rejected.length;
   const acceptedFingerprints = pages
     .filter((page) => page.qualityGatePassed)
     .map((page) => shingles(page));
-  const corpusFingerprints = [...acceptedFingerprints];
   const titles = new Set(
     pages
       .filter((page) => page.qualityGatePassed)
@@ -160,7 +156,7 @@ function buildSemanticCorpus(): {
   );
   const slugs = new Set(pages.map((page) => page.slug));
 
-  for (const candidate of [...library.pages, ...expansion]) {
+  for (const candidate of library.pages) {
     if (!candidate.qualityGatePassed) {
       additionalRejected += 1;
       bump(candidate.qualityNotes[0] ?? "library_quality");
@@ -194,11 +190,8 @@ function buildSemanticCorpus(): {
       continue;
     }
     const fingerprint = shingles(candidate);
-    const compareAgainst = expansionSlugs.has(candidate.slug)
-      ? corpusFingerprints
-      : acceptedFingerprints;
     if (
-      compareAgainst.some((existing) => tooSimilar(existing, fingerprint))
+      acceptedFingerprints.some((existing) => tooSimilar(existing, fingerprint))
     ) {
       additionalRejected += 1;
       bump("near_duplicate");
@@ -267,8 +260,7 @@ function buildSemanticCorpus(): {
       duplicateH1s,
       duplicateDescriptions,
       duplicateSlugs,
-      additionalCandidates:
-        library.pages.length + library.rejected.length + expansion.length,
+      additionalCandidates: library.pages.length + library.rejected.length,
       additionalPublished,
       additionalRejected,
       additionalCapacity: ADDITIONAL_PAGE_CAPACITY,
