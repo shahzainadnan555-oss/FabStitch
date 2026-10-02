@@ -1,14 +1,51 @@
+import { SEO_USE_CASES } from "@/catalog";
 import { MATERIALS, USES } from "@/domain/seo/semantic/ontology";
 
-const BEST_FOR_REDIRECTS: Record<string, string> = {
-  shirts: "shirts",
-  dresses: "dresses",
-  activewear: "activewear",
-  trousers: "trousers",
-  knitwear: "knitwear",
-  upholstery: "upholstery",
-  bedding: "bedding",
-};
+const SEO_BEST_FOR_SLUGS = new Set<string>(
+  SEO_USE_CASES.map((useCase) => useCase.slug),
+);
+
+/**
+ * Map legacy/application Best For segments onto the SEO use-case URL.
+ * Application slugs that are themselves SEO hubs (upholstery, bedding, …)
+ * stay put.
+ */
+const BEST_FOR_REDIRECTS: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  for (const useCase of SEO_USE_CASES) {
+    map[useCase.slug] = useCase.slug;
+    for (const application of useCase.applicationSlugs) {
+      if (!SEO_BEST_FOR_SLUGS.has(application as string)) {
+        map[application] = useCase.slug;
+      }
+    }
+  }
+  // Extra application labels that appear in the catalog but are not listed
+  // under a use-case's applicationSlugs array.
+  Object.assign(map, {
+    shirting: "shirts",
+    overlays: "dresses",
+    ruffles: "dresses",
+    "volume-sleeves": "dresses",
+    linings: "dresses",
+    scarves: "womens-clothing",
+    jackets: "outerwear",
+    "chore-jackets": "outerwear",
+    "workwear-jackets": "outerwear",
+    "garment-insulation": "outerwear",
+  });
+  return map;
+})();
+
+/** Absolute path aliases that must 308 to the SEO Best For URL. */
+const BEST_FOR_ALIAS_REDIRECTS: Record<string, string> = Object.fromEntries(
+  Object.entries(BEST_FOR_REDIRECTS)
+    .filter(([from, to]) => from !== to)
+    .map(([from, to]) => [
+      `/fabrics/best-for/${from}/`,
+      `/fabrics/best-for/${to}/`,
+    ]),
+);
 
 /** Map an obsolete application slug to a live Best For path when possible. */
 export function bestForPathForApplication(slug: string): string {
@@ -188,7 +225,12 @@ export function storefrontRedirect(pathname: string): string | null {
   if (canonicalCase === "/best-for/") return "/fabrics/best-for/";
   const legacyBestFor = canonicalCase.match(/^\/best-for\/([^/]+)\/$/);
   if (legacyBestFor) {
-    return `/fabrics/best-for/${legacyBestFor[1]}/`;
+    const mapped = BEST_FOR_REDIRECTS[legacyBestFor[1]] ?? legacyBestFor[1];
+    return `/fabrics/best-for/${mapped}/`;
+  }
+
+  if (BEST_FOR_ALIAS_REDIRECTS[canonicalCase]) {
+    return BEST_FOR_ALIAS_REDIRECTS[canonicalCase];
   }
 
   if (canonicalCase === "/applications/") return "/fabrics/best-for/";

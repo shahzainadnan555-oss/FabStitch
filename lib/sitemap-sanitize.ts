@@ -1,6 +1,9 @@
 import type { SeoSitemapPage } from "@/lib/api/types";
 import { absoluteSitemapUrl } from "@/lib/sitemaps";
-import { storefrontRedirect } from "@/lib/storefront-redirects";
+import {
+  bestForPathForApplication,
+  storefrontRedirect,
+} from "@/lib/storefront-redirects";
 import { seoPage } from "@/domain/seo/storefront-registry";
 import { localSitemapUrls } from "@/lib/sitemap-fallback";
 
@@ -26,13 +29,17 @@ const PRIVATE_PREFIXES = [
 
 /** Paths the SEO API may still emit after route migrations. */
 function rewriteObsoletePath(pathname: string): string {
+  const redirected = storefrontRedirect(pathname);
+  if (redirected) return redirected;
   if (pathname === "/best-for/") return "/fabrics/best-for/";
   const bestFor = pathname.match(/^\/best-for\/([^/]+)\/$/);
-  if (bestFor) return `/fabrics/best-for/${bestFor[1]}/`;
+  if (bestFor) return bestForPathForApplication(bestFor[1]);
   if (pathname === "/search/") return "/marketplace/";
   if (pathname === "/applications/") return "/fabrics/best-for/";
   const application = pathname.match(/^\/applications\/([^/]+)\/$/);
-  if (application) return `/fabrics/best-for/${application[1]}/`;
+  if (application) return bestForPathForApplication(application[1]);
+  const fabricsBestFor = pathname.match(/^\/fabrics\/best-for\/([^/]+)\/$/);
+  if (fabricsBestFor) return bestForPathForApplication(fabricsBestFor[1]);
   return pathname;
 }
 

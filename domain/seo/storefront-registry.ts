@@ -26,7 +26,10 @@ import {
 } from "@/content/commercial-landing-pages";
 import { COLLECTION_SEO_BY_SLUG } from "@/content/collection-seo";
 import { HELP_ARTICLES } from "@/features/help/content";
-import { STOREFRONT_REDIRECT_FAMILIES } from "@/lib/storefront-redirects";
+import {
+  bestForPathForApplication,
+  STOREFRONT_REDIRECT_FAMILIES,
+} from "@/lib/storefront-redirects";
 import {
   INDEXABLE_SEMANTIC_PAGES,
   SEMANTIC_PAGES,
@@ -816,7 +819,7 @@ const guidePages: SeoPageDefinition[] = CATALOG_GUIDES.map((guide) => {
     contentSource: "FabStitch 2027 reference and canonical catalog",
     relatedPaths: [
       ...guide.fabricSlugs.map((slug) => `/fabrics/${slug}/`),
-      ...guide.applicationSlugs.map((slug) => `/fabrics/best-for/${slug}/`),
+      ...guide.applicationSlugs.map((slug) => bestForPathForApplication(slug)),
       ...(guide.slug === "spring-summer-2027-fabrics"
         ? ["/collections/spring-summer-2027/"]
         : []),

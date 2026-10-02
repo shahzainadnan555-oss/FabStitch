@@ -24,6 +24,10 @@ import {
   type CatalogMeasurement,
   type CustomerCatalogSort,
 } from "@/lib/customer-catalog-presentation";
+import {
+  localCustomerCollectionDetail,
+  localCustomerCollections,
+} from "@/lib/local-catalog-collection";
 
 export {
   BACKEND_CATALOG_SORTS,
@@ -561,7 +565,7 @@ export async function getCustomerCollections(): Promise<
       fabricCount: collection.fabric_count,
     }));
   } catch {
-    return [];
+    return localCustomerCollections();
   }
 }
 
@@ -570,6 +574,7 @@ export const getCustomerCollection = cache(
     slug: string,
     query: Pick<CustomerCatalogQuery, "cursor" | "limit" | "sort"> = {},
   ): Promise<CustomerCollectionDetail | null> => {
+    const local = localCustomerCollectionDetail(slug, query);
     try {
       const collection = await serverApi.get<Collection>(
         `/collections/${encodeURIComponent(slug)}`,
@@ -598,8 +603,11 @@ export const getCustomerCollection = cache(
         nextCursor: collection.next_cursor ?? null,
       };
     } catch (error) {
+      if (local) return local;
       if (error instanceof ApiError && error.status === 404) return null;
-      throw error;
+      // Unknown slug with a transport/5xx error: fail closed as not found
+      // rather than crashing the collection route into an empty soft-200.
+      return null;
     }
   },
 );

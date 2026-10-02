@@ -11,6 +11,9 @@ import {
   seoPage,
 } from "@/domain/seo/storefront-registry";
 import { localCatalogFabricDetail } from "@/lib/local-catalog-fabric";
+import { localCustomerCollectionDetail } from "@/lib/local-catalog-collection";
+import { storefrontRedirect } from "@/lib/storefront-redirects";
+import { getMarketplaceTopic } from "@/domain/seo/marketplace-thousand";
 import { SITE_URL } from "@/lib/seo";
 
 const failures: string[] = [];
@@ -57,6 +60,7 @@ for (const header of [
   "X-Frame-Options",
   "X-Content-Type-Options",
   "Referrer-Policy",
+  "Strict-Transport-Security",
 ]) {
   if (!nextConfig.includes(header)) {
     fail(`next.config.ts missing security header ${header}`);
@@ -113,6 +117,43 @@ if (indexableFabrics.length < 100) {
   fail(
     `expected populated catalog PDPs to be indexable, found ${indexableFabrics.length}`,
   );
+}
+
+// Audit soft-empty fabric URLs must resolve from the local 2027 catalog.
+for (const slug of [
+  "wool-hemp-canvas",
+  "silk-chiffon-crepe",
+  "tencel-denim",
+  "french-terry-classic",
+  "silk-organza",
+]) {
+  if (!localCatalogFabricDetail(slug)?.fabric.name) {
+    fail(`audit soft-empty fabric missing local fallback: ${slug}`);
+  }
+}
+
+const cottonCollection = localCustomerCollectionDetail("cotton");
+if (!cottonCollection?.fabrics.length) {
+  fail("cotton collection local fallback must include fabrics");
+}
+
+const redirectCases: Array<[string, string]> = [
+  ["/fabrics/best-for/shirting/", "/fabrics/best-for/shirts/"],
+  ["/fabrics/best-for/curtains/", "/fabrics/best-for/home-textiles/"],
+  ["/fabrics/best-for/swimwear/", "/fabrics/best-for/activewear/"],
+  ["/fabrics/best-for/bottoms/", "/fabrics/best-for/trousers/"],
+  ["/fabrics/best-for/statement-knits/", "/fabrics/best-for/knitwear/"],
+];
+for (const [from, to] of redirectCases) {
+  const got = storefrontRedirect(from);
+  if (got !== to) fail(`expected redirect ${from} → ${to}, got ${got}`);
+}
+
+const sampleTopic = getMarketplaceTopic("source-cotton-for-shirts");
+if (!sampleTopic || sampleTopic.sections.length < 3) {
+  fail("marketplace topics must render deepened sections (≥3)");
+} else if (sampleTopic.wordCount < 200) {
+  fail(`marketplace topic wordCount below 200: ${sampleTopic.slug}`);
 }
 
 if (failures.length) {

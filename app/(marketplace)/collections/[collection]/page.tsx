@@ -31,6 +31,8 @@ import {
 } from "@/catalog";
 import { collectionNotes, seasonalNotes } from "@/domain/seo/visible-reading";
 import { VisibleReading } from "@/components/seo/visible-reading";
+import { bestForPathForApplication } from "@/lib/storefront-redirects";
+import { localCustomerCollectionDetail } from "@/lib/local-catalog-collection";
 
 type Props = {
   params: Promise<{ collection: string }>;
@@ -50,7 +52,11 @@ export async function generateMetadata({
     params,
     searchParams,
   ]);
-  const collection = await getCustomerCollection(slug, { limit: 1 });
+  // Local-first metadata so a slow catalog API cannot stream <title>/canonical
+  // into <body> (Screaming Frog "outside <head>" finding on /collections/*).
+  const collection =
+    localCustomerCollectionDetail(slug, { limit: 1 }) ??
+    (await getCustomerCollection(slug, { limit: 1 }));
   if (!collection) {
     return {
       title: "Collection not found",
@@ -302,7 +308,7 @@ export default async function CollectionPage({ params, searchParams }: Props) {
               {bestFor.map((useCase) => (
                 <li key={useCase.slug}>
                   <Link
-                    href={`/fabrics/best-for/${useCase.slug}/`}
+                    href={bestForPathForApplication(useCase.slug)}
                     className="inline-flex rounded-sm border border-rule-2 bg-paper-raised px-3 py-2 text-sm font-medium text-ink hover:border-indigo hover:text-indigo"
                   >
                     {useCase.label}

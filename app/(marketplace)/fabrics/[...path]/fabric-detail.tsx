@@ -23,6 +23,7 @@ import { listGuides } from "@/repositories/guides";
 import { FABRICS_2027 } from "@/catalog";
 import { fabricNotes } from "@/domain/seo/visible-reading";
 import { VisibleReading } from "@/components/seo/visible-reading";
+import { bestForPathForApplication } from "@/lib/storefront-redirects";
 
 /**
  * The FabStitch product page. It accepts the source-neutral customer catalogue
@@ -82,7 +83,7 @@ export async function CatalogFabricPage({
   ];
   const bestFor = fabric.bestFor.map((useCase) => ({
     label: useCase.label,
-    href: `/fabrics/best-for/${useCase.slug}/`,
+    href: bestForPathForApplication(useCase.slug),
   }));
   const related = detail.related.map((item) => ({
     label: item.name,

@@ -56,7 +56,16 @@ export default function SupportPage() {
           </h1>
           <p className="mt-5 max-w-[40rem] text-lead text-ink-2">
             Our team is here to help with fabric inquiries, sourcing questions,
-            account issues, and using the FabStitch platform.
+            account issues, and using the FabStitch platform. Start with Help if
+            you need a quick answer; use Contact when your question is about a
+            named fabric, a submitted inquiry, or an account detail we need to
+            look up.
+          </p>
+          <p className="mt-4 max-w-[40rem] text-body text-ink-2">
+            FabStitch follows a fabric → quantity → inquiry path. Support does
+            not open a public supplier directory. Include the fabric URL and the
+            metres you have in mind when you write — that is enough for us to
+            continue sourcing on your behalf.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link

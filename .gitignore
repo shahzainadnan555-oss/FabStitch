@@ -25,6 +25,10 @@
 .DS_Store
 *.pem
 
+# Local Screaming Frog / crawl exports (never commit; can be hundreds of MB)
+/Audit/
+/audit/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

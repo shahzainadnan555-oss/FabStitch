@@ -51,10 +51,12 @@ export async function generateMetadata({
     });
   }
 
+  // Application aliases should 308 via storefrontRedirect. If one still
+  // renders, never index it — thin API-only Best For shells were a crawl issue.
   const resolved = await resolveBestForPage(slug, { limit: 1 });
-  if (!resolved) {
+  if (!resolved?.editorial) {
     return {
-      title: "Best For page not found",
+      title: resolved ? `${resolved.name} fabrics` : "Best For page not found",
       robots: { index: false, follow: true },
     };
   }
@@ -84,6 +86,10 @@ export default async function BestForPage({ params, searchParams }: Props) {
     sort,
   });
   if (!useCase) notFound();
+  // Application-only Best For shells are redirected or 404'd — never keep a
+  // thin indexable page alive for an API slug that is not an SEO use case.
+  const registeredPath = seoPage(`/fabrics/best-for/${slug}/`);
+  if (!useCase.editorial && !registeredPath?.indexable) notFound();
 
   const description =
     useCase.description ||

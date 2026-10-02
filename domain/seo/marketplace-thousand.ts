@@ -499,7 +499,7 @@ function sectionWords(sections: TopicSection[], extra: string[]): number {
 }
 
 function deepenDraft(
-  _draft: Draft,
+  draft: Draft,
   composed: {
     intro: string;
     sections: TopicSection[];
@@ -508,7 +508,56 @@ function deepenDraft(
   },
 ) {
   const sections = [...composed.sections];
-  return { ...composed, sections };
+  const seen = new Set(
+    sections.map((section) => section.heading.toLowerCase()),
+  );
+
+  const sourcing: TopicSection = {
+    heading: "How FabStitch fits this question",
+    body: [
+      `${draft.h1} is a sourcing note, not a product listing and not a second marketplace. The commercial catalog stays at /marketplace/, and each named fabric keeps its own product page with composition, construction, and documented uses.`,
+      "Open a fabric only when the published fields match the brief you already have. Then inquire with metres and garment context. FabStitch handles supplier sourcing after the inquiry — this page does not quote a price, invent stock, or claim a certificate the fabric page never published.",
+      draft.material
+        ? `When ${draft.material.label} appears in the shortlist, read that fibre's construction and weight notes before you treat two cards as interchangeable.`
+        : "Keep fibre, construction, and garment as separate filters. Mixing them into one vague search is how soft, wrong shortlists start.",
+    ],
+  };
+
+  const nextSteps: TopicSection = {
+    heading: "What to do next",
+    body: [
+      "Return to the marketplace and apply the narrowest filter that still matches the brief. Prefer a named fabric page over sharing a filtered URL — filtered marketplace states stay noindex.",
+      "Open two fabric pages side by side and compare only published fields: composition, construction, weight when present, and Best For uses. Leave GSM blank in the inquiry when the page does not publish it.",
+      draft.use
+        ? `If the garment is fixed as ${draft.use.label}, use the Best For edit for that use as the commercial entry, then inquire with quantity once the cloth is chosen.`
+        : draft.material?.collectionSlug
+          ? `If the material family is already fixed, open the ${draft.material.label} collection hub, then inquire from a named fabric — not from this topic URL.`
+          : "When the shortlist is ready, inquire with quantity from the fabric page. Do not treat this topic URL as the product.",
+    ],
+  };
+
+  if (!seen.has(sourcing.heading.toLowerCase())) sections.push(sourcing);
+  if (!seen.has(nextSteps.heading.toLowerCase())) sections.push(nextSteps);
+
+  const faqs = [...composed.faqs];
+  const faqQuestions = new Set(faqs.map((faq) => faq.question.toLowerCase()));
+  const extraFaqs = [
+    {
+      question: `Is “${draft.h1}” a fabric you can buy on this URL?`,
+      answer:
+        "No. This page explains a search question. Buyers compare fabrics on product pages and submit an inquiry with quantity. FabStitch sources from suppliers after that inquiry.",
+    },
+    {
+      question: "Should I share a filtered marketplace link instead?",
+      answer:
+        "Share either https://fabstitch.net/marketplace/ or a specific fabric page. Filtered marketplace URLs are working states, not canonical commercial destinations.",
+    },
+  ];
+  for (const faq of extraFaqs) {
+    if (!faqQuestions.has(faq.question.toLowerCase())) faqs.push(faq);
+  }
+
+  return { ...composed, sections, faqs };
 }
 
 function hubCopy(
@@ -534,6 +583,14 @@ function hubCopy(
           ? `This directory currently lists ${names.length} notes, including ${names.slice(0, 3).join(", ")}${names.length > 3 ? ", and others below" : ""}.`
           : "This directory lists the notes that belong to this group.",
         "If two titles look similar, keep the one that names the decision you still have to make. Then open a fabric page before you write a quantity.",
+      ],
+    },
+    {
+      heading: "How these notes relate to buying",
+      body: [
+        "FabStitch's commercial path is fabric → quantity → inquiry. Topic hubs explain the question that led you here; they do not replace the fabric page or invent a supplier directory.",
+        "After you pick a note, compare two published fabrics and inquire with metres. Do not paste a filter URL into an RFQ and expect it to behave like a product specification.",
+        "When a note and a collection hub cover the same fibre family, prefer the collection for browsing inventory and the note for clarifying the decision you still have to make.",
       ],
     },
   ];
@@ -1036,7 +1093,7 @@ function finish(drafts: Draft[]): MarketplaceTopicRecord[] {
       composed.intro,
       ...composed.faqs.flatMap((faq) => [faq.question, faq.answer]),
     ]);
-    if (count < 80) {
+    if (count < 200) {
       throw new Error(`Thin marketplace topic ${draft.slug} (${count})`);
     }
     return {
@@ -1156,7 +1213,7 @@ export function getMarketplaceTopic(
   }
   const draft = DRAFT_BY_SLUG.get(slug);
   if (!draft) return undefined;
-  const composed = composeDraft(draft);
+  const composed = deepenDraft(draft, composeDraft(draft));
   return {
     ...record,
     ...composed,

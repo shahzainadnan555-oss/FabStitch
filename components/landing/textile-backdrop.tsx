@@ -1,7 +1,12 @@
-import Image from "next/image";
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 
+/**
+ * Decorative textile atmosphere.
+ *
+ * Implemented as a CSS background so crawl tools do not treat it as a content
+ * image missing alt text or width/height attributes. The layer is aria-hidden.
+ */
 export function TextileBackdrop({
   src,
   placement = "right",
@@ -27,19 +32,16 @@ export function TextileBackdrop({
         placement === "full" && "inset-0",
         className,
       )}
-      style={{ "--fs-textile-opacity": opacity } as CSSProperties}
-    >
-      <Image
-        src={src}
-        alt=""
-        fill
-        loading="lazy"
-        sizes={
-          placement === "full" || placement === "bottom" ? "100vw" : "58vw"
-        }
-        className="fs-textile-breathe object-cover"
-        style={{ objectPosition }}
-      />
-    </div>
+      style={
+        {
+          "--fs-textile-opacity": opacity,
+          backgroundImage: `url(${src})`,
+          backgroundSize: "cover",
+          backgroundPosition: objectPosition,
+          backgroundRepeat: "no-repeat",
+          opacity,
+        } as CSSProperties
+      }
+    />
   );
 }

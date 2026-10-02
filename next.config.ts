@@ -37,6 +37,10 @@ const nextConfig: NextConfig = {
               "frame-src 'self' https://accounts.google.com",
             ].join("; "),
           },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
         ],
       },
       {
@@ -52,6 +56,9 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
+    // Avoid emitting 3840px candidates that inflate crawl "over 100 kB" image URLs.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1600, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       {
         protocol: "https",
