@@ -31,12 +31,12 @@ export function SiteFooter() {
             <div className="grid grid-cols-2 gap-x-8 gap-y-10 xl:grid-cols-4 xl:gap-x-7">
               {FOOTER_LINK_GROUPS.map((group) => (
                 <div key={group.label}>
-                  <h2
+                  <p
                     id={`footer-${group.label.toLowerCase()}`}
                     className="font-mono text-label text-gold-on-navy uppercase"
                   >
                     {group.label}
-                  </h2>
+                  </p>
                   {group.label === "Account" ? (
                     <FooterAccountLinks />
                   ) : (

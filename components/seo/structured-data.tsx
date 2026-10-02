@@ -15,13 +15,55 @@ import { absolute, SITE_URL } from "@/lib/seo";
  */
 
 /** Serialise once, server-side, from our own records - never user input. */
+export function jsonLdText(schema: Record<string, unknown>): string {
+  return JSON.stringify(schema).replace(/</g, "\\u003c");
+}
+
 function JsonLd({ schema }: { schema: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdText(schema) }}
     />
   );
+}
+
+export function organizationSchema(): Record<string, unknown> {
+  const id = `${SITE_URL}/#organization`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": id,
+    name: "FabStitch",
+    url: absolute("/"),
+    logo: {
+      "@type": "ImageObject",
+      url: absolute("/media/fabstitch-mark.png"),
+    },
+    description:
+      "FabStitch is a B2B fabric marketplace for discovering fabrics and sourcing materials for apparel, fashion, and manufacturing.",
+  };
+}
+
+export function websiteSchema(): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: "FabStitch",
+    url: absolute("/"),
+    description:
+      "FabStitch is a B2B fabric marketplace for discovering fabrics and sourcing materials for apparel, fashion, and manufacturing.",
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: absolute("/marketplace/?q={search_term_string}"),
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
 }
 
 /**
@@ -33,19 +75,7 @@ function JsonLd({ schema }: { schema: Record<string, unknown> }) {
  * exactly the kind of decorative structured data that gets a site penalised.
  */
 export function OrganizationJsonLd() {
-  return (
-    <JsonLd
-      schema={{
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        name: "FabStitch",
-        url: absolute("/"),
-        logo: absolute("/media/fabstitch-mark.png"),
-        description:
-          "FabStitch is a B2B fabric marketplace for discovering fabrics and sourcing materials for apparel, fashion, and manufacturing.",
-      }}
-    />
-  );
+  return <JsonLd schema={organizationSchema()} />;
 }
 
 /**
@@ -55,26 +85,7 @@ export function OrganizationJsonLd() {
  * (`/marketplace/?q=`) — the same destination the site search uses.
  */
 export function WebSiteJsonLd() {
-  return (
-    <JsonLd
-      schema={{
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        name: "FabStitch",
-        url: absolute("/"),
-        description:
-          "FabStitch is a B2B fabric marketplace for discovering fabrics and sourcing materials for apparel, fashion, and manufacturing.",
-        potentialAction: {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: absolute("/marketplace/?q={search_term_string}"),
-          },
-          "query-input": "required name=search_term_string",
-        },
-      }}
-    />
-  );
+  return <JsonLd schema={websiteSchema()} />;
 }
 
 export function CollectionPageJsonLd({
@@ -97,9 +108,11 @@ export function CollectionPageJsonLd({
       schema={{
         "@context": "https://schema.org",
         "@type": "CollectionPage",
+        "@id": `${absolute(path)}#collection`,
         name,
         description,
         url: absolute(path),
+        isPartOf: { "@id": `${SITE_URL}/#website` },
         ...(items.length
           ? {
               mainEntity: {
@@ -148,8 +161,11 @@ export function ArticleJsonLd({
       schema={{
         "@context": "https://schema.org",
         "@type": "Article",
+        "@id": `${absolute(path)}#article`,
         headline,
         mainEntityOfPage: absolute(path),
+        url: absolute(path),
+        isPartOf: { "@id": `${SITE_URL}/#website` },
         ...(description ? { description } : {}),
         ...(image
           ? {
@@ -206,6 +222,7 @@ export function ListingProductJsonLd({
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
+    "@id": `${absolute(path)}#product`,
     name: listing.name,
     url: absolute(path),
     category: listing.composition,
@@ -296,6 +313,7 @@ export function CatalogProductJsonLd({
       schema={{
         "@context": "https://schema.org",
         "@type": "Product",
+        "@id": `${absolute(`/fabrics/${fabric.slug}/`)}#product`,
         name: fabric.name,
         url: absolute(`/fabrics/${fabric.slug}/`),
         description,

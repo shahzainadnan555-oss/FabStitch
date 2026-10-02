@@ -34,6 +34,7 @@ export function SeoImage({
         width={copy.width}
         height={copy.height}
         sizes={sizes}
+        quality={75}
         priority={priority}
         className={className}
       />
@@ -44,10 +45,11 @@ export function SeoImage({
       src={src}
       alt={copy.alt}
       title={title?.trim() || copy.title}
-      width={copy.width}
-      height={copy.height}
-      sizes={sizes}
-      priority={priority}
+        width={copy.width}
+        height={copy.height}
+        sizes={sizes}
+        quality={75}
+        priority={priority}
       className={className}
     />
   );

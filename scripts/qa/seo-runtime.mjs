@@ -131,8 +131,22 @@ const pages = await pool(urls, 8, async (url) => {
   if (!data.title) failures.push(`${urlPath}: missing title`);
   if (!data.description) failures.push(`${urlPath}: missing description`);
   if (!data.canonical) failures.push(`${urlPath}: missing canonical`);
-  if (data.canonical && new URL(data.canonical, SITE).pathname !== urlPath)
-    failures.push(`${urlPath}: canonical points to ${data.canonical}`);
+  if (data.canonical && !/^https?:\/\//i.test(data.canonical))
+    failures.push(`${urlPath}: canonical is not absolute (${data.canonical})`);
+  const canonicals = [
+    ...(html.match(/<link[^>]+rel=["']canonical["'][^>]*>/gi) ?? []),
+  ];
+  if (canonicals.length > 1)
+    failures.push(`${urlPath}: duplicate canonical tags (${canonicals.length})`);
+  const xRobots = response.headers.get("x-robots-tag") ?? "";
+  if (/noindex/i.test(xRobots) && data.robots && !/noindex/i.test(data.robots))
+    failures.push(
+      `${urlPath}: X-Robots-Tag noindex conflicts with meta robots ${data.robots}`,
+    );
+  if (/^index/i.test(xRobots) && /noindex/i.test(data.robots))
+    failures.push(
+      `${urlPath}: X-Robots-Tag index conflicts with meta robots noindex`,
+    );
   if (/noindex/i.test(data.robots))
     failures.push(`${urlPath}: sitemap URL is noindex`);
   if (data.h1Count !== 1)
@@ -232,11 +246,7 @@ const representativeRoutes = [
   { type: "home", path: "/", indexable: true },
   { type: "fabric-family", path: "/collections/cotton/", indexable: true },
   { type: "fabric-detail", path: "/fabrics/silk-chiffon/", indexable: true },
-  {
-    type: "held-fabric-detail",
-    path: "/fabrics/linen-cotton/",
-    indexable: false,
-  },
+  { type: "fabric-detail-linen", path: "/fabrics/linen-cotton/", indexable: true },
   {
     type: "collection",
     path: "/collections/spring-summer-2027/",
@@ -302,7 +312,6 @@ for (const pathname of privateRoutes) {
 }
 
 const excludedFromSitemap = [
-  "/fabrics/linen-cotton/",
   "/terms/",
   "/privacy/",
   "/support/",

@@ -39,9 +39,9 @@ export function HeaderSearch({ mobile = false }: { mobile?: boolean }) {
               <p className="font-mono text-label tracking-[0.1em] text-gold-ink uppercase">
                 Fabric discovery
               </p>
-              <h2 className="mt-2 text-h2 font-semibold text-ink">
+              <p className="mt-2 text-h2 font-semibold text-ink">
                 What are you looking for?
-              </h2>
+              </p>
             </div>
             <button
               type="button"

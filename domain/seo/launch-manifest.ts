@@ -1,4 +1,4 @@
-import { CURATED_FABRIC_SLUGS } from "@/catalog";
+import { APPROVED_FABRIC_SLUGS } from "@/catalog";
 import {
   SEO_LAUNCH_PHASES,
   canonicalSeoPath,
@@ -26,7 +26,7 @@ const phaseRank = new Map(
 );
 
 const INDEXABLE_FABRIC_PATHS = new Set(
-  CURATED_FABRIC_SLUGS.map((slug) => `/fabrics/${slug}/`),
+  APPROVED_FABRIC_SLUGS.map((slug) => `/fabrics/${slug}/`),
 );
 
 /**
@@ -102,9 +102,8 @@ function localPublicationForPage(input: SeoPublicationRequest): SeoPublication {
   const pageRank = phaseRank.get(pagePhase) ?? Number.MAX_SAFE_INTEGER;
   if (pageRank > activeRank) return { status: "published_noindex" };
 
-  // The catalogue can remain completely browseable while only the approved
-  // launch edit becomes indexable. This is the key distinction between public
-  // product discovery and controlled organic landing-page rollout.
+  // The catalogue remains browseable. Approved 2027 fabric PDPs with real
+  // catalog content are indexable; empty or invalid slugs are not.
   if (input.type === "fabric" && !INDEXABLE_FABRIC_PATHS.has(path)) {
     return { status: "published_noindex" };
   }

@@ -93,8 +93,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${plexSans.variable} ${plexMono.variable} h-full`}
       data-scroll-behavior="smooth"
     >
-      <body className="flex min-h-full flex-col">
+      <head>
         <OrganizationJsonLd />
+      </head>
+      <body className="flex min-h-full flex-col">
         <SessionProvider>{children}</SessionProvider>
         <Suspense fallback={null}>
           <GoogleAnalytics />

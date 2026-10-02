@@ -165,7 +165,9 @@ function withPageNumber(path: string, title: string): string {
 
 function enforceSegment(value: string): string {
   let segment = titleSegment(value);
-  const pads = [" for apparel sourcing", " buyer notes", " cloth guide"];
+  const pads = [" for apparel sourcing", " buyer notes", " cloth guide"].filter(
+    (pad) => !titleAlreadyHasTail(segment, pad.trim()),
+  );
   if (segment.length > SEGMENT_MAX) {
     segment = trimTo(segment, SEGMENT_MAX, SEGMENT_MIN);
   }
@@ -200,6 +202,19 @@ function stampPage(path: string, segment: string): string {
   return next;
 }
 
+function titleAlreadyHasTail(base: string, tail: string): boolean {
+  const haystack = base.toLowerCase();
+  const needle = tail.toLowerCase();
+  if (haystack.includes(needle)) return true;
+  if (tail === "for Apparel" && /\bapparel\b/i.test(base)) return true;
+  if (tail === "Fabric Notes" && /\bnotes?\b/i.test(base)) return true;
+  if (tail === "Buyer Guide" && /\b(buyer|guide)\b/i.test(base)) return true;
+  if (tail === "Cloth Guide" && /\b(cloth|guide)\b/i.test(base)) return true;
+  if (tail === "Use Notes" && /\b(use|notes?)\b/i.test(base)) return true;
+  if (tail === "Explained" && /\bexplained\b/i.test(base)) return true;
+  return false;
+}
+
 export function fitTitle(path: string, storedTitle: string): string {
   const curated = CURATED[path];
   if (curated)
@@ -215,7 +230,12 @@ export function fitTitle(path: string, storedTitle: string): string {
 
   const base =
     titleSegment(withPageNumber(path, storedTitle)) || "Fabric guide";
-  const options = [base, ...TITLE_TAILS.map((tail) => `${base} ${tail}`)];
+  const options = [
+    base,
+    ...TITLE_TAILS.filter((tail) => !titleAlreadyHasTail(base, tail)).map(
+      (tail) => `${base} ${tail}`,
+    ),
+  ];
   const fits = options.filter((option) =>
     inRange(option, SEGMENT_MIN, SEGMENT_MAX),
   );

@@ -168,14 +168,14 @@ const HUBS: readonly {
     slug: "topic-education",
     label: "Marketplace education",
     intro:
-      "These notes explain how to read a FabStitch marketplace result. They do not replace the catalog at /marketplace/.",
+      "These notes explain how to read a FabStitch marketplace result: composition, construction, and stated weight, in that order. They do not replace the catalog at /marketplace/. Open a note when you need the question explained, then search the published fabrics.",
   },
   {
     family: "b2b",
     slug: "topic-b2b",
     label: "B2B sourcing",
     intro:
-      "Business sourcing notes for teams who need a fabric URL, not a private mood board. The commercial catalog stays on the marketplace.",
+      "Business sourcing notes for teams who need a fabric URL other departments can open, not a private mood board. The commercial catalog stays on the marketplace. Use these pages to decide what to search, then inquire on one fabric.",
   },
   {
     family: "buying",
@@ -521,19 +521,20 @@ function hubCopy(
       heading: "How to use this list",
       body: [
         hub.intro,
-        `The notes in ${hub.label} are separate questions. Start with ${names[0] ?? hub.label} only if that title matches the brief.`,
-        "Open a note, then return to the marketplace to see published fabrics. A topic page is not a product and it is not a second catalog.",
-        "Filtered marketplace URLs stay noindex. Share either the marketplace or a specific fabric page.",
+        `Each title in ${hub.label} is a separate search question. Start with ${names[0] ?? hub.label} only when that heading matches the brief you already have.`,
+        "Open the note, then return to the marketplace to see published fabrics. A topic page is not a product, not a second catalog, and not a place to inquire.",
+        "Filtered marketplace URLs stay noindex. Share either https://fabstitch.net/marketplace/ or a specific fabric page.",
       ],
     },
     {
-      heading: `Notes in ${hub.label}`,
-      body: names
-        .slice(0, 12)
-        .map(
-          (name) =>
-            `${name} is one note in this directory. It explains a search question. It does not replace the fabric page you inquire on, and it does not add a price or a certificate.`,
-        ),
+      heading: `What ${hub.label.toLowerCase()} is for`,
+      body: [
+        `${hub.label} groups related marketplace questions so a buyer can pick one intent instead of mixing fibre, garment, and weight on the same search.`,
+        names.length
+          ? `This directory currently lists ${names.length} notes, including ${names.slice(0, 3).join(", ")}${names.length > 3 ? ", and others below" : ""}.`
+          : "This directory lists the notes that belong to this group.",
+        "If two titles look similar, keep the one that names the decision you still have to make. Then open a fabric page before you write a quantity.",
+      ],
     },
   ];
 }

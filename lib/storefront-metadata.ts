@@ -46,7 +46,14 @@ export const HOMEPAGE_DESCRIPTION =
   "Discover apparel, fashion, and manufacturing fabrics on FabStitch, a B2B marketplace for sourcing cloth by material and use.";
 
 function canonicalPath(path: string): string {
-  const pathname = path.split(/[?#]/, 1)[0] || "/";
+  let pathname = path.split(/[?#]/, 1)[0] || "/";
+  if (/^https?:\/\//i.test(pathname)) {
+    try {
+      pathname = new URL(pathname).pathname;
+    } catch {
+      pathname = "/";
+    }
+  }
   const withLeadingSlash = pathname.startsWith("/") ? pathname : `/${pathname}`;
   const collapsed = withLeadingSlash.replace(/\/{2,}/g, "/").toLowerCase();
   return collapsed === "/" ? "/" : `${collapsed.replace(/\/+$/, "")}/`;
@@ -106,7 +113,7 @@ export function storefrontMetadata({
   return {
     title: documentTitle,
     description: resolvedDescription,
-    alternates: { canonical: isHome ? absolute("/") : canonical },
+    alternates: { canonical: absolute(canonical) },
     robots: {
       index: forcePublicIndex ? true : index,
       follow: true,
@@ -119,7 +126,7 @@ export function storefrontMetadata({
       siteName: BRAND_NAME,
       title: socialTitle,
       description: resolvedDescription,
-      url: isHome ? absolute("/") : canonical,
+      url: absolute(canonical),
       locale: "en_US",
       images: [
         {
@@ -216,7 +223,7 @@ function backendMetadata(
     return {
       title: documentTitle,
       description,
-      alternates: { canonical },
+      alternates: { canonical: absolute(canonical) },
       robots: {
         index: true,
         follow: true,
@@ -229,7 +236,7 @@ function backendMetadata(
         siteName: BRAND_NAME,
         title: socialDisplay,
         description: socialDescription,
-        url: canonical,
+        url: absolute(canonical),
         ...(socialImage
           ? {
               images: [
@@ -275,7 +282,7 @@ function backendMetadata(
       siteName: BRAND_NAME,
       title: socialDisplay,
       description: socialDescription,
-      url: canonical,
+      url: absolute(canonical),
       ...(socialImage
         ? {
             images: [

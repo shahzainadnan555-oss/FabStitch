@@ -88,7 +88,7 @@ function FilterGroup({
         <Label tone="ink">{label}</Label>
       </legend>
       <div className="mt-2 max-h-40 space-y-1 overflow-y-auto pr-1">
-        {options.map((option) => (
+        {options.slice(0, 24).map((option) => (
           <label
             key={option.value}
             className="flex cursor-pointer items-center gap-2.5 py-1 text-sm text-ink-2"

@@ -17,7 +17,6 @@ import { FabricCatalogueCard } from "@/components/marketplace/fabric-card";
 import { CatalogFabricPage } from "./fabric-detail";
 import {
   fabricSeoDescription,
-  hasSeoQueryState,
   registeredStorefrontMetadata,
 } from "@/lib/storefront-metadata";
 import {
@@ -45,6 +44,10 @@ import {
   FabricExperienceHero,
   RelatedFabricTiles,
 } from "@/components/marketplace/fabric-experience";
+import {
+  approvedFabricStaticParams,
+  localCatalogFabricDetail,
+} from "@/lib/local-catalog-fabric";
 import { LANDING_MEDIA } from "@/components/landing/media";
 
 /**
@@ -63,54 +66,56 @@ type Props = PageProps<"/fabrics/[...path]">;
 /**
  * A catalogue fabric addressed by its own slug.
  *
- * The taxonomy resolver knows the local tree; the approved catalogue has
- * product slugs that are not tree paths. A single segment
- * the tree does not recognise is therefore looked up as a fabric before the
- * route gives up — which is what makes every catalogue record reachable
- * instead of 404.
+ * Prefer the local 2027 catalog so PDPs stay populated when the API is slow
+ * or missing. Invalid slugs must 404 rather than render an empty 200 shell.
  */
 async function catalogueFabric(path: string[]) {
   if (path.length !== 1) return null;
+  const slug = path[0];
+  const local = localCatalogFabricDetail(slug);
+  if (local) return local;
   try {
-    return await getCustomerCatalogFabric(path[0]);
+    return await getCustomerCatalogFabric(slug);
   } catch {
-    // Transient API failures must not collapse the route into a full-page
-    // crash for an otherwise valid fabric slug.
     return "unavailable" as const;
   }
 }
 
 export function generateStaticParams() {
   const paths = [
-    ...FABRIC_FAMILIES.map((family) => [family.slug]),
-    ...FABRIC_NODES.map((node) =>
-      buildCanonical(node)
+    ...approvedFabricStaticParams(),
+    ...FABRIC_FAMILIES.map((family) => ({ path: [family.slug] })),
+    ...FABRIC_NODES.map((node) => ({
+      path: buildCanonical(node)
         .replace(/^\/fabrics\/|\/$/g, "")
         .split("/"),
-    ),
+    })),
   ];
-  return [...new Map(paths.map((path) => [path.join("/"), { path }])).values()];
+  return [
+    ...new Map(paths.map((entry) => [entry.path.join("/"), entry])).values(),
+  ];
 }
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}: Props): Promise<Metadata> {
-  const [{ path }, query] = await Promise.all([params, searchParams]);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { path } = await params;
   const detail = await catalogueFabric(path);
   if (detail === "unavailable") {
-    return registeredStorefrontMetadata(`/fabrics/${path[0]}/`, {
+    return {
       title: "Fabric",
-      index: false,
-    });
+      robots: { index: false, follow: true },
+    };
   }
   if (detail) {
     const { fabric } = detail;
+    const local = localCatalogFabricDetail(fabric.slug);
+    const populated =
+      Boolean(local) ||
+      Boolean(fabric.description?.trim() || fabric.summary?.trim());
     return registeredStorefrontMetadata(`/fabrics/${fabric.slug}/`, {
       title: fabric.seo?.title || fabric.name,
       description: fabricSeoDescription(fabric),
       image: fabric.media.src,
-      index: !hasSeoQueryState(query),
+      index: populated && fabric.seo?.indexable !== false,
     });
   }
 
@@ -128,15 +133,8 @@ export async function generateMetadata({
   // returning 200 and claiming to be indexable, so a crawler must resolve the
   // duplicate rather than being told outright. Aliases are never indexable, no
   // matter how much supply sits behind the page they point at.
-  // Metadata is generated from the entity and gated on real supply, so a page
-  // the gate held back says `noindex` in its own head rather than relying on
-  // the sitemap to hide it - a crawler following an internal link would
-  // otherwise index it anyway.
-  // The backend publication record is the only path that can opt the clean URL
-  // into indexing. Missing records and query variants remain conservative.
   // Taxonomy family/node guides remain public for browse continuity but are
   // not indexed until they pass the storefront SEO registry quality gate.
-  // Clean query URLs still canonicalize here; filtered states stay noindex.
   return registeredStorefrontMetadata(route.canonical, {
     title: `${route.title} fabrics`,
     description: `Explore source-backed ${route.title.toLowerCase()} fabric directions, specifications and uses in the approved FabStitch 2027 collection.`,
@@ -151,6 +149,7 @@ export default async function FabricCategoryPage({
   const { path } = await params;
   const detail = await catalogueFabric(path);
   if (detail === "unavailable") {
+    if (!resolveFabricPath(path)) notFound();
     return (
       <CatalogLoadError
         title="Unable to load this fabric right now."

@@ -35,7 +35,7 @@ function Svg({ title, className, children, ...props }: IconProps) {
       className={cn("shrink-0", className)}
       {...props}
     >
-      {title ? <title>{title}</title> : null}
+      {title ? <desc>{title}</desc> : null}
       {children}
     </svg>
   );

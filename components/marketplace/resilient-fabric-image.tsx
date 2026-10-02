@@ -36,6 +36,7 @@ export function ResilientFabricImage({
       height={copy.height}
       unoptimized={remote}
       sizes={sizes}
+      quality={75}
       priority={priority}
       onError={() => setFailed(true)}
       className={`absolute inset-0 h-full w-full ${className ?? ""}`}
